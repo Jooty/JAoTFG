@@ -159,26 +159,23 @@ public class PlayerController : MonoBehaviour
     {
         if (!IsGrounded) return;
 
+        var _horizontal = Input.GetAxisRaw("Horizontal");
+        var _vertical = Input.GetAxisRaw("Vertical");
+        moveInput = new Vector3(_horizontal, 0, _vertical).normalized;
+
         RotateToMovement();
 
         // add camera relativity
         moveInput = cam.transform.TransformDirection(moveInput);
         moveInput.y = 0;
-
         moveInput.Normalize();
-
-        // var _speed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed;
 
         rigid.AddForce(moveInput * sprintSpeed / Time.deltaTime);
     }
 
     private void RotateToMovement()
     {
-        var _horizontal = Input.GetAxisRaw("Horizontal");
-        var _vertical = Input.GetAxisRaw("Vertical");
-        moveInput = new Vector3(_horizontal, 0, _vertical).normalized;
-
-        directionPos = transform.position + (cam.transform.right * moveInput.x) + (cam.transform.forward * moveInput.z);
+        var directionPos = transform.position + (cam.transform.right * moveInput.x) + (cam.transform.forward * moveInput.z);
         var dir = directionPos - transform.position;
         dir.y = 0;
 
