@@ -25,7 +25,6 @@ public class ManeuverGear : Gear
 
     [HideInInspector] public HookController hook;
     [HideInInspector] public GameObject grapplingLine;
-    [HideInInspector] public enum HookStatus { sheathed, released, attached, retracting };
     [HideInInspector] public HookStatus hookStatus;
     [HideInInspector] public float hookDistance;
 

@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour
     private void HandleAnimations()
     {
         bodyAnim.SetFloat("fallSpeed", rigid.velocity.y);
-        bodyAnim.SetBool("isHooked", player.maneuverGear.hookStatus == ManeuverGear.HookStatus.attached);
+        bodyAnim.SetBool("isHooked", player.maneuverGear.hookStatus == HookStatus.attached);
 
         if (!player.usingManeuverGear)
         {
@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour
         canJump = false;
 
         // TEMP -- REMOVE LATER
-        if (player.maneuverGear && player.maneuverGear.hookStatus != ManeuverGear.HookStatus.sheathed)
+        if (player.maneuverGear && player.maneuverGear.hookStatus != HookStatus.sheathed)
         {
             player.usingManeuverGear = true;
             rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
@@ -209,7 +209,7 @@ public class PlayerController : MonoBehaviour
 
     private void JumpEvent()
     {
-        if (player.maneuverGear && player.maneuverGear.hookStatus != ManeuverGear.HookStatus.sheathed)
+        if (player.maneuverGear && player.maneuverGear.hookStatus != HookStatus.sheathed)
         {
             player.usingManeuverGear = true;
             rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
@@ -375,11 +375,11 @@ public class PlayerController : MonoBehaviour
     {
         if (!player.hasManeuverGear) return;
 
-        if (Input.GetMouseButton(0) && !player.maneuverGear.hook && CanHook())
+        if (Input.GetKey(KeyCode.Q) && !player.maneuverGear.hook && CanHook())
         {
             FireHook();
         }
-        else if (Input.GetMouseButtonUp(0) && player.maneuverGear.hook)
+        else if (Input.GetKeyUp(KeyCode.Q) && player.maneuverGear.hook)
         {
             RecallHook();
         }
@@ -519,7 +519,7 @@ public class PlayerController : MonoBehaviour
     {
         Quaternion target = Quaternion.identity;
 
-        if (player.maneuverGear.hookStatus == ManeuverGear.HookStatus.attached && rigid.velocity.magnitude > 3)
+        if (player.maneuverGear.hookStatus == HookStatus.attached && rigid.velocity.magnitude > 3)
         {
             var tetherDirection = player.maneuverGear.hook.transform.position - transform.position;
             target = Quaternion.LookRotation(rigid.velocity, tetherDirection);
@@ -575,7 +575,7 @@ public class PlayerController : MonoBehaviour
             player.maneuverGear.hook = _hook.GetComponent<HookController>();
             player.maneuverGear.hook.target = hit.point;
             player.maneuverGear.hook.source = player.maneuverGear;
-            player.maneuverGear.hookStatus = ManeuverGear.HookStatus.released;
+            player.maneuverGear.hookStatus = HookStatus.released;
 
             player.maneuverGear.grapplingLine.SetActive(true);
         }
@@ -583,7 +583,7 @@ public class PlayerController : MonoBehaviour
 
     private void RecallHook()
     {
-        player.maneuverGear.hookStatus = ManeuverGear.HookStatus.retracting;
+        player.maneuverGear.hookStatus = HookStatus.retracting;
 
         // sound effect
         aud.PlayOneShot(player.maneuverGear.manSoundEffects[9]);
@@ -600,36 +600,34 @@ public class PlayerController : MonoBehaviour
 
     private void DoManeuverGearPhysics()
     {
-        if (Input.GetMouseButton(0) && player.maneuverGear.hookStatus == ManeuverGear.HookStatus.attached)
+        if (Input.GetKeyDown(KeyCode.Q) && player.maneuverGear.hookStatus == HookStatus.attached)
         {
             // gets velocity in units/frame, then gets the position for next frame
-            Vector3 curr_velo_upf = rigid.velocity * Time.fixedDeltaTime;
-            Vector3 test_pos = transform.position + curr_velo_upf;
+            Vector3 currentVelocityUpf = rigid.velocity * Time.fixedDeltaTime;
+            Vector3 nextPos = transform.position + currentVelocityUpf;
 
-            if (Vector3.Distance(test_pos, player.maneuverGear.hook.transform.position) < player.maneuverGear.hookDistance)
+            if (Vector3.Distance(nextPos, player.maneuverGear.hook.transform.position) < player.maneuverGear.hookDistance)
             {
-                player.maneuverGear.hookDistance = Vector3.Distance(test_pos, player.maneuverGear.hook.transform.position);
+                player.maneuverGear.hookDistance = Vector3.Distance(nextPos, player.maneuverGear.hook.transform.position);
             }
 
-            ApplyTensionForce(curr_velo_upf, test_pos);
+            ApplyTensionForce(currentVelocityUpf, nextPos);
         }
 
         return;
     }
 
-    private void ApplyTensionForce(Vector3 curr_velo_upf, Vector3 test_pos)
+    private void ApplyTensionForce(Vector3 currentVelocityUpf, Vector3 nextPos)
     {
-        if (player.maneuverGear.hookStatus != ManeuverGear.HookStatus.attached) return;
-
         //finds what the new velocity is due to tension force grappling hook
         //normalized vector that from node to test pos
-        Vector3 node_to_test = (test_pos - player.maneuverGear.hook.transform.position).normalized;
+        Vector3 node_to_test = (nextPos - player.maneuverGear.hook.transform.position).normalized;
         Vector3 new_pos = (node_to_test * player.maneuverGear.hookDistance) + player.maneuverGear.hook.transform.position;
         Vector3 new_velocity = new_pos - gameObject.transform.position;
 
         //force_tension = mass * (d_velo / d_time)
         //where d_velo is new_velocity - old_velocity
-        Vector3 delta_velocity = new_velocity - curr_velo_upf;
+        Vector3 delta_velocity = new_velocity - currentVelocityUpf;
         Vector3 tension_force = (rigid.mass * (delta_velocity / Time.fixedDeltaTime));
 
         rigid.AddForce(tension_force, ForceMode.Impulse);
@@ -670,7 +668,7 @@ public class PlayerController : MonoBehaviour
 
             isWaitingToLand = true;
 
-            if (player.maneuverGear.hookStatus != ManeuverGear.HookStatus.attached)
+            if (player.maneuverGear.hookStatus != HookStatus.attached)
             {
                 player.usingManeuverGear = true;
             }

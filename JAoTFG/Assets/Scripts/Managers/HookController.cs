@@ -54,7 +54,7 @@ public class HookController : MonoBehaviour
 
     private void hookAttached()
     {
-        alreadyCalled = true;
+        source.hookStatus = HookStatus.attached;
         source.HookAttachedEvent();
 
         var clip = Resources.Load<AudioClip>("SFX/HERO/HookHit");
@@ -64,7 +64,7 @@ public class HookController : MonoBehaviour
 
     private void hookRecalled()
     {
-        source.hookStatus = ManeuverGear.HookStatus.sheathed;
+        source.hookStatus = HookStatus.sheathed;
 
         source.grapplingLine.SetActive(false);
 
