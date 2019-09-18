@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public static class ExtensionMethods
 {
@@ -43,6 +44,11 @@ public static class ExtensionMethods
     public static bool Toggle(this bool val)
     {
         return !val;
+    }
+
+    public static bool IsEmpty(this Array array)
+    {
+        return array.Length == 0;
     }
 
 }
