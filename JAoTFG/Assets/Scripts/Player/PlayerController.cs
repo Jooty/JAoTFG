@@ -147,14 +147,13 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAnimations()
     {
-        bodyAnim.SetFloat("fallSpeed", rigid.velocity.y);
-        bodyAnim.SetBool("isHooked",hookStatus == HookStatus.attached);
+        bodyAnim.SetBool("usingManGear", usingManGear);
+        bodyAnim.SetFloat("velocity", Common.GetFloatByRelativePercent(0, 1, 0, GameVariables.HERO_MAX_SPEED, rigid.velocity.magnitude));
+        bodyAnim.SetFloat("velocityY", Common.GetFloatByRelativePercent(0, 1, 0, 9.8f, rigid.velocity.y));
+        bodyAnim.SetBool("isHooked", hookStatus == HookStatus.attached);
 
         if (!usingManGear)
         {
-            //anim.SetLayerWeight(0, 1);
-            //anim.SetLayerWeight(2, 0);
-
             // Running
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
@@ -169,8 +168,16 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            //anim.SetLayerWeight(0, 1);
-            //anim.SetLayerWeight(2, 0);
+            bodyAnim.SetBool("isRunning", false);
+        }
+
+        if (IsGrounded && usingManGear)
+        {
+            bodyAnim.SetBool("isSliding", true);
+        }
+        else
+        {
+            bodyAnim.SetBool("isSliding", false);
         }
     }
 
@@ -219,22 +226,15 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        canJump = false;
+        if (!canJump || !IsGrounded) return;
 
-        // TEMP -- REMOVE LATER
-        if (hookStatus != HookStatus.sheathed)
-        {
-            usingManGear = true;
-            rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
-        }
-        else
-        {
-            rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
-        }
+        bodyAnim.SetTrigger("jump");
     }
 
-    private void JumpEvent()
+    public void JumpEvent()
     {
+        canJump = false;
+
         if (hookStatus != HookStatus.sheathed)
         {
             usingManGear = true;
@@ -532,7 +532,7 @@ public class PlayerController : MonoBehaviour
     private void SwordRelease()
     {
         bodyAnim.SetTrigger("attackRelease");
-        aud.PlayOneShot(manSoundEffects[11], AudioSettings.SFX);
+        aud.PlayOneShot(manSoundEffects[5], AudioSettings.SFX);
         sword.GetComponent<BoxCollider>().enabled = true;
         sword2.GetComponent<BoxCollider>().enabled = true;
         StartCoroutine(DisableSwords());
@@ -549,7 +549,7 @@ public class PlayerController : MonoBehaviour
     {
         Quaternion target = Quaternion.identity;
 
-        if (hookStatus == HookStatus.attached && rigid.velocity.magnitude > 3)
+        if (hookStatus == HookStatus.attached && rigid.velocity.magnitude > 3 && hook)
         {
             if (IsGrounded)
             {
@@ -644,7 +644,7 @@ public class PlayerController : MonoBehaviour
 
     private void DoManeuverGearPhysics()
     {
-        if (Input.GetKey(KeyCode.Q) && hookStatus == HookStatus.attached)
+        if (Input.GetKey(KeyCode.Q) && hookStatus == HookStatus.attached && hook)
         {
             // gets velocity in units/frame, then gets the position for next frame
             Vector3 currentVelocityUpf = rigid.velocity * Time.fixedDeltaTime;
