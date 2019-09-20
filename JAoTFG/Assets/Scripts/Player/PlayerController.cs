@@ -480,11 +480,6 @@ public class PlayerController : MonoBehaviour
         rigid.AddForce(transform.forward * thrustPower * Time.deltaTime, ForceMode.Acceleration);
         isThrusting = true;
 
-        if (hook && GameVariables.MG_RETRACT_ON_GAS)
-        {
-            hookDistance -= GameVariables.MG_GAS_REEL_SPEED * Time.deltaTime;
-        }
-
         gas -= 1 * Time.deltaTime;
     }
 
@@ -658,6 +653,10 @@ public class PlayerController : MonoBehaviour
             if (Vector3.Distance(nextPos, hook.transform.position) < hookDistance)
             {
                 hookDistance = Vector3.Distance(nextPos, hook.transform.position);
+            }
+            if (isThrusting && GameVariables.MG_RETRACT_ON_GAS)
+            {
+                hookDistance -= GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER * Time.deltaTime * GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER;
             }
 
             ApplyTensionForce(currentVelocityUpf, nextPos);
