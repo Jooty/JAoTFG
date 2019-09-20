@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class ArenaManager : MonoBehaviour
 {
 
-    public static ArenaManager instance;
+    [HideInInspector] public static ArenaManager instance;
 
+    [SerializeField] private bool spawnPillars = true;
     public int pillarCount;
     public int startTitanCount;
 
@@ -27,7 +28,10 @@ public class ArenaManager : MonoBehaviour
         currentWave = 0;
         titansAlive = new List<Titan>();
 
-        SpawnPillars();
+        if (spawnPillars)
+        {
+            SpawnPillars();
+        }
         SpawnTitans();
     }
 
