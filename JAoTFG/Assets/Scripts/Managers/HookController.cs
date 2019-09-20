@@ -9,7 +9,7 @@ public class HookController : MonoBehaviour
     public float retractSpeed = 300f;
 
     [HideInInspector]
-    public ManeuverGear source;
+    public PlayerController source;
 
     [HideInInspector]
     public Vector3 target;

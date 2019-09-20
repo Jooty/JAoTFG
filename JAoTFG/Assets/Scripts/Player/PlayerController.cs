@@ -26,6 +26,31 @@ public class PlayerController : MonoBehaviour
     [Range(0, 1)] [SerializeField] private float feetToIkPositionSpeed = 0.5f;
     public bool showSolverDebug = true;
 
+    [Header("Maneuver Gear")]
+    public float gas;
+    public float totalMaxGas;
+    public float thrustPower;
+    public float hookSpeed;
+    [HideInInspector] public float hookReturnSpeed;
+
+    [SerializeField] public GameObject hookUI;
+    [SerializeField] public GameObject sword;
+    [SerializeField] public GameObject sword2;
+    [SerializeField] public ParticleSystem thrustSmoke;
+    [SerializeField] public ParticleSystem hookSmoke;
+    [SerializeField] public Transform leftHookPoint;
+
+    [HideInInspector] public bool hasSwordInHand;
+    [HideInInspector] public bool isThrusting;
+
+    [HideInInspector] public HookController hook;
+    [HideInInspector] public GameObject grapplingLine;
+    [HideInInspector] public HookStatus hookStatus;
+    [HideInInspector] public float hookDistance;
+
+    [HideInInspector] public AudioClip[] manSoundEffects;
+    private bool usingManGear;
+
     private PhysicMaterial zfriction;
     private PhysicMaterial mfriction;
 
@@ -70,6 +95,11 @@ public class PlayerController : MonoBehaviour
 
         canJump = true;
         wantsToJump = true;
+        gas = totalMaxGas;
+        hookReturnSpeed = hookSpeed * 3f;
+        hookStatus = HookStatus.sheathed;
+
+        CreateTetherLine();
     }
 
     private void Update()
@@ -79,16 +109,12 @@ public class PlayerController : MonoBehaviour
         HandleControls();
         HandleAnimations();
         EnforceMaxSpeed();
-
-        if (player.hasManeuverGear)
-        {
-            ManueverGearUpdate();
-        }
+        ManueverGearUpdate();
     }
 
     void FixedUpdate()
     {
-        if (player.usingManeuverGear)
+        if (usingManGear)
         {
             DoManeuverGearPhysics();
         }
@@ -122,9 +148,9 @@ public class PlayerController : MonoBehaviour
     private void HandleAnimations()
     {
         bodyAnim.SetFloat("fallSpeed", rigid.velocity.y);
-        bodyAnim.SetBool("isHooked", player.maneuverGear.hookStatus == HookStatus.attached);
+        bodyAnim.SetBool("isHooked",hookStatus == HookStatus.attached);
 
-        if (!player.usingManeuverGear)
+        if (!usingManGear)
         {
             //anim.SetLayerWeight(0, 1);
             //anim.SetLayerWeight(2, 0);
@@ -196,9 +222,9 @@ public class PlayerController : MonoBehaviour
         canJump = false;
 
         // TEMP -- REMOVE LATER
-        if (player.maneuverGear && player.maneuverGear.hookStatus != HookStatus.sheathed)
+        if (hookStatus != HookStatus.sheathed)
         {
-            player.usingManeuverGear = true;
+            usingManGear = true;
             rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
         }
         else
@@ -209,9 +235,9 @@ public class PlayerController : MonoBehaviour
 
     private void JumpEvent()
     {
-        if (player.maneuverGear && player.maneuverGear.hookStatus != HookStatus.sheathed)
+        if (hookStatus != HookStatus.sheathed)
         {
-            player.usingManeuverGear = true;
+            usingManGear = true;
             rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
         }
         else
@@ -225,16 +251,12 @@ public class PlayerController : MonoBehaviour
         bodyAnim.SetTrigger("land");
         canJump = true;
         isWaitingToLand = false;
-
-        if (player.maneuverGear)
-        {
-            player.usingManeuverGear = false;
-        }
+        usingManGear = false;
     }
 
     private void HandleFriction() 
     {
-        if (player.usingManeuverGear) return;
+        if (usingManGear) return;
 
         if (moveInput == Vector3.zero)
         {
@@ -351,21 +373,19 @@ public class PlayerController : MonoBehaviour
 
     private void ManueverGearUpdate()
     {
-        if (!player.hasManeuverGear) return;
-
         UpdateManeuverGearCameraEffects();
         UpdateManeuverGearUI();
         CheckHookRunawayDistance();
         HandleManeuverGearControls();
+        DrawHook();
 
-        if (!player.usingManeuverGear && player.maneuverGear.hook) 
+        if (!usingManGear && hook) 
         {
             // todo
-            player.maneuverGear.hookDistance 
-                = Vector3.Distance(transform.position, player.maneuverGear.hook.transform.position);
+            hookDistance = Vector3.Distance(transform.position, hook.transform.position);
         }
 
-        if (player.usingManeuverGear)
+        if (usingManGear)
         { 
             AirRotate();
         }
@@ -373,20 +393,18 @@ public class PlayerController : MonoBehaviour
 
     private void HandleManeuverGearControls()
     {
-        if (!player.hasManeuverGear) return;
-
-        if (Input.GetKey(KeyCode.Q) && !player.maneuverGear.hook && CanHook())
+        if (Input.GetKey(KeyCode.Q) && !hook && CanHook())
         {
             FireHook();
         }
-        else if (Input.GetKeyUp(KeyCode.Q) && player.maneuverGear.hook)
+        else if (Input.GetKeyUp(KeyCode.Q) && hook)
         {
             RecallHook();
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            if (player.maneuverGear.hasSwordInHand)
+            if (hasSwordInHand)
             {
                 SheatheSwords();
             }
@@ -396,34 +414,34 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(0) && player.maneuverGear.hasSwordInHand)
+        if (Input.GetMouseButtonDown(0) && hasSwordInHand)
         {
             SwordReady();
         }
-        else if (Input.GetMouseButtonUp(0) && player.maneuverGear.hasSwordInHand)
+        else if (Input.GetMouseButtonUp(0) && hasSwordInHand)
         {
             SwordRelease();
         }
 
         if (Input.GetKey(KeyCode.Space))
         {
-            if (IsGrounded && !player.maneuverGear.hook) return;
+            if (IsGrounded && !hook) return;
 
             GasThrust();
 
             if (!aud.isPlaying)
             {
-                aud.clip = player.maneuverGear.manSoundEffects[3];
+                aud.clip = manSoundEffects[3];
                 aud.loop = true;
                 aud.Play();
             }
-            player.maneuverGear.thrustSmoke.Play();
+            thrustSmoke.Play();
         }
         else if (Input.GetKeyUp(KeyCode.Space))
         {
-            player.maneuverGear.isThrusting = false;
+            isThrusting = false;
             aud.Stop();
-            player.maneuverGear.thrustSmoke.Pause();
+            thrustSmoke.Pause();
         }
     }
 
@@ -431,31 +449,27 @@ public class PlayerController : MonoBehaviour
     {
         if (CanHook())
         {
-            player.maneuverGear.hookUI.SetActive(true);
+            hookUI.SetActive(true);
         }
         else
         {
-            player.maneuverGear.hookUI.SetActive(false);
+            hookUI.SetActive(false);
         }
     }
 
     private void UpdateManeuverGearCameraEffects()
     {
-        if (!player.usingManeuverGear) return;
+        if (!usingManGear) return;
 
         var target = Common.GetFloatByRelativePercent(GameVariables.FIELD_OF_VIEW, GameVariables.FIELD_OF_VIEW * 1.2f, 0, GameVariables.HERO_MAX_SPEED, rigid.velocity.magnitude);
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, target, .3f);
     }
 
-    /// <summary>
-    /// Check to see if the player has run far away from the max hook distance.
-    /// If so, break the tether.
-    /// </summary>
     private void CheckHookRunawayDistance()
     {
-        if (!player.maneuverGear.hook) return;
+        if (!hook) return;
 
-        if (Vector3.Distance(transform.position, player.maneuverGear.hook.transform.position) > GameVariables.MG_HOOK_MAX_RUNAWAY_RANGE)
+        if (Vector3.Distance(transform.position, hook.transform.position) > GameVariables.MG_HOOK_MAX_RUNAWAY_RANGE)
         {
             RecallHook();
         }
@@ -463,35 +477,56 @@ public class PlayerController : MonoBehaviour
 
     private void GasThrust()
     {
-        rigid.AddForce(transform.forward * player.maneuverGear.thrustPower * Time.deltaTime, ForceMode.Acceleration);
-        player.maneuverGear.isThrusting = true;
+        rigid.AddForce(transform.forward * thrustPower * Time.deltaTime, ForceMode.Acceleration);
+        isThrusting = true;
 
-        if (player.maneuverGear.hook && GameVariables.MG_RETRACT_ON_GAS)
+        if (hook && GameVariables.MG_RETRACT_ON_GAS)
         {
-            player.maneuverGear.hookDistance -= GameVariables.MG_GAS_REEL_SPEED * Time.deltaTime;
+            hookDistance -= GameVariables.MG_GAS_REEL_SPEED * Time.deltaTime;
         }
 
-        player.maneuverGear.gas -= player.maneuverGear.gasReduceSpeed * Time.deltaTime;
+        gas -= 1 * Time.deltaTime;
+    }
+
+    private void CreateTetherLine()
+    {
+        // draw hook
+        grapplingLine = new GameObject("GrapplingLine");
+        grapplingLine.SetActive(false);
+        grapplingLine.transform.SetParent(leftHookPoint);
+        LineRenderer line_renderer = grapplingLine.AddComponent<LineRenderer>();
+        line_renderer.startWidth = .05f;
+        line_renderer.material.color = Color.black;
+
+        manSoundEffects = Resources.LoadAll<AudioClip>("SFX/HERO");
+    }
+
+    private void DrawHook()
+    {
+        if (!hook) return;
+
+        Vector3[] line_vortex_arr = { leftHookPoint.position, hook.transform.position };
+        grapplingLine.GetComponent<LineRenderer>().SetPositions(line_vortex_arr);
     }
 
     private void UnsheatheSwords()
     {
-        player.maneuverGear.sword.SetActive(true);
-        player.maneuverGear.sword2.SetActive(true);
+        sword.SetActive(true);
+        sword2.SetActive(true);
 
         bodyAnim.SetTrigger("withdrawSword");
-        player.maneuverGear.hasSwordInHand = true;
+        hasSwordInHand = true;
 
-        aud.PlayOneShot(player.maneuverGear.manSoundEffects[0], .2f);
+        aud.PlayOneShot(manSoundEffects[0], .2f);
     }
 
     private void SheatheSwords()
     {
-        player.maneuverGear.sword.SetActive(false);
-        player.maneuverGear.sword2.SetActive(false);
+        sword.SetActive(false);
+        sword2.SetActive(false);
 
         bodyAnim.SetTrigger("sheatheSword");
-        player.maneuverGear.hasSwordInHand = false;
+        hasSwordInHand = false;
     }
 
     private void SwordReady()
@@ -502,26 +537,26 @@ public class PlayerController : MonoBehaviour
     private void SwordRelease()
     {
         bodyAnim.SetTrigger("attackRelease");
-        aud.PlayOneShot(player.maneuverGear.manSoundEffects[11], AudioSettings.SFX);
-        player.maneuverGear.sword.GetComponent<BoxCollider>().enabled = true;
-        player.maneuverGear.sword2.GetComponent<BoxCollider>().enabled = true;
+        aud.PlayOneShot(manSoundEffects[11], AudioSettings.SFX);
+        sword.GetComponent<BoxCollider>().enabled = true;
+        sword2.GetComponent<BoxCollider>().enabled = true;
         StartCoroutine(DisableSwords());
     }
 
     private IEnumerator DisableSwords()
     {
         yield return new WaitForSeconds(2);
-        player.maneuverGear.sword.GetComponent<BoxCollider>().enabled = false;
-        player.maneuverGear.sword2.GetComponent<BoxCollider>().enabled = false;
+        sword.GetComponent<BoxCollider>().enabled = false;
+        sword2.GetComponent<BoxCollider>().enabled = false;
     }
 
     private void AirRotate()
     {
         Quaternion target = Quaternion.identity;
 
-        if (player.maneuverGear.hookStatus == HookStatus.attached && rigid.velocity.magnitude > 3)
+        if (hookStatus == HookStatus.attached && rigid.velocity.magnitude > 3)
         {
-            var tetherDirection = player.maneuverGear.hook.transform.position - transform.position;
+            var tetherDirection = hook.transform.position - transform.position;
             target = Quaternion.LookRotation(rigid.velocity, tetherDirection);
         }
         else
@@ -561,54 +596,61 @@ public class PlayerController : MonoBehaviour
     private void FireHook()
     {
         // SFX
-        // player.maneuverGear.hookSmoke.Play();
-        aud.PlayOneShot(player.maneuverGear.manSoundEffects[10]);
+        // .hookSmoke.Play();
+        aud.PlayOneShot(manSoundEffects[10]);
 
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, GameVariables.MG_HOOK_RANGE, 1))
         {
             if (rigid.velocity.y < -5)
             {
-                player.usingManeuverGear = true;
+                usingManGear = true;
             }
 
             var _hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation);
-            player.maneuverGear.hook = _hook.GetComponent<HookController>();
-            player.maneuverGear.hook.target = hit.point;
-            player.maneuverGear.hook.source = player.maneuverGear;
-            player.maneuverGear.hookStatus = HookStatus.released;
+            hook = _hook.GetComponent<HookController>();
+            hook.target = hit.point;
+            hook.source = this;
+            hookStatus = HookStatus.released;
 
-            player.maneuverGear.grapplingLine.SetActive(true);
+            grapplingLine.SetActive(true);
         }
     }
 
     private void RecallHook()
     {
-        player.maneuverGear.hookStatus = HookStatus.retracting;
+        hookStatus = HookStatus.retracting;
 
         // sound effect
-        aud.PlayOneShot(player.maneuverGear.manSoundEffects[9]);
+        aud.PlayOneShot(manSoundEffects[9]);
 
-        player.maneuverGear.hook.recall = true;
+        hook.recall = true;
 
         if (IsGrounded)
         {
-            player.usingManeuverGear = false;
+            usingManGear = false;
         }
 
         return;
     }
 
+    public void HookAttachedEvent()
+    {
+        hookStatus = HookStatus.attached;
+
+        hookDistance = Vector3.Distance(hook.transform.position, gameObject.transform.position);
+    }
+
     private void DoManeuverGearPhysics()
     {
-        if (Input.GetKeyDown(KeyCode.Q) && player.maneuverGear.hookStatus == HookStatus.attached)
+        if (Input.GetKey(KeyCode.Q) && hookStatus == HookStatus.attached)
         {
             // gets velocity in units/frame, then gets the position for next frame
             Vector3 currentVelocityUpf = rigid.velocity * Time.fixedDeltaTime;
             Vector3 nextPos = transform.position + currentVelocityUpf;
 
-            if (Vector3.Distance(nextPos, player.maneuverGear.hook.transform.position) < player.maneuverGear.hookDistance)
+            if (Vector3.Distance(nextPos, hook.transform.position) < hookDistance)
             {
-                player.maneuverGear.hookDistance = Vector3.Distance(nextPos, player.maneuverGear.hook.transform.position);
+                hookDistance = Vector3.Distance(nextPos, hook.transform.position);
             }
 
             ApplyTensionForce(currentVelocityUpf, nextPos);
@@ -621,8 +663,8 @@ public class PlayerController : MonoBehaviour
     {
         //finds what the new velocity is due to tension force grappling hook
         //normalized vector that from node to test pos
-        Vector3 node_to_test = (nextPos - player.maneuverGear.hook.transform.position).normalized;
-        Vector3 new_pos = (node_to_test * player.maneuverGear.hookDistance) + player.maneuverGear.hook.transform.position;
+        Vector3 node_to_test = (nextPos - hook.transform.position).normalized;
+        Vector3 new_pos = (node_to_test * hookDistance) + hook.transform.position;
         Vector3 new_velocity = new_pos - gameObject.transform.position;
 
         //force_tension = mass * (d_velo / d_time)
@@ -639,7 +681,7 @@ public class PlayerController : MonoBehaviour
     {
         if (IsGrounded)
         { 
-            if (player.usingManeuverGear)
+            if (usingManGear)
             {
                 if (isWaitingToLand && rigid.velocity.magnitude < 3)
                 {
@@ -668,9 +710,9 @@ public class PlayerController : MonoBehaviour
 
             isWaitingToLand = true;
 
-            if (player.maneuverGear.hookStatus != HookStatus.attached)
+            if (hookStatus != HookStatus.attached)
             {
-                player.usingManeuverGear = true;
+                usingManGear = true;
             }
         }
     }

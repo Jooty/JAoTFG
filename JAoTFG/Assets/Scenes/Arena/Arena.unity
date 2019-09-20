@@ -992,6 +992,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 394311465}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &550486232 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2109554695655465248, guid: edb3afd77a1805140a9f7a2317abaea7,
+    type: 3}
+  m_PrefabInstance: {fileID: 5425447847933399520}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &599309231
 GameObject:
   m_ObjectHideFlags: 0
@@ -1217,6 +1223,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 73b344d270864ef448eb48dff46b5e21, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6fc7d339fb3ea34191870eb8174d6bc, type: 3}
+--- !u!1 &821061014 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3310196308167771887, guid: edb3afd77a1805140a9f7a2317abaea7,
+    type: 3}
+  m_PrefabInstance: {fileID: 5425447847933399520}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &821221616 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e6fc7d339fb3ea34191870eb8174d6bc,
@@ -2131,6 +2143,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1648926798 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5425447848786302087, guid: edb3afd77a1805140a9f7a2317abaea7,
+    type: 3}
+  m_PrefabInstance: {fileID: 5425447847933399520}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1658121563 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e6fc7d339fb3ea34191870eb8174d6bc,
@@ -2711,6 +2729,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 73b344d270864ef448eb48dff46b5e21, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6fc7d339fb3ea34191870eb8174d6bc, type: 3}
+--- !u!1 &1881632272 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3310196309844762893, guid: edb3afd77a1805140a9f7a2317abaea7,
+    type: 3}
+  m_PrefabInstance: {fileID: 5425447847933399520}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1898552356 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e6fc7d339fb3ea34191870eb8174d6bc,
@@ -2734,6 +2758,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: e6fc7d339fb3ea34191870eb8174d6bc,
     type: 3}
   m_PrefabInstance: {fileID: 1743316564}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &2042626784 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 5425447847980527265, guid: edb3afd77a1805140a9f7a2317abaea7,
+    type: 3}
+  m_PrefabInstance: {fileID: 5425447847933399520}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &2050919270 stripped
 Transform:
@@ -2762,7 +2792,7 @@ PrefabInstance:
     - target: {fileID: 5425447847855279407, guid: edb3afd77a1805140a9f7a2317abaea7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.319
+      value: 1.994
       objectReference: {fileID: 0}
     - target: {fileID: 5425447848648010341, guid: edb3afd77a1805140a9f7a2317abaea7,
         type: 3}
@@ -2824,5 +2854,51 @@ PrefabInstance:
       propertyPath: hookUI
       value: 
       objectReference: {fileID: 1798385263}
-    m_RemovedComponents: []
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: totalMaxGas
+      value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: thrustPower
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: hookSpeed
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: hookUI
+      value: 
+      objectReference: {fileID: 1798385263}
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: sword
+      value: 
+      objectReference: {fileID: 1881632272}
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: sword2
+      value: 
+      objectReference: {fileID: 821061014}
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: thrustSmoke
+      value: 
+      objectReference: {fileID: 2042626784}
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: hookSmoke
+      value: 
+      objectReference: {fileID: 550486232}
+    - target: {fileID: 5425447848648010342, guid: edb3afd77a1805140a9f7a2317abaea7,
+        type: 3}
+      propertyPath: leftHookPoint
+      value: 
+      objectReference: {fileID: 1648926798}
+    m_RemovedComponents:
+    - {fileID: 5425447849231099650, guid: edb3afd77a1805140a9f7a2317abaea7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: edb3afd77a1805140a9f7a2317abaea7, type: 3}
