@@ -441,7 +441,7 @@ public class PlayerController : MonoBehaviour
         {
             isThrusting = false;
             aud.Stop();
-            thrustSmoke.Pause();
+            thrustSmoke.Stop();
         }
     }
 
@@ -556,6 +556,13 @@ public class PlayerController : MonoBehaviour
 
         if (hookStatus == HookStatus.attached && rigid.velocity.magnitude > 3)
         {
+            if (IsGrounded)
+            {
+                target = Quaternion.Euler(0, transform.eulerAngles.y, transform.eulerAngles.z);
+
+                return;
+            }
+
             var tetherDirection = hook.transform.position - transform.position;
             target = Quaternion.LookRotation(rigid.velocity, tetherDirection);
         }
@@ -687,7 +694,7 @@ public class PlayerController : MonoBehaviour
                 {
                     Land();
                 }
-                else if (isWaitingToLand && rigid.velocity.magnitude > 3)
+                else if (isWaitingToLand && rigid.velocity.magnitude > 3 && !hook)
                 {
                     rigid.drag = .5f;
                 }
