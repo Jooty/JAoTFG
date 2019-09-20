@@ -533,16 +533,25 @@ public class PlayerController : MonoBehaviour
     {
         bodyAnim.SetTrigger("attackRelease");
         aud.PlayOneShot(manSoundEffects[5], AudioSettings.SFX);
-        sword.GetComponent<BoxCollider>().enabled = true;
-        sword2.GetComponent<BoxCollider>().enabled = true;
-        StartCoroutine(DisableSwords());
-    }
 
-    private IEnumerator DisableSwords()
-    {
-        yield return new WaitForSeconds(2);
-        sword.GetComponent<BoxCollider>().enabled = false;
-        sword2.GetComponent<BoxCollider>().enabled = false;
+        // Check for hit
+        var distOffset = Vector3.Distance(cam.transform.position, transform.position);
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, distOffset + 3, 1))
+        {
+            if (hit.transform.tag == "TitanNape")
+            {
+                hit.transform.gameObject.GetComponent<TitanNape>().Hit();
+                aud.PlayOneShot(manSoundEffects[7]);
+            }
+            else if (hit.transform.tag == "Titan")
+            {
+                aud.PlayOneShot(manSoundEffects[6]);
+            }
+        }
+        else
+        {
+            aud.PlayOneShot(manSoundEffects[5]);
+        }
     }
 
     private void AirRotate()
