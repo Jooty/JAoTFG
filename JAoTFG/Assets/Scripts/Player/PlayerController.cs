@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviour
             bodyAnim.SetBool("isRunning", false);
         }
 
-        if (IsGrounded && usingManGear)
+        if (IsGrounded() && usingManGear)
         {
             bodyAnim.SetBool("isSliding", true);
             isSliding = true;
@@ -192,7 +192,7 @@ public class PlayerController : MonoBehaviour
 
     private void Movement()
     {
-        if (!IsGrounded) return;
+        if (!IsGrounded()) return;
 
         var _horizontal = Input.GetAxisRaw("Horizontal");
         var _vertical = Input.GetAxisRaw("Vertical");
@@ -228,7 +228,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (!canJump || !IsGrounded) return;
+        if (!canJump || !IsGrounded()) return;
 
         bodyAnim.SetTrigger("jump");
     }
@@ -427,7 +427,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && !isSliding)
         {
-            if (IsGrounded && !hook) return;
+            if (IsGrounded() && !hook) return;
 
             GasThrust();
 
@@ -562,7 +562,7 @@ public class PlayerController : MonoBehaviour
 
         if (hookStatus == HookStatus.attached && rigid.velocity.magnitude > 3 && hook)
         {
-            if (IsGrounded)
+            if (IsGrounded())
             {
                 target = Quaternion.Euler(0, transform.eulerAngles.y, transform.eulerAngles.z);
 
@@ -645,7 +645,7 @@ public class PlayerController : MonoBehaviour
 
         hook.recall = true;
 
-        if (IsGrounded)
+        if (IsGrounded())
         {
             usingManGear = false;
         }
@@ -703,7 +703,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleGround()
     {
-        if (IsGrounded)
+        if (IsGrounded())
         { 
             if (usingManGear)
             {
@@ -741,19 +741,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private bool IsGrounded
+    public bool IsGrounded()
     {
-        get
+        var origin = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
+
+        if (GameVariables.DEBUG_DRAW_GROUND_CHECK_RAY)
         {
-            var origin = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
-
-            if (GameVariables.DEBUG_DRAW_GROUND_CHECK_RAY)
-            {
-                Debug.DrawLine(origin, (Vector3.down * (coll.bounds.extents.y + .5f)) + origin, Color.red);
-            }
-
-            return Physics.Raycast(origin, Vector3.down, coll.bounds.extents.y + .5f, 1);
+            Debug.DrawLine(origin, (Vector3.down * (coll.bounds.extents.y + .5f)) + origin, Color.red);
         }
+
+        return Physics.Raycast(origin, Vector3.down, coll.bounds.extents.y + .5f, 1);
     }
 
     private void EnforceMaxSpeed()
