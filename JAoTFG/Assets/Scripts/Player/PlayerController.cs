@@ -574,8 +574,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (isSliding) return;
-
             var _horizontal = Input.GetAxisRaw("Horizontal");
             var _vertical = Input.GetAxisRaw("Vertical");
             moveInput = new Vector3(_horizontal, 0, _vertical).normalized;
@@ -600,7 +598,14 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED);
+        if (!isSliding)
+        {
+            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED);
+        }
+        else
+        {
+            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED * .135f);
+        }
     }
 
     private bool CanHook()
