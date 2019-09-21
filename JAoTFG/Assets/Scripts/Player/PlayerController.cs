@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
             Debug.Break();
 
-        if (Input.GetKey(KeyCode.Space) && canJump)
+        if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             if (wantsToJump)
             {
