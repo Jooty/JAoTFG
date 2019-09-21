@@ -59,16 +59,16 @@ public class PlayerController : MonoBehaviour
     private Vector3 directionPos;
     private Vector3 moveInput;
 
-    private bool isSprinting;
-    private bool isWaitingToLand;
-    private bool canJump;
-    private bool wantsToJump;
-    private bool isSliding;
+    [HideInInspector] public bool isSprinting;
+    [HideInInspector] public bool isWaitingToLand;
+    [HideInInspector] public bool canJump;
+    [HideInInspector] public bool wantsToJump;
+    [HideInInspector] public bool isSliding;
 
     private Animator bodyAnim;
 
     // local components
-    private Rigidbody rigid;
+    [HideInInspector] public Rigidbody rigid;
     private AudioSource aud;
     private Player player;
     private PlayerTargets targets;
