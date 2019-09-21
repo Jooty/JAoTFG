@@ -439,7 +439,7 @@ public class PlayerController : MonoBehaviour
             }
             thrustSmoke.Play();
         }
-        else if (Input.GetKeyUp(KeyCode.Space) || isSliding)
+        else if (Input.GetKeyUp(KeyCode.Space) || isSliding && !hook)
         {
             isThrusting = false;
             aud.Stop();
