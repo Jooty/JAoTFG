@@ -425,7 +425,7 @@ public class PlayerController : MonoBehaviour
             SwordRelease();
         }
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && !isSliding)
         {
             if (IsGrounded && !hook) return;
 
@@ -439,7 +439,7 @@ public class PlayerController : MonoBehaviour
             }
             thrustSmoke.Play();
         }
-        else if (Input.GetKeyUp(KeyCode.Space))
+        else if (Input.GetKeyUp(KeyCode.Space) || isSliding)
         {
             isThrusting = false;
             aud.Stop();
