@@ -395,7 +395,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleManeuverGearControls()
     {
-        if (Input.GetKey(KeyCode.Q) && !hook && CanHook())
+        if (Input.GetKeyDown(KeyCode.Q) && !hook && CanHook())
         {
             FireHook();
         }
