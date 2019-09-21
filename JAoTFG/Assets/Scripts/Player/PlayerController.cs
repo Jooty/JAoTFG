@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour
     private bool isWaitingToLand;
     private bool canJump;
     private bool wantsToJump;
+    private bool isSliding;
 
     private Animator bodyAnim;
 
@@ -174,10 +175,12 @@ public class PlayerController : MonoBehaviour
         if (IsGrounded && usingManGear)
         {
             bodyAnim.SetBool("isSliding", true);
+            isSliding = true;
         }
         else
         {
             bodyAnim.SetBool("isSliding", false);
+            isSliding = false;
         }
     }
 
@@ -572,6 +575,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            if (isSliding) return;
+
             var _horizontal = Input.GetAxisRaw("Horizontal");
             var _vertical = Input.GetAxisRaw("Vertical");
             moveInput = new Vector3(_horizontal, 0, _vertical).normalized;
