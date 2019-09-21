@@ -21,6 +21,8 @@ public class PlayerDebugUIManager : MonoBehaviour
         debugtext.text = $"speed: {player.rigid.velocity.magnitude}\n" +
             $"max speed: {GameVariables.HERO_MAX_SPEED}\n" +
             $"gear: {player.usingManGear}\n" +
+            $"hook-distance: {player.hookDistance}\n" +
+            $"hook-status: {player.hookStatus}\n" +
             $"grounded: {player.IsGrounded()}\n" +
             $"gas: {player.gas / player.totalMaxGas}\n" +
             $"thrust-power: {player.thrustPower}\n" +
