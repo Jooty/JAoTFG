@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float hookDistance;
 
     [HideInInspector] public AudioClip[] manSoundEffects;
-    private bool usingManGear;
+    [HideInInspector] public bool usingManGear;
 
     private PhysicMaterial zfriction;
     private PhysicMaterial mfriction;
@@ -59,7 +59,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 directionPos;
     private Vector3 moveInput;
 
-    [HideInInspector] public bool isSprinting;
     [HideInInspector] public bool isWaitingToLand;
     [HideInInspector] public bool canJump;
     [HideInInspector] public bool wantsToJump;
