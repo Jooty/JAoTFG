@@ -61,8 +61,8 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public bool isWaitingToLand;
     [HideInInspector] public bool canJump;
-    [HideInInspector] public bool wantsToJump;
     [HideInInspector] public bool isSliding;
+    private bool jumpedThisFrame = false;
 
     private Animator bodyAnim;
 
@@ -94,7 +94,6 @@ public class PlayerController : MonoBehaviour
         mfriction = Resources.Load<PhysicMaterial>("Physics/maxFriction");
 
         canJump = true;
-        wantsToJump = true;
         gas = totalMaxGas;
         hookReturnSpeed = hookSpeed * 3f;
         hookStatus = HookStatus.sheathed;
@@ -131,17 +130,9 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
             Debug.Break();
 
-        if (Input.GetKeyDown(KeyCode.Space) && canJump)
+        if (Input.GetKeyDown(KeyCode.Space) && canJump && !jumpedThisFrame)
         {
-            if (wantsToJump)
-            {
-                wantsToJump = false;
-                Jump();
-            }
-        }
-        else if (Input.GetKeyUp(KeyCode.Space))
-        {
-            wantsToJump = true;
+            Jump();
         }
     }
 
@@ -229,6 +220,7 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         if (!canJump || !IsGrounded()) return;
+        jumpedThisFrame = true;
 
         bodyAnim.SetTrigger("jump");
     }
@@ -237,20 +229,13 @@ public class PlayerController : MonoBehaviour
     {
         canJump = false;
 
-        if (hookStatus != HookStatus.sheathed)
-        {
-            usingManGear = true;
-            rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
-        }
-        else
-        {
-            rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
-        }
+        rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
     }
 
     private void Land()
     {
         bodyAnim.SetTrigger("land");
+
         canJump = true;
         isWaitingToLand = false;
         usingManGear = false;
@@ -718,7 +703,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (isWaitingToLand)
+                if (isWaitingToLand && !jumpedThisFrame)
                 {
                     Land();
                 }
@@ -733,6 +718,7 @@ public class PlayerController : MonoBehaviour
             rigid.drag = 0.02f;
 
             isWaitingToLand = true;
+            jumpedThisFrame = false;
 
             if (hookStatus != HookStatus.attached)
             {
@@ -747,10 +733,10 @@ public class PlayerController : MonoBehaviour
 
         if (GameVariables.DEBUG_DRAW_GROUND_CHECK_RAY)
         {
-            Debug.DrawLine(origin, (Vector3.down * (coll.bounds.extents.y + .5f)) + origin, Color.red);
+            Debug.DrawLine(origin, (Vector3.down * (coll.bounds.extents.y + .1f)) + origin, Color.red);
         }
 
-        return Physics.Raycast(origin, Vector3.down, coll.bounds.extents.y + .5f, 1);
+        return Physics.Raycast(origin, Vector3.down, coll.bounds.extents.y + .1f, 1);
     }
 
     private void EnforceMaxSpeed()
