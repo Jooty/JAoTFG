@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,42 +14,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float turnSpeed = 5;
     [SerializeField] private float jumpPower = 5;
 
-    private Vector3 rightFootPosition, leftFootPosition, leftFootIkPosition, rightFootIkPosition;
-    private Quaternion leftFootIkRotation, rightFootIkRotation;
-    private float lastPelvisPositionY, lastRightFootPositionY, lastLeftFootPositionY;
-
-    [Header("Feet Grounder")]
-    public bool enableFeetIk = true;
-    [SerializeField] private Transform leftFootTransform, rightFootTransform;
-    [Range(0, 2)] [SerializeField] private float heightFromGroundRaycast = 1.14f;
-    [Range(0, 2)] [SerializeField] private float raycastDownDistance = 1.5f;
-    [SerializeField] private LayerMask environmentLayer;
-    [SerializeField] private float pelvisOffset = 0f;
-    [Range(0, 1)] [SerializeField] private float pelvisUpAndDownSpeed = 0.28f;
-    [Range(0, 1)] [SerializeField] private float feetToIkPositionSpeed = 0.5f;
-    public bool showSolverDebug = true;
-
     [Header("Maneuver Gear")]
     public float gas;
     public float totalMaxGas;
     public float thrustPower;
-    public float hookSpeed;
-    [HideInInspector] public float hookReturnSpeed;
 
     [SerializeField] public GameObject hookUI;
     [SerializeField] public GameObject sword;
     [SerializeField] public GameObject sword2;
     [SerializeField] public ParticleSystem thrustSmoke;
     [SerializeField] public ParticleSystem hookSmoke;
-    [SerializeField] public Transform leftHookPoint;
 
     [HideInInspector] public bool hasSwordInHand;
     [HideInInspector] public bool isThrusting;
 
-    [HideInInspector] public HookController hook;
-    [HideInInspector] public GameObject grapplingLine;
-    [HideInInspector] public HookStatus hookStatus;
-    [HideInInspector] public float hookDistance;
+    public List<HookController> hooks;
+    [SerializeField] private GameObject[] hookPoints;
 
     [HideInInspector] public AudioClip[] manSoundEffects;
     [HideInInspector] public bool usingManGear;
@@ -86,26 +69,24 @@ public class PlayerController : MonoBehaviour
     {
         bodyAnim = GetBodyAnimator();
         cam = Camera.main;
+        hooks = new List<HookController>();
         //aud.volume = AudioSettings.SFX;
 
         Cursor.lockState = CursorLockMode.Locked;
 
-        zfriction = Resources.Load<PhysicMaterial>("Physics/zeroFriction");
-        mfriction = Resources.Load<PhysicMaterial>("Physics/maxFriction");
-
         canJump = true;
         gas = totalMaxGas;
-        hookReturnSpeed = hookSpeed * 3f;
-        hookStatus = HookStatus.sheathed;
 
-        CreateTetherLine();
+        zfriction = Resources.Load<PhysicMaterial>("Physics/zeroFriction");
+        mfriction = Resources.Load<PhysicMaterial>("Physics/maxFriction");
+        manSoundEffects = Resources.LoadAll<AudioClip>("SFX/HERO");
     }
 
     private void Update()
     {
         HandleFriction();
         HandleGround();
-        HandleControls();
+        HandleGroundedControls();
         HandleAnimations();
         EnforceMaxSpeed();
         ManueverGearUpdate();
@@ -120,11 +101,10 @@ public class PlayerController : MonoBehaviour
         else
         {
             Movement();
-            FootIkFixedUpdate();
         }
     }
 
-    private void HandleControls()
+    private void HandleGroundedControls()
     {
         // REMOVE LATER
         if (Input.GetKeyDown(KeyCode.P))
@@ -141,7 +121,7 @@ public class PlayerController : MonoBehaviour
         bodyAnim.SetBool("usingManGear", usingManGear);
         bodyAnim.SetFloat("velocity", Common.GetFloatByRelativePercent(0, 1, 0, GameVariables.HERO_MAX_SPEED, rigid.velocity.magnitude));
         bodyAnim.SetFloat("velocityY", Common.GetFloatByRelativePercent(0, 1, 0, 9.8f, rigid.velocity.y));
-        bodyAnim.SetBool("isHooked", hookStatus == HookStatus.attached);
+        bodyAnim.SetBool("isHooked", hooks.Count > 0);
 
         if (!usingManGear)
         {
@@ -223,6 +203,9 @@ public class PlayerController : MonoBehaviour
         jumpedThisFrame = true;
 
         bodyAnim.SetTrigger("jump");
+
+        // remove later
+        JumpEvent();
     }
 
     public void JumpEvent()
@@ -257,122 +240,18 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    #region Foot Grounding
-
-    private void FootIkFixedUpdate()
-    {
-        if (!enableFeetIk) return;
-
-        AdjustFeetTargets();
-
-        FootPositonSolver(rightFootPosition, ref rightFootIkPosition, ref rightFootIkRotation);
-        FootPositonSolver(leftFootPosition, ref leftFootIkPosition, ref leftFootIkRotation);
-    }
-
-    private void OnAnimatorIK(int layerIndex)
-    {
-        if (!enableFeetIk) return;
-
-        MovePelvisHeight();
-
-        // right foot
-        bodyAnim.SetIKPositionWeight(AvatarIKGoal.RightFoot, 1);
-        MoveFootToIkPoint(AvatarIKGoal.RightFoot, rightFootIkPosition, rightFootIkRotation, ref lastRightFootPositionY);
-
-        // left foot
-        bodyAnim.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1);
-        MoveFootToIkPoint(AvatarIKGoal.LeftFoot, leftFootIkPosition, leftFootIkRotation, ref lastLeftFootPositionY);
-    }
-
-    private void MoveFootToIkPoint(AvatarIKGoal foot, Vector3 positionIkHolder, Quaternion rotationIkHolder, ref float lastFootPositionY)
-    {
-        Vector3 targetIkPosition = bodyAnim.GetIKPosition(foot);
-
-        if (positionIkHolder != Vector3.zero)
-        {
-            targetIkPosition = transform.InverseTransformPoint(targetIkPosition);
-            positionIkHolder = transform.InverseTransformPoint(positionIkHolder);
-
-            float y = Mathf.Lerp(lastFootPositionY, positionIkHolder.y, feetToIkPositionSpeed);
-            targetIkPosition.y += y;
-
-            lastFootPositionY = y;
-
-            targetIkPosition = transform.TransformPoint(targetIkPosition);
-
-            bodyAnim.SetIKRotation(foot, rotationIkHolder);
-        }
-
-        bodyAnim.SetIKPosition(foot, targetIkPosition);
-    }
-
-    private void MovePelvisHeight()
-    {
-        if (rightFootIkPosition == Vector3.zero || leftFootIkPosition == Vector3.zero || lastPelvisPositionY == 0)
-        {
-            lastPelvisPositionY = bodyAnim.bodyPosition.y;
-            return;
-        }
-
-        float lOffsetPosition = leftFootIkPosition.y - transform.position.y;
-        float rOffsetPosition = rightFootIkPosition.y - transform.position.y;
-
-        float totalOffset = (lOffsetPosition < rOffsetPosition) ? lOffsetPosition : rOffsetPosition;
-
-        Vector3 newPelvisPosition = bodyAnim.bodyPosition + Vector3.up * totalOffset;
-
-        newPelvisPosition.y = Mathf.Lerp(lastPelvisPositionY, newPelvisPosition.y, pelvisUpAndDownSpeed);
-
-        bodyAnim.bodyPosition = newPelvisPosition;
-
-        lastPelvisPositionY = bodyAnim.bodyPosition.y;
-    }
-
-    private void FootPositonSolver(Vector3 fromSkyPosition, ref Vector3 feetIkPositions, ref Quaternion feetIkRotations)
-    {
-        if (showSolverDebug)
-            Debug.DrawLine(fromSkyPosition, fromSkyPosition + Vector3.down * (raycastDownDistance + heightFromGroundRaycast));
-
-        if (Physics.Raycast(fromSkyPosition, Vector3.down, out var hit, raycastDownDistance + heightFromGroundRaycast, environmentLayer))
-        {
-            feetIkPositions = fromSkyPosition;
-            feetIkPositions.y = hit.point.y + pelvisOffset;
-            feetIkRotations = Quaternion.FromToRotation(Vector3.up, hit.normal) * transform.rotation;
-
-            return;
-        }
-
-        feetIkPositions = Vector3.zero;
-    }
-
-    private void AdjustFeetTargets ()
-    {
-        rightFootPosition = rightFootTransform.position;
-        rightFootPosition.y = transform.position.y + heightFromGroundRaycast;
-
-        leftFootPosition = leftFootTransform.position;
-        leftFootPosition.y = transform.position.y + heightFromGroundRaycast;
-    }
-
-    #endregion
-
     #region Maneuver Gear Methods
 
     private void ManueverGearUpdate()
     {
         UpdateManeuverGearCameraEffects();
         UpdateManeuverGearUI();
+        UpdateTetherDistanceWhenFooted();
         CheckHookRunawayDistance();
         HandleManeuverGearControls();
         DrawHook();
 
-        if (!usingManGear && hook) 
-        {
-            // todo
-            hookDistance = Vector3.Distance(transform.position, hook.transform.position);
-        }
-
-        if (usingManGear)
+        if (!IsGrounded())
         { 
             AirRotate();
         }
@@ -380,13 +259,22 @@ public class PlayerController : MonoBehaviour
 
     private void HandleManeuverGearControls()
     {
-        if (Input.GetKey(KeyCode.Q) && !hook && CanHook())
+        if (Input.GetKey(KeyCode.Q) && CanHook() && !GetLeftHook())
         {
-            FireHook();
+            FireHook(HookSide.left);
         }
-        else if (Input.GetKeyUp(KeyCode.Q) && hook)
+        else if (Input.GetKeyUp(KeyCode.Q) && GetLeftHook())
         {
-            RecallHook();
+            RecallHook(HookSide.left);
+        }
+
+        if (Input.GetKey(KeyCode.E) && CanHook() && !GetRightHook())
+        {
+            FireHook(HookSide.right);
+        }
+        else if (Input.GetKeyUp(KeyCode.E) && GetRightHook())
+        {
+            RecallHook(HookSide.right);
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -412,7 +300,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && !isSliding)
         {
-            if (IsGrounded() && !hook) return;
+            if (IsGrounded() && !GetLeftHook() || IsGrounded() && !GetRightHook()) return;
 
             GasThrust();
 
@@ -424,7 +312,7 @@ public class PlayerController : MonoBehaviour
             }
             thrustSmoke.Play();
         }
-        else if (Input.GetKeyUp(KeyCode.Space) || isSliding && !hook)
+        else if (Input.GetKeyUp(KeyCode.Space) || isSliding && !GetLeftHook() || isSliding && !GetRightHook())
         {
             isThrusting = false;
             aud.Stop();
@@ -444,6 +332,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void UpdateTetherDistanceWhenFooted()
+    {
+        if (usingManGear) return;
+
+        foreach (HookController hook in hooks)
+        {
+            hook.tetherDistance = Vector3.Distance(transform.position, hook.transform.position);
+        }
+    }
+
     private void UpdateManeuverGearCameraEffects()
     {
         if (!usingManGear) return;
@@ -454,41 +352,34 @@ public class PlayerController : MonoBehaviour
 
     private void CheckHookRunawayDistance()
     {
-        if (!hook) return;
+        if (hooks.Count == 0) return;
 
-        if (Vector3.Distance(transform.position, hook.transform.position) > GameVariables.MG_HOOK_MAX_RUNAWAY_RANGE)
+        foreach (HookController hook in hooks)
         {
-            RecallHook();
+            if (Vector3.Distance(transform.position, hook.transform.position) > GameVariables.MG_HOOK_MAX_RUNAWAY_RANGE)
+            {
+                RecallHook(hook.side);
+            }
         }
     }
 
     private void GasThrust()
     {
-        rigid.AddForce(transform.forward * thrustPower * Time.deltaTime, ForceMode.Acceleration);
         isThrusting = true;
-
         gas -= 1 * Time.deltaTime;
-    }
 
-    private void CreateTetherLine()
-    {
-        // draw hook
-        grapplingLine = new GameObject("GrapplingLine");
-        grapplingLine.SetActive(false);
-        grapplingLine.transform.SetParent(leftHookPoint);
-        LineRenderer line_renderer = grapplingLine.AddComponent<LineRenderer>();
-        line_renderer.startWidth = .05f;
-        line_renderer.material.color = Color.black;
-
-        manSoundEffects = Resources.LoadAll<AudioClip>("SFX/HERO");
+        rigid.AddForce(transform.forward * thrustPower * Time.deltaTime, ForceMode.Acceleration);
     }
 
     private void DrawHook()
     {
-        if (!hook) return;
+        foreach (HookController hook in hooks)
+        {
+            if (!hook.grapplingLine) continue;
 
-        Vector3[] line_vortex_arr = { leftHookPoint.position, hook.transform.position };
-        grapplingLine.GetComponent<LineRenderer>().SetPositions(line_vortex_arr);
+            Vector3[] line_vortex_arr = { hookPoints[(int)hook.side].transform.position, hook.transform.position };
+            hook.grapplingLine.SetPositions(line_vortex_arr);
+        }
     }
 
     private void UnsheatheSwords()
@@ -545,19 +436,38 @@ public class PlayerController : MonoBehaviour
     {
         Quaternion target = Quaternion.identity;
 
-        if (hookStatus == HookStatus.attached && rigid.velocity.magnitude > 3 && hook)
+        if (hooks.Count > 0 && rigid.velocity.magnitude > 3)
         {
-            if (IsGrounded())
+            var left = GetLeftHook();
+            var right = GetRightHook();
+
+            // Solo hook
+            if (hooks.Count == 1)
             {
-                target = Quaternion.Euler(0, transform.eulerAngles.y, transform.eulerAngles.z);
+                var hook = GetSoloActiveHook();
+                if (hook.status != HookStatus.attached) return;
+                if (IsGrounded())
+                {
+                    target = Quaternion.Euler(0, transform.eulerAngles.y, transform.eulerAngles.z);
+                    return;
+                }
 
-                return;
+                var tetherDirection = hook.transform.position - transform.position;
+                target = Quaternion.LookRotation(rigid.velocity, tetherDirection);
             }
+            else // Both hooks active
+            {
+                if (left.status != HookStatus.attached ||right.status != HookStatus.attached) return;
 
-            var tetherDirection = hook.transform.position - transform.position;
-            target = Quaternion.LookRotation(rigid.velocity, tetherDirection);
+                var lTether = left.transform.position - transform.position;
+                var rTether = right.transform.position - transform.position;
+                var lRot = Quaternion.LookRotation(rigid.velocity, lTether);
+                var rRot = Quaternion.LookRotation(rigid.velocity, rTether);
+
+                target = Quaternion.Lerp(lRot, rRot, .5f);
+            }
         }
-        else
+        else // Rotate WASD
         {
             var _horizontal = Input.GetAxisRaw("Horizontal");
             var _vertical = Input.GetAxisRaw("Vertical");
@@ -598,7 +508,7 @@ public class PlayerController : MonoBehaviour
         return Physics.Raycast(cam.transform.position, cam.transform.forward, GameVariables.MG_HOOK_RANGE, 1);
     }
 
-    private void FireHook()
+    private void FireHook(HookSide side)
     {
         // SFX
         // .hookSmoke.Play();
@@ -611,23 +521,21 @@ public class PlayerController : MonoBehaviour
                 usingManGear = true;
             }
 
-            var _hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation);
-            hook = _hook.GetComponent<HookController>();
+            var hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation)
+                .GetComponent<HookController>();
+            hook.side = side;
             hook.target = hit.point;
             hook.source = this;
-            hookStatus = HookStatus.released;
-
-            grapplingLine.SetActive(true);
+            hook.status = HookStatus.released;
+            hooks.Add(hook);
         }
     }
 
-    private void RecallHook()
+    private void RecallHook(HookSide side)
     {
-        hookStatus = HookStatus.retracting;
-
-        // sound effect
-        aud.PlayOneShot(manSoundEffects[9]);
-
+        var hook = GetHookBySide(side);
+        if (!Common.Exists(hook)) return;
+        hook.status = HookStatus.retracting;
         hook.recall = true;
 
         if (IsGrounded())
@@ -635,53 +543,116 @@ public class PlayerController : MonoBehaviour
             usingManGear = false;
         }
 
-        return;
+        // sound effect
+        aud.PlayOneShot(manSoundEffects[9]);
     }
 
-    public void HookAttachedEvent()
+    public void HookAttachedEvent(HookSide side)
     {
-        hookStatus = HookStatus.attached;
+        var hook = GetHookBySide(side);
+        if (!hook) return;
+        hook.status = HookStatus.attached;
+        hook.tetherDistance = Vector3.Distance(hook.transform.position, transform.position);
+    }
 
-        hookDistance = Vector3.Distance(hook.transform.position, gameObject.transform.position);
+    public void HookRetractedEvent(HookSide side)
+    {
+        var hook = GetHookBySide(side);
+        hook.status = HookStatus.sheathed;
+
+        hooks.Remove(hook);
+        Destroy(hook.gameObject);
     }
 
     private void DoManeuverGearPhysics()
     {
-        if (Input.GetKey(KeyCode.Q) && hookStatus == HookStatus.attached && hook)
+        var left = GetLeftHook();
+        var right = GetRightHook();
+
+        if (left?.status == HookStatus.attached || right?.status == HookStatus.attached)
         {
             // gets velocity in units/frame, then gets the position for next frame
-            Vector3 currentVelocityUpf = rigid.velocity * Time.fixedDeltaTime;
-            Vector3 nextPos = transform.position + currentVelocityUpf;
+            Vector3 currentVelocity = rigid.velocity * Time.fixedDeltaTime;
+            Vector3 nextPos = transform.position + currentVelocity;
 
-            if (Vector3.Distance(nextPos, hook.transform.position) < hookDistance)
+            foreach (HookController hook in hooks)
             {
-                hookDistance = Vector3.Distance(nextPos, hook.transform.position);
-            }
-            if (isThrusting && GameVariables.MG_RETRACT_ON_GAS)
-            {
-                hookDistance -= GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER * Time.deltaTime * GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER;
+                if (Vector3.Distance(nextPos, hook.transform.position) < hook.tetherDistance)
+                {
+                    hook.tetherDistance = Vector3.Distance(nextPos, hook.transform.position);
+                }
+
+                if (isThrusting && GameVariables.MG_RETRACT_ON_GAS && hook.tetherDistance > 1 && hooks.Count == 1)
+                {
+                    hook.tetherDistance -= GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER * Time.deltaTime * GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER;
+                }
             }
 
-            ApplyTensionForce(currentVelocityUpf, nextPos);
+            ApplyTensionForce(currentVelocity, nextPos);
         }
 
         return;
     }
 
-    private void ApplyTensionForce(Vector3 currentVelocityUpf, Vector3 nextPos)
+    private void ApplyTensionForce(Vector3 currentVelocity, Vector3 nextPos)
     {
-        //finds what the new velocity is due to tension force grappling hook
-        //normalized vector that from node to test pos
-        Vector3 node_to_test = (nextPos - hook.transform.position).normalized;
-        Vector3 new_pos = (node_to_test * hookDistance) + hook.transform.position;
-        Vector3 new_velocity = new_pos - gameObject.transform.position;
+        var left = GetLeftHook();
+        var right = GetRightHook();
 
-        //force_tension = mass * (d_velo / d_time)
-        //where d_velo is new_velocity - old_velocity
-        Vector3 delta_velocity = new_velocity - currentVelocityUpf;
-        Vector3 tension_force = (rigid.mass * (delta_velocity / Time.fixedDeltaTime));
+        if (left)
+        {
+            // Finds what the new velocity is due to tension force grappling hook
+            // Normalized vector that from node to test pos
+            Vector3 nodeLeft = (nextPos - left.transform.position).normalized;
+            Vector3 newPosLeft = (nodeLeft * left.tetherDistance) + left.transform.position;
+            Vector3 newVelocityLeft = newPosLeft - transform.position;
 
-        rigid.AddForce(tension_force, ForceMode.Impulse);
+            // Force_tension = mass * (d_velo / d_time)
+            // Where delta_velocity is new_velocity - old_velocity
+            Vector3 deltaVelocityLeft = newVelocityLeft - currentVelocity;
+            Vector3 tensionForceLeft = (rigid.mass * (deltaVelocityLeft / Time.fixedDeltaTime));
+
+            rigid.AddForce(tensionForceLeft, ForceMode.Impulse);
+        }
+
+        if (right)
+        {
+            Vector3 nodeRight = (nextPos - right.transform.position).normalized;
+            Vector3 newPosRight = (nodeRight * right.tetherDistance) + right.transform.position;
+            Vector3 newVelocityRight = newPosRight - transform.position;
+
+            Vector3 deltaVelocityRight = newVelocityRight - currentVelocity;
+            Vector3 tensionForceRight = (rigid.mass * (deltaVelocityRight / Time.fixedDeltaTime));
+
+            rigid.AddForce(tensionForceRight, ForceMode.Impulse);
+        }
+    }
+
+    public HookController GetLeftHook()
+    {
+        return hooks.FirstOrDefault(x => x.side == HookSide.left);
+    }
+
+    public HookController GetRightHook()
+    {
+        return hooks.FirstOrDefault(x => x.side == HookSide.right);
+    }
+
+    private HookController GetSoloActiveHook()
+    {
+        if (hooks.Count > 0)
+        {
+            return hooks.FirstOrDefault();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private HookController GetHookBySide(HookSide side)
+    {
+        return hooks.FirstOrDefault(x => x.side == side);
     }
 
     #endregion
@@ -696,7 +667,7 @@ public class PlayerController : MonoBehaviour
                 {
                     Land();
                 }
-                else if (isWaitingToLand && rigid.velocity.magnitude > 3 && !hook)
+                else if (isWaitingToLand && rigid.velocity.magnitude > 3 && hooks.Count == 0)
                 {
                     rigid.drag = .5f;
                 }
@@ -720,7 +691,7 @@ public class PlayerController : MonoBehaviour
             isWaitingToLand = true;
             jumpedThisFrame = false;
 
-            if (hookStatus != HookStatus.attached)
+            if (hooks.Count > 0)
             {
                 usingManGear = true;
             }

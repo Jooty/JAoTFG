@@ -5,31 +5,25 @@ using UnityEngine;
 public class HookController : MonoBehaviour
 {
 
-    public float speed = 100f;
-    public float retractSpeed = 300f;
+    public float speed = 300f;
 
-    [HideInInspector]
-    public PlayerController source;
+    public HookStatus status;
+    public float tetherDistance;
+    public HookSide side;
 
-    [HideInInspector]
-    public Vector3 target;
-
-    [HideInInspector]
-    public bool hooked = false;
-
-    [HideInInspector]
-    public bool recall = false;
+    [HideInInspector] public PlayerController source;
+    [HideInInspector] public Vector3 target;
+    [HideInInspector] public bool recall = false;
+    [HideInInspector] public LineRenderer grapplingLine;
 
     private bool alreadyCalled = false;
 
-    private Rigidbody sourceRigid;
-
     private void Start()
     {
-        if (source)
-        {
-            sourceRigid = source.GetComponent<Rigidbody>();
-        }
+        grapplingLine = new GameObject("GrapplingLineLeft").AddComponent<LineRenderer>();
+        grapplingLine.startWidth = .05f;
+        grapplingLine.material.color = Color.black;
+        grapplingLine.transform.SetParent(transform);
     }
 
     private void Update()
@@ -49,26 +43,18 @@ public class HookController : MonoBehaviour
             hookAttached();
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, target, (recall ? source.hookReturnSpeed : source.hookSpeed) * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, target, (recall ? speed * 3 : speed) * Time.deltaTime);
     }
 
     private void hookAttached()
     {
-        source.hookStatus = HookStatus.attached;
-        source.HookAttachedEvent();
-
-        var clip = Resources.Load<AudioClip>("SFX/HERO/HookHit");
-        // todo
-        // GetComponent<AudioSource>().PlayOneShot(clip, AudioSettings.SFX);
+        alreadyCalled = true;
+        source.HookAttachedEvent(side);
     }
 
     private void hookRecalled()
     {
-        source.hookStatus = HookStatus.sheathed;
-
-        source.grapplingLine.SetActive(false);
-
-        Destroy(gameObject);
+        source.HookRetractedEvent(side);
     }
 
 }
