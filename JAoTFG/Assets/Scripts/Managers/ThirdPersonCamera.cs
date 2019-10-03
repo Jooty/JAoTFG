@@ -19,9 +19,12 @@ public class ThirdPersonCamera : MonoBehaviour {
     float yaw;
     float pitch;
 
+    private Rigidbody player;
+
     private void Start()
     {
         this.GetComponent<Camera>().fieldOfView = GameVariables.FIELD_OF_VIEW;
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
 
         if (lockCursor)
         {
@@ -56,7 +59,9 @@ public class ThirdPersonCamera : MonoBehaviour {
         //}
 
         var rot = Quaternion.Euler(pitch, yaw, 0);
-        var pos = rot * new Vector3(0, 0, -distance + distanceOffset) + target.position;
+
+        var dist = Common.GetFloatByRelativePercent(distance, distance * 1.5f, 0, GameVariables.HERO_MAX_SPEED, player.velocity.magnitude);
+        var pos = rot * new Vector3(0, 0, -dist + distanceOffset) + target.position;
         transform.rotation = rot;
         transform.position = pos;
     }
