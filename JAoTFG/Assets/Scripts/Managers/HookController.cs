@@ -43,7 +43,7 @@ public class HookController : MonoBehaviour
             hookAttached();
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, target, (recall ? speed * 3 : speed) * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
     }
 
     private void hookAttached()

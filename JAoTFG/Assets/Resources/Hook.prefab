@@ -202,9 +202,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d06c609f3eb1e8d4babc2e7919512248, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 100
-  retractSpeed: 300
+  speed: 200
+  status: 0
+  tetherDistance: 0
+  side: 0
   source: {fileID: 0}
   target: {x: 0, y: 0, z: 0}
-  hooked: 0
   recall: 0
+  grapplingLine: {fileID: 0}
