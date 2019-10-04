@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : HumanoidController
 {
 
     [Header("Movement")]
@@ -208,7 +208,7 @@ public class PlayerController : MonoBehaviour
         JumpEvent();
     }
 
-    public void JumpEvent()
+    public override void JumpEvent()
     {
         canJump = false;
 
@@ -712,6 +712,11 @@ public class PlayerController : MonoBehaviour
     private Vector3 GetNextFramePosition()
     {
         return transform.position + (rigid.velocity * Time.fixedDeltaTime);
+    }
+
+    public override void ColliderEvent(Collision coll)
+    {
+        throw new NotImplementedException();
     }
 
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterBody : MonoBehaviour
 {
 
-    private PlayerController controller;
+    private HumanoidController controller;
 
     private void Start()
     {
@@ -15,6 +15,11 @@ public class CharacterBody : MonoBehaviour
     public void JumpEvent()
     {
         controller.JumpEvent();
+    }
+
+    public void ColliderEvent(Collision coll)
+    {
+
     }
 
 }

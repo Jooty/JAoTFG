@@ -11,6 +11,8 @@ TagManager:
   - Ground
   - Titan
   - TitanNape
+  - CharacterBody
+  - Hook
   layers:
   - Default
   - TransparentFX
