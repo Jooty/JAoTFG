@@ -599,7 +599,7 @@ public class PlayerController : MonoBehaviour
         var left = GetLeftHook();
         var right = GetRightHook();
 
-        if (left)
+        if (left?.status == HookStatus.attached)
         {
             // Finds what the new velocity is due to tension force grappling hook
             // Normalized vector that from node to test pos
@@ -615,7 +615,7 @@ public class PlayerController : MonoBehaviour
             rigid.AddForce(tensionForceLeft, ForceMode.Impulse);
         }
 
-        if (right)
+        if (right?.status == HookStatus.attached)
         {
             Vector3 nodeRight = (nextPos - right.transform.position).normalized;
             Vector3 newPosRight = (nodeRight * right.tetherDistance) + right.transform.position;
