@@ -21,9 +21,17 @@ public class ThirdPersonCamera : MonoBehaviour {
 
     private Rigidbody player;
 
+    // locals
+    private Camera cam;
+
+    private void Awake()
+    {
+        cam = GetComponent<Camera>();
+    }
+
     private void Start()
     {
-        this.GetComponent<Camera>().fieldOfView = GameVariables.FIELD_OF_VIEW;
+        cam.fieldOfView = GameVariables.FIELD_OF_VIEW;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
 
         if (lockCursor)
@@ -44,6 +52,15 @@ public class ThirdPersonCamera : MonoBehaviour {
         {
             distanceOffset = 0;
         }
+
+        // Do camera effects
+        var fovtarget = Common.GetFloatByRelativePercent(
+            GameVariables.FIELD_OF_VIEW,
+            GameVariables.FIELD_OF_VIEW * 1.2f, 
+            0, 
+            GameVariables.HERO_MAX_SPEED, 
+            player.velocity.magnitude);
+        cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fovtarget, .3f);
     }
 
     private void LateUpdate()

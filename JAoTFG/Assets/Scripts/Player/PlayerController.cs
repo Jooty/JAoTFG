@@ -244,7 +244,6 @@ public class PlayerController : MonoBehaviour
 
     private void ManueverGearUpdate()
     {
-        UpdateManeuverGearCameraEffects();
         UpdateManeuverGearUI();
         UpdateTetherDistanceWhenFooted();
         CheckHookRunawayDistance();
@@ -340,14 +339,6 @@ public class PlayerController : MonoBehaviour
         {
             hook.tetherDistance = Vector3.Distance(transform.position, hook.transform.position);
         }
-    }
-
-    private void UpdateManeuverGearCameraEffects()
-    {
-        if (!usingManGear) return;
-
-        var target = Common.GetFloatByRelativePercent(GameVariables.FIELD_OF_VIEW, GameVariables.FIELD_OF_VIEW * 1.2f, 0, GameVariables.HERO_MAX_SPEED, rigid.velocity.magnitude);
-        cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, target, .3f);
     }
 
     private void CheckHookRunawayDistance()
