@@ -518,6 +518,7 @@ public class PlayerController : HumanoidController
             hook.target = hit.point;
             hook.source = this;
             hook.status = HookStatus.released;
+            hook.eventualParent = hit.transform;
             hooks.Add(hook);
         }
     }
@@ -716,7 +717,6 @@ public class PlayerController : HumanoidController
 
     public override void ColliderEvent(Collision coll)
     {
-        throw new NotImplementedException();
+        return;
     }
-
 }

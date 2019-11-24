@@ -15,6 +15,7 @@ public class HookController : MonoBehaviour
     [HideInInspector] public Vector3 target;
     [HideInInspector] public bool recall = false;
     [HideInInspector] public LineRenderer grapplingLine;
+    [HideInInspector] public Transform eventualParent;
 
     private bool alreadyCalled = false;
 
@@ -43,11 +44,15 @@ public class HookController : MonoBehaviour
             hookAttached();
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+        if (transform.parent != eventualParent)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+        }
     }
 
     private void hookAttached()
     {
+        transform.SetParent(eventualParent);
         alreadyCalled = true;
         source.HookAttachedEvent(side);
     }
