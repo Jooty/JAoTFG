@@ -44,7 +44,7 @@ public class HookController : MonoBehaviour
             hookAttached();
         }
 
-        if (transform.parent != eventualParent)
+        if (transform.parent != eventualParent || recall)
         {
             transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
         }
