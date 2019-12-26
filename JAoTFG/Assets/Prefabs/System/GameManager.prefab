@@ -69,7 +69,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 640976607}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 640976607}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreReversedGraphics: 1
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1916847441}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -162,8 +162,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
@@ -173,6 +171,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &8883282022622218917
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +220,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamemode: 0
-  fadeTimer: 1
 --- !u!114 &5178376739200474318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,8 +232,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b2610ad916c627468085de166fd0766, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loadingWaitTime: 3
   fadeImage: {fileID: 1916847443}
   FirstSceneToLoad: MainMenu
+  currentlyLoading: 
 --- !u!82 &8883282022622218912
 AudioSource:
   m_ObjectHideFlags: 0
@@ -246,9 +246,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 24656aabfe3a16d41b7b34fd5f44eb88, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 475044b3b73e07d439710b28e3937ee2, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 1
   Mute: 0
