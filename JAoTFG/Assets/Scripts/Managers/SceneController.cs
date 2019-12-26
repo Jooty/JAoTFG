@@ -15,7 +15,6 @@ public class SceneController : MonoBehaviour
     /// Scenes load too quickly to effecively test this script.
     /// </summary>
     [Range(1, 10)] [SerializeField] private float loadingWaitTime = 3f;
-    [Range(1, 3)] [SerializeField] private float fadeWaitTime = 1f;
 
     public Image fadeImage;
     public string FirstSceneToLoad = "MainMenu";
@@ -24,8 +23,8 @@ public class SceneController : MonoBehaviour
 
     private Sprite[] backgrounds;
 
-    private string sceneToLoad;
     [SerializeField] private string currentlyLoading;
+    private bool needsToGoToLoadingScene;
     private AsyncOperation currentOperation;
 
     private Animator anim;
@@ -39,17 +38,22 @@ public class SceneController : MonoBehaviour
     {
         SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
 
-        background = GameObject.Find("Canvas/Background").GetComponent<Image>();
-        quoteText = GameObject.Find("Canvas/BottomPanel/QuoteText").GetComponent<TextMeshProUGUI>();
+        if (SceneManager.GetActiveScene().name == "LoadingScreen")
+        {
+            background = GameObject.Find("Canvas/Background").GetComponent<Image>();
+            quoteText = GameObject.Find("Canvas/BottomPanel/QuoteText").GetComponent<TextMeshProUGUI>();
 
-        SetBackground();
-        SetQuote();
+            SetBackground();
+            SetQuote();
 
-        ChangeScene(FirstSceneToLoad);
+            ChangeScene(FirstSceneToLoad);
+        }
     }
 
     private void SceneManager_activeSceneChanged(Scene lastScene, Scene newScene)
     {
+        anim.SetTrigger("fadeIn");
+
         if (newScene.name == "LoadingScreen")
         {
             background = GameObject.Find("Canvas/Background").GetComponent<Image>();
@@ -62,19 +66,46 @@ public class SceneController : MonoBehaviour
 
     public void ChangeScene(string sceneName)
     {
+        if (currentOperation != null) return;
+
         currentlyLoading = sceneName;
-        StartCoroutine(changeScene());
+
+        if (SceneManager.GetActiveScene().name != "LoadingScreen")
+        {
+            anim.SetTrigger("fadeOut");
+            needsToGoToLoadingScene = true;
+        }
+        else
+        {
+            anim.SetTrigger("fadeIn");
+        }
     }
 
-    private IEnumerator changeScene()
+    public void FadeOutCompletedEvent()
     {
-        yield return StartCoroutine(changeToLoadingSceneIfNeeded());
-        yield return StartCoroutine(Fade(false));
+        if (needsToGoToLoadingScene)
+        {
+            SceneManager.LoadScene("LoadingScreen");
+            needsToGoToLoadingScene = false;
+        }
 
-        if (currentlyLoading != "MainMenu")
-            GetComponent<AudioSource>().Stop();
+        if (currentlyLoading == "")
+        {
+            currentOperation.allowSceneActivation = true;
+            currentOperation = null;
+        }
+        else
+        {
+            anim.SetTrigger("fadeIn");
+        }
+    }
 
-        StartCoroutine(beginLoading());
+    public void FadeInCompletedEvent()
+    {
+        if (currentlyLoading != "")
+        {
+            StartCoroutine(beginLoading());
+        }
     }
 
     IEnumerator beginLoading()
@@ -84,39 +115,18 @@ public class SceneController : MonoBehaviour
 
         while (currentOperation.progress < 0.9f) yield return null;
 
-        StartCoroutine(LoadingWaitTimer());
+        yield return new WaitForSeconds(loadingWaitTime);
 
-        StartCoroutine(goToNextScene()); 
+        goToLoadedScene();
     }
 
-    IEnumerator goToNextScene()
+    private void goToLoadedScene()
     {
-        yield return StartCoroutine(Fade());
-        currentOperation.allowSceneActivation = true;
+        if (currentlyLoading != "MainMenu")
+            GetComponent<AudioSource>().Stop();
 
-        currentlyLoading.Empty();
-        currentOperation = null;
-
-        StartCoroutine(Fade(false));
-    }
-
-    IEnumerator changeToLoadingSceneIfNeeded()
-    {
-        if (SceneManager.GetActiveScene().name == "LoadingScreen") yield break;
-
-        yield return StartCoroutine(Fade());
-
-        SceneManager.LoadScene("LoadingScreen");
-    }
-
-    IEnumerator Fade(bool _out = true)
-    {
-        if (_out)
-            anim.SetTrigger("fadeOut");
-        else
-            anim.SetTrigger("fadeIn");
-
-        yield return new WaitForSeconds(fadeWaitTime);
+        currentlyLoading = "";
+        anim.SetTrigger("fadeOut");
     }
 
     private void SetBackground()
@@ -165,11 +175,6 @@ public class SceneController : MonoBehaviour
         }
 
         return quotes.ToArray();
-    }
-
-    private IEnumerator LoadingWaitTimer()
-    {
-        yield return new WaitForSeconds(loadingWaitTime);
     }
 
 }
