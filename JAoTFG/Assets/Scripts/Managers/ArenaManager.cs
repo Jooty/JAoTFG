@@ -33,7 +33,10 @@ public class ArenaManager : MonoBehaviour
         {
             SpawnPillars();
         }
-        SpawnTitans();
+        if (spawnTitans) 
+        {
+            SpawnTitans();
+        }
     }
 
     private void Update()
