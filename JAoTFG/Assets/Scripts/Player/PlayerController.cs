@@ -321,6 +321,8 @@ public class PlayerController : HumanoidController
 
     private void UpdateManeuverGearUI()
     {
+        if (!hookUI) return;
+
         if (CanHook())
         {
             hookUI.SetActive(true);
@@ -359,7 +361,14 @@ public class PlayerController : HumanoidController
         isThrusting = true;
         gas -= 1 * Time.deltaTime;
 
-        rigid.AddForce(transform.forward * thrustPower * Time.deltaTime, ForceMode.Acceleration);
+        rigid.AddForce(transform.forward * thrustPower * Time.deltaTime);
+    }
+
+    private void GasBurst()
+    {
+        gas -= 1.5f * Time.deltaTime;
+
+        rigid.AddForce(transform.forward * thrustPower * .75f, ForceMode.Impulse);
     }
 
     private void DrawHook()
@@ -545,6 +554,9 @@ public class PlayerController : HumanoidController
         if (!hook) return;
         hook.status = HookStatus.attached;
         hook.tetherDistance = Vector3.Distance(hook.transform.position, transform.position);
+
+        transform.LookAt(hook.transform);
+        GasBurst();
     }
 
     public void HookRetractedEvent(HookSide side)
