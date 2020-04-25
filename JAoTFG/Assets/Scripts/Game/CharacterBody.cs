@@ -12,9 +12,9 @@ public class CharacterBody : MonoBehaviour
         controller = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
     }
 
-    public void JumpEvent()
+    public void JumpEvent(bool isDoubleJump)
     {
-        controller.JumpEvent();
+        controller.JumpEvent(isDoubleJump);
     }
 
     public void ColliderEvent(Collision coll)

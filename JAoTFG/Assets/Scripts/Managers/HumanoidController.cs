@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class HumanoidController : MonoBehaviour
 {
 
-    public abstract void JumpEvent();
+    public abstract void JumpEvent(bool isDoubleJump);
     public abstract void ColliderEvent(Collision coll);
 
 }

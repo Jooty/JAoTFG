@@ -13,8 +13,10 @@ public class PlayerController : HumanoidController
     [SerializeField] private float sprintSpeed = 1.3f;
     [SerializeField] private float turnSpeed = 5;
     [SerializeField] private float jumpPower = 5;
+    private bool canDoubleJump;
 
     [Header("Maneuver Gear")]
+    public bool hasManGear;
     public float gas;
     public float totalMaxGas;
     public float thrustPower;
@@ -54,14 +56,14 @@ public class PlayerController : HumanoidController
     private AudioSource aud;
     private Player player;
     private PlayerTargets targets;
-    private CapsuleCollider coll;
+    private CapsuleCollider collider;
 
     private void Awake()
     {
         this.aud = GetComponent<AudioSource>();
         this.rigid = GetComponent<Rigidbody>();
         this.targets = GetComponent<PlayerTargets>();
-        this.coll = GetComponent<CapsuleCollider>();
+        this.collider = GetComponent<CapsuleCollider>();
         this.player = GetComponent<Player>();
     }
 
@@ -94,7 +96,7 @@ public class PlayerController : HumanoidController
 
     void FixedUpdate()
     {
-        if (usingManGear)
+        if (usingManGear && hasManGear)
         {
             DoManeuverGearPhysics();
         }
@@ -110,9 +112,16 @@ public class PlayerController : HumanoidController
         if (Input.GetKeyDown(KeyCode.P))
             Debug.Break();
 
-        if (Input.GetKeyDown(KeyCode.Space) && canJump && !jumpedThisFrame)
+        if (Input.GetKeyDown(KeyCode.Space) && canJump || Input.GetKeyDown(KeyCode.Space) && canDoubleJump)
         {
-            Jump();
+            if (!jumpedThisFrame && canJump)
+            {
+                Jump(false);
+            }
+            else if (canDoubleJump)
+            {
+                Jump(true);
+            }
         }
     }
 
@@ -197,20 +206,23 @@ public class PlayerController : HumanoidController
         }
     }
 
-    private void Jump()
+    private void Jump(bool isDoubleJump)
     {
-        if (!canJump || !IsGrounded()) return;
         jumpedThisFrame = true;
-
         bodyAnim.SetTrigger("jump");
 
         // remove later
-        JumpEvent();
+        JumpEvent(isDoubleJump);
     }
 
-    public override void JumpEvent()
+    public override void JumpEvent(bool isDoubleJump)
     {
         canJump = false;
+
+        if (isDoubleJump)
+        {
+            canDoubleJump = false;
+        } 
 
         rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
     }
@@ -220,6 +232,7 @@ public class PlayerController : HumanoidController
         bodyAnim.SetTrigger("land");
 
         canJump = true;
+        canDoubleJump = true;
         isWaitingToLand = false;
         usingManGear = false;
     }
@@ -230,11 +243,11 @@ public class PlayerController : HumanoidController
 
         if (moveInput == Vector3.zero)
         {
-            coll.material = mfriction;
+            collider.material = mfriction;
         }
         else
         {
-            coll.material = zfriction;
+            collider.material = zfriction;
         }
     }
 
@@ -244,6 +257,8 @@ public class PlayerController : HumanoidController
 
     private void ManueverGearUpdate()
     {
+        if (!hasManGear) return;
+        if (!hasManGear) return;
         UpdateManeuverGearUI();
         UpdateTetherDistanceWhenFooted();
         CheckHookRunawayDistance();
@@ -704,14 +719,14 @@ public class PlayerController : HumanoidController
 
     public bool IsGrounded()
     {
-        var origin = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
+        var origin = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
         if (GameVariables.DEBUG_DRAW_GROUND_CHECK_RAY)
         {
-            Debug.DrawLine(origin, (Vector3.down * (coll.bounds.extents.y + .1f)) + origin, Color.red);
+            Debug.DrawLine(origin, (Vector3.down * (collider.bounds.extents.y + .1f)) + origin, Color.red);
         }
 
-        return Physics.Raycast(origin, Vector3.down, coll.bounds.extents.y + .1f, 1);
+        return Physics.Raycast(origin, Vector3.down, collider.bounds.extents.y + .1f, 1);
     }
 
     private void EnforceMaxSpeed()

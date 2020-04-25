@@ -91,7 +91,7 @@ public class TitanController : HumanoidController
         }
     }
 
-    public override void JumpEvent() { }
+    public override void JumpEvent(bool isDoubleJump) { }
 
     public override void ColliderEvent(Collision coll) { }
 
