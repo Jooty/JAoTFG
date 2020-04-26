@@ -92,6 +92,11 @@ public class PlayerController : HumanoidController
         HandleAnimations();
         EnforceMaxSpeed();
         ManueverGearUpdate();
+
+        if (!IsGrounded())
+        {
+            AirRotate();
+        }
     }
 
     void FixedUpdate()
@@ -222,9 +227,10 @@ public class PlayerController : HumanoidController
         if (isDoubleJump)
         {
             canDoubleJump = false;
-        } 
+        }
 
-        rigid.AddForce(transform.up * jumpPower, ForceMode.Impulse);
+        var newVelocity = rigid.velocity.ChangeY(jumpPower);
+        rigid.velocity = newVelocity;
     }
 
     private void Land()
@@ -264,11 +270,6 @@ public class PlayerController : HumanoidController
         CheckHookRunawayDistance();
         HandleManeuverGearControls();
         DrawHook();
-
-        if (!IsGrounded())
-        { 
-            AirRotate();
-        }
     }
 
     private void HandleManeuverGearControls()
