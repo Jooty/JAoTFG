@@ -51,4 +51,9 @@ public static class ExtensionMethods
         return array.Length == 0;
     }
 
+    public static Vector3 ChangeY(this Vector3 vec, float newY)
+    {
+        return new Vector3(vec.x, newY, vec.z);
+    }
+
 }
