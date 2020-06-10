@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
         switch (mode)
         {
             case Gamemode.arena:
-                sceneController.ChangeScene("Arena");
+                sceneController.ChangeScene("UpdatedArena");
                 break;
         }
     }
