@@ -263,8 +263,8 @@ public class PlayerController : HumanoidController
 
     private void ManueverGearUpdate()
     {
-        if (!hasManGear) return;
-        if (!hasManGear) return;
+        if (!hasManGear) return; 
+
         UpdateManeuverGearUI();
         UpdateTetherDistanceWhenFooted();
         CheckHookRunawayDistance();
@@ -313,10 +313,8 @@ public class PlayerController : HumanoidController
             SwordRelease();
         }
 
-        if (Input.GetKey(KeyCode.Space) && !isSliding)
+        if (Input.GetKey(KeyCode.Space))
         {
-            if (IsGrounded() && !GetLeftHook() || IsGrounded() && !GetRightHook()) return;
-
             GasThrust();
 
             if (!aud.isPlaying)
@@ -325,13 +323,19 @@ public class PlayerController : HumanoidController
                 aud.loop = true;
                 aud.Play();
             }
-            thrustSmoke.Play();
+            if (thrustSmoke)
+            {
+                thrustSmoke.Play();
+            }
         }
         else if (Input.GetKeyUp(KeyCode.Space) || isSliding && !GetLeftHook() || isSliding && !GetRightHook())
         {
             isThrusting = false;
             aud.Stop();
-            thrustSmoke.Stop();
+            if (thrustSmoke)
+            {
+                thrustSmoke.Stop();
+            }
         }
     }
 
@@ -572,7 +576,6 @@ public class PlayerController : HumanoidController
         hook.tetherDistance = Vector3.Distance(hook.transform.position, transform.position);
 
         transform.LookAt(hook.transform);
-        GasBurst();
     }
 
     public void HookRetractedEvent(HookSide side)
