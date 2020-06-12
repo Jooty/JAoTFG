@@ -5,16 +5,11 @@ using UnityEngine;
 public class CharacterBody : MonoBehaviour
 {
 
-    private HumanoidController controller;
+    private CharacterController controller;
 
     private void Start()
     {
-        controller = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
-    }
-
-    public void JumpEvent(bool isDoubleJump)
-    {
-        controller.JumpEvent(isDoubleJump);
+        controller = transform.parent.GetComponent<CharacterController>();
     }
 
     public void ColliderEvent(Collision coll)

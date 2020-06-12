@@ -5,7 +5,7 @@ using UnityEngine.AI;
 using System.Linq;
 
 [RequireComponent(typeof(Titan))]
-public class TitanController : HumanoidController
+public class TitanController : CharacterController
 {
 
     [SerializeField] [Range(.1f, 1)] private float rotateSpeed = .5f;
@@ -90,8 +90,6 @@ public class TitanController : HumanoidController
             action = TitanAction.idle;
         }
     }
-
-    public override void JumpEvent(bool isDoubleJump) { }
 
     public override void ColliderEvent(Collision coll) { }
 
