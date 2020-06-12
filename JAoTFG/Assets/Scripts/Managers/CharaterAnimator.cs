@@ -10,13 +10,13 @@ public abstract class CharaterAnimator : MonoBehaviour
     protected Animator animator;
     protected Rigidbody rigid;
 
-    private void Awake()
+    protected void Awake()
     {
         this.controller = GetComponent<CharacterController>();
         this.rigid = GetComponent<Rigidbody>();
     }
 
-    private void Start()
+    protected void Start()
     {
         controller.OnMove += Controller_OnMove;
         controller.OnAttack += Controller_OnAttack;
@@ -26,15 +26,15 @@ public abstract class CharaterAnimator : MonoBehaviour
         controller.OnLand += Controller_OnLand;
     }
 
-    private void Controller_OnLand(object sender, System.EventArgs e)
-    {
-        animator.SetTrigger("land");
-    }
-
-    private void Update()
+    protected void Update()
     {
         animator.SetFloat("velocity", Common.GetFloatByRelativePercent(0, 1, 0, GameVariables.HERO_MAX_SPEED, rigid.velocity.magnitude));
         animator.SetFloat("velocityY", Common.GetFloatByRelativePercent(0, 1, 0, 9.8f, rigid.velocity.y));
+    }
+
+    private void Controller_OnLand(object sender, System.EventArgs e)
+    {
+        animator.SetTrigger("land");
     }
 
     protected virtual void Controller_OnJump(object sender, System.EventArgs e)

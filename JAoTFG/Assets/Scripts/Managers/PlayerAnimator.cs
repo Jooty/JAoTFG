@@ -9,21 +9,27 @@ public class PlayerAnimator : CharaterAnimator
     // locals
     private PlayerController playerController;
 
-    private void Awake()
+    new private void Awake()
     {
         this.playerController = GetComponent<PlayerController>();
+
+        base.Awake();
     }
 
-    private void Start()
+    new private void Start()
     {
         base.animator = GetAnimator();
+
+        base.Start();
     }
 
-    private void Update()
+    new private void Update()
     {
         base.animator.SetBool("usingManGear", playerController.usingManGear);
         base.animator.SetBool("isHooked", playerController.hooks.Count > 0);
         base.animator.SetBool("isSliding", playerController.isSliding);
+
+        base.Update();
     }
 
     private Animator GetAnimator()
