@@ -31,7 +31,9 @@ public class PlayerDebugUIManager : MonoBehaviour
             $"thrust: {player.isThrusting}\n" +
             $"iswaitingtoland: {player.isWaitingToLand}\n" +
             $"canjump: {player.canJump}\n" +
-            $"issliding: {player.isSliding}\n";
+            $"issliding: {player.isSliding}\n" +
+            $"velocity: {player.rigid.velocity.magnitude}\n" +
+            $"using gear: {player.usingManGear}";
     }
 
 }
