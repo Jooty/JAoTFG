@@ -74,6 +74,10 @@ public class PlayerController : CharacterController
         {
             AirRotate();
         }
+        else if (base.IsGrounded() && base.speed > 15)
+        {
+            DoSliding();
+        }
 
         base.Update();
     }
@@ -141,20 +145,24 @@ public class PlayerController : CharacterController
         {
             if (usingManGear)
             {
-                if (base.speed < 3)
+                if (base.speed < 15)
                 {
                     Land();
                 }
-                else if (base.speed > 3 && hooks.Count == 0) // sliding on ground
+                else if (base.speed > 15 && hooks.Count == 0) // sliding on ground
                 {
-                    base.rigid.drag = .5f;
+                    base.rigid.drag = .4f;
                 }
             }
             else
             {
-                if (!base.jumpedThisFrame && base.speed < 11f)
+                if (!base.jumpedThisFrame && base.speed < 15f)
                 {
                     Land();
+                }
+                else if (isThrusting)
+                {
+                    base.rigid.drag = .4f;
                 }
                 else
                 {
@@ -185,6 +193,28 @@ public class PlayerController : CharacterController
         else
         {
             isSliding = false;
+        }
+    }
+
+    private void DoSliding()
+    {
+        if (!isSliding) return;
+
+        if (hooks.Count == 0)
+        {
+            RotateToMovement();
+        }
+        else
+        {
+            var hook = GetSoloActiveHook();
+            if (hook.status != HookStatus.attached) return;
+
+            var tetherDirection = hook.transform.position - transform.position;
+            var lookDir = Quaternion.LookRotation(rigid.velocity, tetherDirection);
+            var newDir = new Quaternion(0, lookDir.y, 0, 0);
+            var target = newDir;
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED * .15f);
         }
     }
 
@@ -353,14 +383,7 @@ public class PlayerController : CharacterController
             {
                 var hook = GetSoloActiveHook();
                 if (hook.status != HookStatus.attached) return;
-                if (IsGrounded())
-                {
-                    var tetherDirection = hook.transform.position - transform.position;
-                    var lookDir = Quaternion.LookRotation(rigid.velocity, tetherDirection);
-                    var newDir = new Quaternion(0, lookDir.y, 0, 0);
-                    target = newDir;
-                }
-                else
+                if (!IsGrounded())
                 {
                     var tetherDirection = hook.transform.position - transform.position;
                     target = Quaternion.LookRotation(rigid.velocity, tetherDirection);
@@ -407,14 +430,7 @@ public class PlayerController : CharacterController
             }
         }
 
-        if (!isSliding)
-        {
-            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED);
-        }
-        else
-        {
-            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED * .135f);
-        }
+        transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED);
     }
 
     private bool CanHook()
