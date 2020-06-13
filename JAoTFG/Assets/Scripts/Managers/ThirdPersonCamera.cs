@@ -44,7 +44,7 @@ public class ThirdPersonCamera : MonoBehaviour {
     private void Update()
     {
         var relativePos = transform.position - target.position;
-        if (Physics.Raycast(target.position, relativePos, out var hit, distance + .5f))
+        if (Physics.Raycast(target.position, relativePos, out var hit, distance + .5f, 1))
         {
             distanceOffset = Mathf.Clamp(distance - hit.distance + .8f, 0, distance);
         }
