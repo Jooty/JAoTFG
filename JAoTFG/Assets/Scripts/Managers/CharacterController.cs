@@ -54,6 +54,8 @@ public abstract class CharacterController : MonoBehaviour
 
     public virtual void Jump()
     {
+        OnJump?.Invoke(this, EventArgs.Empty);
+
         jumpedThisFrame = true;
         canJump = false;
 
@@ -64,19 +66,17 @@ public abstract class CharacterController : MonoBehaviour
 
         var newVelocity = rigid.velocity.ChangeY(jumpPower);
         rigid.velocity = newVelocity;
-
-        OnJump?.Invoke(this, EventArgs.Empty);
     }
 
     public virtual void Land()
     {
+        OnLand?.Invoke(this, EventArgs.Empty);
+
         canJump = true;
         canDoubleJump = true;
         isWaitingToLand = false;
 
         rigid.drag = 5;
-
-        OnLand?.Invoke(this, EventArgs.Empty);
     }
 
     public virtual void Death()
@@ -119,10 +119,10 @@ public abstract class CharacterController : MonoBehaviour
 
         if (GameVariables.DEBUG_DRAW_GROUND_CHECK_RAY)
         {
-            Debug.DrawLine(origin, (Vector3.down * (coll.bounds.extents.y + .3f)) + origin, Color.red);
+            Debug.DrawLine(origin, (Vector3.down * (.4f)) + origin, Color.red);
         }
 
-        return Physics.Raycast(origin, Vector3.down, coll.bounds.extents.y + .3f, 1);
+        return Physics.Raycast(origin, Vector3.down, .4f, 1);
     }
 
     protected void EnforceMaxSpeed()
