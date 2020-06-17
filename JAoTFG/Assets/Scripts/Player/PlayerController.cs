@@ -21,7 +21,9 @@ public class PlayerController : CharacterController
     [HideInInspector] public bool isThrusting;
 
     public List<HookController> hooks;
-    [SerializeField] private GameObject[] hookPoints;
+    public Transform[] ropeShotVisualizerSpawnPoints_Left;
+    public Transform[] ropeShotVisualizerSpawnPoints_Right;
+    public GameObject[] hookPoints;
 
     [HideInInspector] public AudioClip[] manSoundEffects;
     [HideInInspector] public bool usingManGear;
@@ -185,7 +187,7 @@ public class PlayerController : CharacterController
 
     private void SetSliding()
     {
-        if (IsGrounded() && isThrusting && rigid.velocity.magnitude > 15f
+        if (IsGrounded() && rigid.velocity.magnitude > 15f && !base.jumpedThisFrame
             || IsGrounded() && hooks.Count > 0 && rigid.velocity.magnitude > 3f && usingManGear)
         {
             isSliding = true;
@@ -260,7 +262,6 @@ public class PlayerController : CharacterController
         UpdateTetherDistanceWhenFooted();
         CheckHookRunawayDistance();
         HandleManeuverGearControls();
-        DrawHook();
     }
 
     private void HandleManeuverGearControls()
@@ -361,17 +362,6 @@ public class PlayerController : CharacterController
         rigid.AddForce(transform.forward * thrustPower * .75f, ForceMode.Impulse);
     }
 
-    private void DrawHook()
-    {
-        foreach (HookController hook in hooks)
-        {
-            if (!hook.grapplingLine) continue;
-
-            Vector3[] line_vortex_arr = { hookPoints[(int)hook.side].transform.position, hook.transform.position };
-            hook.grapplingLine.SetPositions(line_vortex_arr);
-        }
-    }
-
     private void AirRotate()
     {
         Quaternion target = Quaternion.identity;
@@ -451,22 +441,37 @@ public class PlayerController : CharacterController
                 usingManGear = true;
             }
 
-            var hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation)
-                .GetComponent<HookController>();
-            hook.side = side;
-            hook.target = hit.point;
-            hook.source = this;
-            hook.status = HookStatus.released;
-            hook.eventualParent = hit.transform;
-            hooks.Add(hook);
+            // New code
+            if (side == HookSide.left)
+            {
+                var hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation)
+                    .GetComponent<HookController>();
+                hook.transform.parent = transform;
+                hook.transform.position = hookPoints[0].transform.position;
+                hook.InitateHook(HookSide.left, this, hookPoints[0].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Left);
+                hooks.Add(hook);
+
+                hook.OnHookRecalled += Hook_OnHookRecalled;
+            } 
+            else
+            {
+                var hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation)
+                    .GetComponent<HookController>();
+                hook.transform.position = hookPoints[1].transform.position;
+                hook.transform.position = hookPoints[1].transform.position;
+                hook.InitateHook(HookSide.right, this, hookPoints[1].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Right);
+                hooks.Add(hook);
+
+                hook.OnHookRecalled += Hook_OnHookRecalled;
+            }
         }
     }
 
     private void RecallHook(HookSide side)
     {
         var hook = GetHookBySide(side);
-        if (!Common.Exists(hook)) return;
-        hook.status = HookStatus.retracting;
+        if (!hook || hook.recall) return;
+
         hook.recall = true;
 
         if (IsGrounded())
@@ -478,23 +483,9 @@ public class PlayerController : CharacterController
         aud.PlayOneShot(manSoundEffects[9]);
     }
 
-    public void HookAttachedEvent(HookSide side)
+    private void Hook_OnHookRecalled(object sender, EventArgs e)
     {
-        var hook = GetHookBySide(side);
-        if (!hook) return;
-        hook.status = HookStatus.attached;
-        hook.tetherDistance = Vector3.Distance(hook.transform.position, transform.position);
-
-        transform.LookAt(hook.transform);
-    }
-
-    public void HookRetractedEvent(HookSide side)
-    {
-        var hook = GetHookBySide(side);
-        hook.status = HookStatus.sheathed;
-
-        hooks.Remove(hook);
-        Destroy(hook.gameObject);
+        hooks.Remove((HookController)sender);
     }
 
     private void DoManeuverGearPhysics()
@@ -510,21 +501,19 @@ public class PlayerController : CharacterController
 
             foreach (HookController hook in hooks)
             {
-                if (Vector3.Distance(nextPos, hook.transform.position) < hook.tetherDistance)
+                if (Vector3.Distance(nextPos, hook.target) < hook.tetherDistance)
                 {
-                    hook.tetherDistance = Vector3.Distance(nextPos, hook.transform.position);
+                    hook.tetherDistance = Vector3.Distance(nextPos, hook.target);
                 }
 
                 if (isThrusting && GameVariables.MG_RETRACT_ON_GAS && hook.tetherDistance > 1 && hooks.Count == 1)
                 {
-                    hook.tetherDistance -= GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER * Time.deltaTime * GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER;
+                    hook.tetherDistance -= GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER * Time.deltaTime;
                 }
             }
 
             ApplyTensionForce(currentVelocity, nextPos);
         }
-
-        return;
     }
 
     private void ApplyTensionForce(Vector3 currentVelocity, Vector3 nextPos)
@@ -536,8 +525,8 @@ public class PlayerController : CharacterController
         {
             // Finds what the new velocity is due to tension force grappling hook
             // Normalized vector that from node to test pos
-            Vector3 nodeLeft = (nextPos - left.transform.position).normalized;
-            Vector3 newPosLeft = (nodeLeft * left.tetherDistance) + left.transform.position;
+            Vector3 nodeLeft = (nextPos - left.target).normalized;
+            Vector3 newPosLeft = (nodeLeft * left.tetherDistance) + left.target;
             Vector3 newVelocityLeft = newPosLeft - transform.position;
 
             // Force_tension = mass * (d_velo / d_time)
@@ -550,8 +539,8 @@ public class PlayerController : CharacterController
 
         if (right?.status == HookStatus.attached)
         {
-            Vector3 nodeRight = (nextPos - right.transform.position).normalized;
-            Vector3 newPosRight = (nodeRight * right.tetherDistance) + right.transform.position;
+            Vector3 nodeRight = (nextPos - right.target).normalized;
+            Vector3 newPosRight = (nodeRight * right.tetherDistance) + right.target;
             Vector3 newVelocityRight = newPosRight - transform.position;
 
             Vector3 deltaVelocityRight = newVelocityRight - currentVelocity;
