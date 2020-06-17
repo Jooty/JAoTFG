@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class HookController : MonoBehaviour
@@ -159,7 +158,6 @@ public class HookController : MonoBehaviour
             {
                 Gizmos.color = Color.white;
                 Gizmos.DrawWireSphere(ghostLinePositions[i], .1f);
-                Handles.Label(ghostLinePositions[i], i.ToString());
                 if (ghostLinePositions.Count() - 1 == i)
                 {
                     return;
@@ -180,7 +178,6 @@ public class HookController : MonoBehaviour
             {
                 Gizmos.color = Color.white;
                 Gizmos.DrawWireSphere(linePositions[i], .1f);
-                Handles.Label(linePositions[i], i.ToString());
                 if (linePositions.Count() - 1 == i)
                 {
                     return;
