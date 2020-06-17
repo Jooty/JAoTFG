@@ -9,6 +9,7 @@ public class ArenaManager : MonoBehaviour
     [HideInInspector] public static ArenaManager instance;
 
     [SerializeField] private bool spawnPillars = true;
+    [SerializeField] private bool spawnTitans = true;
     public int pillarCount;
     public int startTitanCount;
 
@@ -32,12 +33,15 @@ public class ArenaManager : MonoBehaviour
         {
             SpawnPillars();
         }
-        SpawnTitans();
+        if (spawnTitans) 
+        {
+            SpawnTitans();
+        }
     }
 
     private void Update()
     {
-        if (titansAlive.Count == 0)
+        if (titansAlive.Count == 0 && spawnTitans)
         {
             currentWave++;
 

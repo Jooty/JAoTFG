@@ -18,7 +18,7 @@ public class PlayerDebugUIManager : MonoBehaviour
 
     private void Update()
     {
-        debugtext.text = $"speed: {player.rigid.velocity.magnitude}\n" +
+        debugtext.text =
             $"max speed: {GameVariables.HERO_MAX_SPEED}\n" +
             $"gear: {player.usingManGear}\n" +
             $"left-distance: {player.GetLeftHook()?.tetherDistance}\n" +
@@ -31,7 +31,9 @@ public class PlayerDebugUIManager : MonoBehaviour
             $"thrust: {player.isThrusting}\n" +
             $"iswaitingtoland: {player.isWaitingToLand}\n" +
             $"canjump: {player.canJump}\n" +
-            $"issliding: {player.isSliding}\n";
+            $"issliding: {player.isSliding}\n" +
+            $"velocity: {player.speed}\n" +
+            $"using gear: {player.usingManGear}";
     }
 
 }

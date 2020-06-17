@@ -45,4 +45,24 @@ public static class Common
         return calc;
     }
 
+    /// <summary>
+    /// Traverse up hierarchy until we find a parent with "tag" and return it.
+    /// </summary>
+    /// <param name="childObject"></param>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    public static GameObject FindParentWithTag(GameObject childObject, string tag)
+    {
+        Transform t = childObject.transform;
+        while (t.parent != null)
+        {
+            if (t.parent.tag == tag)
+            {
+                return t.parent.gameObject;
+            }
+            t = t.parent.transform;
+        }
+        return null; // Could not find a parent with given tag.
+    }
+
 }
