@@ -500,8 +500,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7493065498959368220}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.0743, y: 0.0472, z: 0.0839}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalPosition: {x: -0.0743, y: 0.0472, z: 0.1086}
+  m_LocalScale: {x: 0.011524786, y: 0.011577607, z: 0.011080484}
   m_Children:
   - {fileID: 4344876307676867835}
   - {fileID: 5673811406099898545}
@@ -572,6 +572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b20d10cc698166e4d8b9843e84c85e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Collider: {fileID: 0}
 --- !u!1 &7657698917221215307
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,7 +597,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7657698917221215307}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 2.144, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7657698917947489653}
@@ -786,7 +787,7 @@ MonoBehaviour:
   turnSpeed: 0.15
   jumpPower: 15
   canDoubleJump: 0
-  speed: 0
+  currentSpeed: 0
   canJump: 0
   jumpedThisFrame: 0
   doubleJumpedThisFrame: 0
@@ -801,6 +802,22 @@ MonoBehaviour:
   hookSmoke: {fileID: 0}
   isThrusting: 0
   hooks: []
+  ropeShotVisualizerSpawnPoints_Left:
+  - {fileID: 4344876307676867835}
+  - {fileID: 5673811406099898545}
+  - {fileID: 3745096300540468888}
+  - {fileID: 251703442117056731}
+  - {fileID: 2599070499796198144}
+  - {fileID: 585307062950451980}
+  - {fileID: 4926209975883407971}
+  ropeShotVisualizerSpawnPoints_Right:
+  - {fileID: 902608943434539088}
+  - {fileID: 7716840053524989750}
+  - {fileID: 1058413434755772222}
+  - {fileID: 8221468665947119827}
+  - {fileID: 149759932678024116}
+  - {fileID: 8729061444479864377}
+  - {fileID: 4055552462014943308}
   hookPoints:
   - {fileID: 9219565826595859176}
   - {fileID: 8004621575499168007}

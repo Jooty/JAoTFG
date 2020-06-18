@@ -57,7 +57,7 @@ public class PlayerController : CharacterController
 
         Cursor.lockState = CursorLockMode.Locked;
 
-        canJump = true;
+        base.canJump = true;
         gas = totalMaxGas;
 
         zfriction = Resources.Load<PhysicMaterial>("Physics/zeroFriction");
@@ -110,6 +110,8 @@ public class PlayerController : CharacterController
 
     public override void Move()
     {
+        base.Move();
+
         if (IsGrounded() && hooks.Count == 0 && !isWaitingToLand)
         {
             var _horizontal = Input.GetAxisRaw("Horizontal");
@@ -130,8 +132,6 @@ public class PlayerController : CharacterController
         {
             DoManeuverGearPhysics();
         }
-
-        base.Move();
     }
 
     public override void Land()

@@ -57,7 +57,7 @@ public abstract class CharacterController : MonoBehaviour
         OnMove?.Invoke(this, EventArgs.Empty);
     }
 
-    public virtual void Move_AI()
+    public virtual void Move_AI(Vector3 target)
     {
         if (!canMove) return;
 

@@ -14,7 +14,6 @@ public class ArenaManager : MonoBehaviour
     public int startTitanCount;
 
     public int currentWave;
-    [HideInInspector] public List<Titan> titansAlive;
 
     [SerializeField] private GameObject towerPrefab;
     [SerializeField] private GameObject titanPrefab;
@@ -27,25 +26,11 @@ public class ArenaManager : MonoBehaviour
     private void Start()
     {
         currentWave = 0;
-        titansAlive = new List<Titan>();
+        //titansAlive = new List<Titan>();
 
         if (spawnPillars)
         {
             SpawnPillars();
-        }
-        if (spawnTitans) 
-        {
-            SpawnTitans();
-        }
-    }
-
-    private void Update()
-    {
-        if (titansAlive.Count == 0 && spawnTitans)
-        {
-            currentWave++;
-
-            SpawnTitans();
         }
     }
 
@@ -56,20 +41,6 @@ public class ArenaManager : MonoBehaviour
             var t = Instantiate(towerPrefab, GeneratedPosition, Quaternion.identity);
             t.transform.SetParent(this.transform);
         }
-    }
-
-    private void SpawnTitans()
-    {
-        for (int i = 0; i <= startTitanCount + currentWave; i++)
-        {
-            var t = Instantiate(titanPrefab, GeneratedPosition, Quaternion.identity);
-            titansAlive.Add(t.GetComponent<Titan>());
-        }
-    }
-
-    public void RemoveTitan(Titan titan)
-    {
-        titansAlive.Remove(titan);
     }
 
     private Vector3 GeneratedPosition

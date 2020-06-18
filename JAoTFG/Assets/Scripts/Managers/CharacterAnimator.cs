@@ -68,7 +68,14 @@ public abstract class CharacterAnimator : MonoBehaviour
 
     protected virtual void Controller_OnMove_AI(object sender, System.EventArgs e)
     {
-
+        if (controller.currentSpeed > 0)
+        {
+            animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
     }
 
 }

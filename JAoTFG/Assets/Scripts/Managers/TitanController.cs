@@ -4,107 +4,84 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Linq;
 
-[RequireComponent(typeof(Titan))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class TitanController : CharacterController
 {
 
-    [SerializeField] [Range(.1f, 1)] private float rotateSpeed = .5f;
-    [SerializeField] private float distanceToAttack = 3f;
+    public float eyeSlashRecoveryTime = 20f;
+    public float ankleSlashRecoveryTime = 20f;
 
-    private TitanAction action;
-    private Player player;
+    private TitanBodyHitbox[] hitboxes;
 
-    private int pom;
-    private int pissedOffMeter
-    {
-        get
-        {
-            return pom;
-        }
-        set
-        {
-            if (value > 50) pom = 50;
-            else if (value < 0) pom = 0;
-            else pom = value;
-        }
-    }
-    private bool foundPlayer;
+    private PlayerController player;
 
     // locals
-    private Titan titan;
-    private NavMeshAgent nav;
+    private TitanAnimator animator;
+    private NavMeshAgent agent;
 
-    private void Awake()
+    private new void Awake()
     {
-        titan = GetComponent<Titan>();
-        nav = GetComponent<NavMeshAgent>();
+        this.animator = GetComponent<TitanAnimator>();
+        this.hitboxes = GetComponentsInChildren<TitanBodyHitbox>();
+        this.agent = GetComponent<NavMeshAgent>();
+
+        base.Awake();
     }
 
     private void Start()
     {
-        SetStartingAction();
-
-        pissedOffMeter = 25;
-
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player = FindObjectOfType<PlayerController>();
     }
 
-    private void Update()
+    private new void Update()
     {
-        if (pissedOffMeter >= 25)
-        {
-            if (!PlayerInSight())
-            {
-                if (wantsToRotateRight())
-                {
-                    transform.Rotate(0, rotateSpeed * Time.deltaTime, 0);
-                }
-                else
-                {
-                    transform.Rotate(0, -(rotateSpeed * Time.deltaTime), 0);
-                }
-            }
-            else
-            {
-                if (Vector3.Distance(transform.position, player.transform.position) > distanceToAttack)
-                {
-                    nav.SetDestination(player.transform.position);
-                }
-                else
-                {
+        base.Update();
 
-                }
-            }
+        Move_AI(player.transform.position);
+    }
+
+    public override void Move_AI(Vector3 target)
+    {
+        base.Move_AI(target);
+
+        agent.SetDestination(target);
+    }
+
+    public void HitboxHitEvent(TitanBodyHitboxType type)
+    {
+        switch (type)
+        {
+            case TitanBodyHitboxType.ankle:
+                SlashAnkles();
+                break;
+            case TitanBodyHitboxType.eyes:
+                SlashEyes();
+                break;
+            case TitanBodyHitboxType.nape:
+                base.Death();
+                break;
         }
     }
 
-    private void SetStartingAction()
+    public override void ColliderEvent(Collision coll)
     {
-        var r = Random.value > .5f;
-        if (r)
-        {
-            action = TitanAction.sit;
-        }
-        else
-        {
-            action = TitanAction.idle;
-        }
+        throw new System.NotImplementedException();
     }
 
-    public override void ColliderEvent(Collision coll) { }
-
-    private bool PlayerInSight()
+    private void SlashAnkles()
     {
-        Vector3 targetLine = player.transform.position - transform.position;
-        return Vector3.Dot(targetLine.normalized, transform.forward) < .5f;
+        StartCoroutine(RecoveryTimer(ankleSlashRecoveryTime));
     }
 
-    private bool wantsToRotateRight()
+    private void SlashEyes()
     {
-        var dir = player.transform.position - transform.position;
-        var angle = Vector3.Angle(dir, transform.forward);
-
-        return angle > 1 && angle < 90;
+        StartCoroutine(RecoveryTimer(eyeSlashRecoveryTime));
     }
 
+    private IEnumerator RecoveryTimer(float timeToWait)
+    {
+        base.canMove = false;
+        yield return new WaitForSeconds(timeToWait);
+        base.canMove = true;
+    }
 }
