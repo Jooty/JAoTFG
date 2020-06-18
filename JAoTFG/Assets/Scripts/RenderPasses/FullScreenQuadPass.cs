@@ -2,9 +2,9 @@
 {
     public class FullScreenQuadPass : UnityEngine.Rendering.Universal.ScriptableRenderPass
     {
-        string m_ProfilerTag = "DrawFullScreenPass";
+        private string m_ProfilerTag = "DrawFullScreenPass";
 
-        FullScreenQuad.FullScreenQuadSettings m_Settings;
+        private FullScreenQuad.FullScreenQuadSettings m_Settings;
 
         public FullScreenQuadPass(FullScreenQuad.FullScreenQuadSettings settings)
         {

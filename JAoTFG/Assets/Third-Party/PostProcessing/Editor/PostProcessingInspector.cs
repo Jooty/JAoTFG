@@ -1,9 +1,9 @@
-using UnityEngine;
-using UnityEngine.PostProcessing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
+using UnityEngine.PostProcessing;
 
 namespace UnityEditor.PostProcessing
 {
@@ -11,26 +11,26 @@ namespace UnityEditor.PostProcessing
     [CustomEditor(typeof(PostProcessingProfile))]
     public class PostProcessingInspector : Editor
     {
-        static GUIContent s_PreviewTitle = new GUIContent("Monitors");
+        private static GUIContent s_PreviewTitle = new GUIContent("Monitors");
 
-        PostProcessingProfile m_ConcreteTarget
+        private PostProcessingProfile m_ConcreteTarget
         {
             get { return target as PostProcessingProfile; }
         }
 
-        int m_CurrentMonitorID
+        private int m_CurrentMonitorID
         {
             get { return m_ConcreteTarget.monitors.currentMonitorID; }
             set { m_ConcreteTarget.monitors.currentMonitorID = value; }
         }
 
-        List<PostProcessingMonitor> m_Monitors;
-        GUIContent[] m_MonitorNames;
-        Dictionary<PostProcessingModelEditor, PostProcessingModel> m_CustomEditors = new Dictionary<PostProcessingModelEditor, PostProcessingModel>();
+        private List<PostProcessingMonitor> m_Monitors;
+        private GUIContent[] m_MonitorNames;
+        private Dictionary<PostProcessingModelEditor, PostProcessingModel> m_CustomEditors = new Dictionary<PostProcessingModelEditor, PostProcessingModel>();
 
         public bool IsInteractivePreviewOpened { get; private set; }
 
-        void OnEnable()
+        private void OnEnable()
         {
             if (target == null)
                 return;
@@ -114,7 +114,7 @@ namespace UnityEditor.PostProcessing
                 m_ConcreteTarget.monitors.onFrameEndEditorOnly = OnFrameEnd;
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             if (m_CustomEditors != null)
             {
@@ -136,7 +136,7 @@ namespace UnityEditor.PostProcessing
                 m_ConcreteTarget.monitors.onFrameEndEditorOnly = null;
         }
 
-        void OnFrameEnd(RenderTexture source)
+        private void OnFrameEnd(RenderTexture source)
         {
             if (!IsInteractivePreviewOpened)
                 return;

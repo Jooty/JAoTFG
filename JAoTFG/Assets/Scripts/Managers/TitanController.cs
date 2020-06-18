@@ -1,13 +1,10 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Linq;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class TitanController : CharacterController
 {
-
     public float eyeSlashRecoveryTime = 20f;
     public float ankleSlashRecoveryTime = 20f;
 
@@ -17,6 +14,7 @@ public class TitanController : CharacterController
 
     // locals
     private TitanAnimator animator;
+
     private NavMeshAgent agent;
 
     private new void Awake()
@@ -54,9 +52,11 @@ public class TitanController : CharacterController
             case TitanBodyHitboxType.ankle:
                 SlashAnkles();
                 break;
+
             case TitanBodyHitboxType.eyes:
                 SlashEyes();
                 break;
+
             case TitanBodyHitboxType.nape:
                 base.Death();
                 break;

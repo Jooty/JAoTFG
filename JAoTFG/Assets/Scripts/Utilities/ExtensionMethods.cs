@@ -3,7 +3,6 @@ using UnityEngine;
 
 public static class ExtensionMethods
 {
-
     /// <summary>
     /// Climbs the transform hierachy upwards,
     /// and returns the first parent transform according to tag.
@@ -22,7 +21,7 @@ public static class ExtensionMethods
             }
             t = t.parent.transform;
         }
-        return null; 
+        return null;
     }
 
     /// <summary>
@@ -55,5 +54,4 @@ public static class ExtensionMethods
     {
         return new Vector3(vec.x, newY, vec.z);
     }
-
 }

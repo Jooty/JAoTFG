@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class CharacterAnimator : MonoBehaviour
 {
-
     // locals
     protected CharacterController controller;
+
     protected Animator animator;
     protected Rigidbody rigid;
 
@@ -77,5 +75,4 @@ public abstract class CharacterAnimator : MonoBehaviour
             animator.SetBool("isRunning", false);
         }
     }
-
 }

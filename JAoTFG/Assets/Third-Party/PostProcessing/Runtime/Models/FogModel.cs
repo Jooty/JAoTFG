@@ -24,7 +24,8 @@ namespace UnityEngine.PostProcessing
         }
 
         [SerializeField]
-        Settings m_Settings = Settings.defaultSettings;
+        private Settings m_Settings = Settings.defaultSettings;
+
         public Settings settings
         {
             get { return m_Settings; }

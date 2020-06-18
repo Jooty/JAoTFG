@@ -1,27 +1,25 @@
-using UnityEngine.Rendering;
-
 namespace UnityEngine.PostProcessing
 {
     using DebugMode = BuiltinDebugViewsModel.Mode;
 
     public sealed class DepthOfFieldComponent : PostProcessingComponentRenderTexture<DepthOfFieldModel>
     {
-        static class Uniforms
+        private static class Uniforms
         {
-            internal static readonly int _DepthOfFieldTex    = Shader.PropertyToID("_DepthOfFieldTex");
+            internal static readonly int _DepthOfFieldTex = Shader.PropertyToID("_DepthOfFieldTex");
             internal static readonly int _DepthOfFieldCoCTex = Shader.PropertyToID("_DepthOfFieldCoCTex");
-            internal static readonly int _Distance           = Shader.PropertyToID("_Distance");
-            internal static readonly int _LensCoeff          = Shader.PropertyToID("_LensCoeff");
-            internal static readonly int _MaxCoC             = Shader.PropertyToID("_MaxCoC");
-            internal static readonly int _RcpMaxCoC          = Shader.PropertyToID("_RcpMaxCoC");
-            internal static readonly int _RcpAspect          = Shader.PropertyToID("_RcpAspect");
-            internal static readonly int _MainTex            = Shader.PropertyToID("_MainTex");
-            internal static readonly int _CoCTex             = Shader.PropertyToID("_CoCTex");
-            internal static readonly int _TaaParams          = Shader.PropertyToID("_TaaParams");
+            internal static readonly int _Distance = Shader.PropertyToID("_Distance");
+            internal static readonly int _LensCoeff = Shader.PropertyToID("_LensCoeff");
+            internal static readonly int _MaxCoC = Shader.PropertyToID("_MaxCoC");
+            internal static readonly int _RcpMaxCoC = Shader.PropertyToID("_RcpMaxCoC");
+            internal static readonly int _RcpAspect = Shader.PropertyToID("_RcpAspect");
+            internal static readonly int _MainTex = Shader.PropertyToID("_MainTex");
+            internal static readonly int _CoCTex = Shader.PropertyToID("_CoCTex");
+            internal static readonly int _TaaParams = Shader.PropertyToID("_TaaParams");
             internal static readonly int _DepthOfFieldParams = Shader.PropertyToID("_DepthOfFieldParams");
         }
 
-        const string k_ShaderString = "Hidden/Post FX/Depth Of Field";
+        private const string k_ShaderString = "Hidden/Post FX/Depth Of Field";
 
         public override bool active
         {
@@ -37,12 +35,12 @@ namespace UnityEngine.PostProcessing
             return DepthTextureMode.Depth;
         }
 
-        RenderTexture m_CoCHistory;
+        private RenderTexture m_CoCHistory;
 
         // Height of the 35mm full-frame format (36mm x 24mm)
-        const float k_FilmHeight = 0.024f;
+        private const float k_FilmHeight = 0.024f;
 
-        float CalculateFocalLength()
+        private float CalculateFocalLength()
         {
             var settings = model.settings;
 
@@ -53,7 +51,7 @@ namespace UnityEngine.PostProcessing
             return 0.5f * k_FilmHeight / Mathf.Tan(0.5f * fov);
         }
 
-        float CalculateMaxCoCRadius(int screenHeight)
+        private float CalculateMaxCoCRadius(int screenHeight)
         {
             // Estimate the allowable maximum radius of CoC from the kernel
             // size (the equation below was empirically derived).
@@ -64,13 +62,13 @@ namespace UnityEngine.PostProcessing
             return Mathf.Min(0.05f, radiusInPixels / screenHeight);
         }
 
-        bool CheckHistory(int width, int height)
+        private bool CheckHistory(int width, int height)
         {
             return m_CoCHistory != null && m_CoCHistory.IsCreated() &&
                 m_CoCHistory.width == width && m_CoCHistory.height == height;
         }
 
-        RenderTextureFormat SelectFormat(RenderTextureFormat primary, RenderTextureFormat secondary)
+        private RenderTextureFormat SelectFormat(RenderTextureFormat primary, RenderTextureFormat secondary)
         {
             if (SystemInfo.SupportsRenderTextureFormat(primary)) return primary;
             if (SystemInfo.SupportsRenderTextureFormat(secondary)) return secondary;
@@ -84,10 +82,10 @@ namespace UnityEngine.PostProcessing
             var cocFormat = SelectFormat(RenderTextureFormat.R8, RenderTextureFormat.RHalf);
 
             // Avoid using R8 on OSX with Metal. #896121, https://goo.gl/MgKqu6
-            #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX) && !UNITY_2017_1_OR_NEWER
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX) && !UNITY_2017_1_OR_NEWER
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Metal)
                 cocFormat = SelectFormat(RenderTextureFormat.RHalf, RenderTextureFormat.Default);
-            #endif
+#endif
 
             // Material setup
             var f = CalculateFocalLength();

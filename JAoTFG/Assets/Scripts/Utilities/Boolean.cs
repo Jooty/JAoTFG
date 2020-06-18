@@ -2,7 +2,6 @@
 
 public class Boolean
 {
-    
     public static void SetBooleanRandom(ref bool value)
     {
         var r = Random.Range(1, 2);
@@ -28,5 +27,4 @@ public class Boolean
             return false;
         }
     }
-
 }

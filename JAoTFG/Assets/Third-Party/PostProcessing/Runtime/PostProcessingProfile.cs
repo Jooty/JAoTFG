@@ -4,7 +4,7 @@ namespace UnityEngine.PostProcessing
 {
     public class PostProcessingProfile : ScriptableObject
     {
-        #pragma warning disable 0169 // "field x is never used"
+#pragma warning disable 0169 // "field x is never used"
 
         public BuiltinDebugViewsModel debugViews = new BuiltinDebugViewsModel();
         public FogModel fog = new FogModel();
@@ -23,6 +23,7 @@ namespace UnityEngine.PostProcessing
         public DitheringModel dithering = new DitheringModel();
 
 #if UNITY_EDITOR
+
         // Monitor settings
         [Serializable]
         public class MonitorSettings
@@ -32,6 +33,7 @@ namespace UnityEngine.PostProcessing
 
             // Global
             public int currentMonitorID = 0;
+
             public bool refreshOnPlay = false;
 
             // Histogram
@@ -49,6 +51,7 @@ namespace UnityEngine.PostProcessing
 
             // Waveform
             public float waveformExposure = 0.12f;
+
             public bool waveformY = false;
             public bool waveformR = true;
             public bool waveformG = true;
@@ -59,6 +62,7 @@ namespace UnityEngine.PostProcessing
 
             // Vectorscope
             public float vectorscopeExposure = 0.12f;
+
             public bool vectorscopeShowBackground = true;
         }
 

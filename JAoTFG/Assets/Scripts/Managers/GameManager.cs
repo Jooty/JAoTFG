@@ -1,12 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
     // Singleton
     [HideInInspector] public static GameManager instance;
 
@@ -14,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     // Locals
     private SceneController sceneController;
+
     private AudioSource musicPlayer;
     private Animator anim;
 
@@ -62,5 +58,4 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
 }

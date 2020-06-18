@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class PlayerAnimator : CharacterAnimator
+﻿public class PlayerAnimator : CharacterAnimator
 {
-
     // locals
     private PlayerController playerController;
 
@@ -24,5 +18,4 @@ public class PlayerAnimator : CharacterAnimator
 
         base.Update();
     }
-
 }

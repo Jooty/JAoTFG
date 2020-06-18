@@ -18,7 +18,8 @@ namespace UnityEngine.PostProcessing
 #endif
         }
 
-        static Texture2D s_WhiteTexture;
+        private static Texture2D s_WhiteTexture;
+
         public static Texture2D whiteTexture
         {
             get
@@ -34,7 +35,8 @@ namespace UnityEngine.PostProcessing
             }
         }
 
-        static Mesh s_Quad;
+        private static Mesh s_Quad;
+
         public static Mesh quad
         {
             get

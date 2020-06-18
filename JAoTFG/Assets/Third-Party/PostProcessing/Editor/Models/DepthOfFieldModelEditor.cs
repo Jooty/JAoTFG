@@ -7,11 +7,11 @@ namespace UnityEditor.PostProcessing
     [PostProcessingModelEditor(typeof(DepthOfFieldModel))]
     public class DepthOfFieldModelEditor : PostProcessingModelEditor
     {
-        SerializedProperty m_FocusDistance;
-        SerializedProperty m_Aperture;
-        SerializedProperty m_FocalLength;
-        SerializedProperty m_UseCameraFov;
-        SerializedProperty m_KernelSize;
+        private SerializedProperty m_FocusDistance;
+        private SerializedProperty m_Aperture;
+        private SerializedProperty m_FocalLength;
+        private SerializedProperty m_UseCameraFov;
+        private SerializedProperty m_KernelSize;
 
         public override void OnEnable()
         {

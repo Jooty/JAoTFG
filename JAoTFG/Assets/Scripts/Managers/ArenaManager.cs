@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class ArenaManager : MonoBehaviour
 {
-
     [HideInInspector] public static ArenaManager instance;
 
     [SerializeField] private bool spawnPillars = true;
@@ -57,5 +53,4 @@ public class ArenaManager : MonoBehaviour
             return t;
         }
     }
-
 }

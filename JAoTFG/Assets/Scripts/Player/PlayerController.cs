@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerController : CharacterController
 {
-
     [Header("Maneuver Gear")]
     public bool hasManGear;
+
     public float gas;
     public float totalMaxGas;
     public float thrustPower;
@@ -49,7 +47,7 @@ public class PlayerController : CharacterController
     }
 
     private void Start()
-    { 
+    {
         cam = Camera.main;
         hooks = new List<HookController>();
         // TODO
@@ -84,7 +82,7 @@ public class PlayerController : CharacterController
         base.Update();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         Move();
     }
@@ -256,7 +254,7 @@ public class PlayerController : CharacterController
 
     private void ManueverGearUpdate()
     {
-        if (!hasManGear) return; 
+        if (!hasManGear) return;
 
         UpdateManeuverGearUI();
         UpdateTetherDistanceWhenFooted();
@@ -452,7 +450,7 @@ public class PlayerController : CharacterController
                 hooks.Add(hook);
 
                 hook.OnHookRecalled += Hook_OnHookRecalled;
-            } 
+            }
             else
             {
                 var hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation)
@@ -577,7 +575,7 @@ public class PlayerController : CharacterController
         return hooks.FirstOrDefault(x => x.side == side);
     }
 
-    #endregion
+    #endregion Maneuver Gear Methods
 
     private Vector3 GetNextFramePosition()
     {

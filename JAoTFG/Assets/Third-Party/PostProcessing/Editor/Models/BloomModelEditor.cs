@@ -8,7 +8,7 @@ namespace UnityEditor.PostProcessing
     [PostProcessingModelEditor(typeof(BloomModel))]
     public class BloomModelEditor : PostProcessingModelEditor
     {
-        struct BloomSettings
+        private struct BloomSettings
         {
             public SerializedProperty intensity;
             public SerializedProperty threshold;
@@ -17,14 +17,14 @@ namespace UnityEditor.PostProcessing
             public SerializedProperty antiFlicker;
         }
 
-        struct LensDirtSettings
+        private struct LensDirtSettings
         {
             public SerializedProperty texture;
             public SerializedProperty intensity;
         }
 
-        BloomSettings m_Bloom;
-        LensDirtSettings m_LensDirt;
+        private BloomSettings m_Bloom;
+        private LensDirtSettings m_LensDirt;
 
         public override void OnEnable()
         {
@@ -67,23 +67,24 @@ namespace UnityEditor.PostProcessing
 
         #region Graph
 
-        float m_GraphThreshold;
-        float m_GraphKnee;
-        float m_GraphIntensity;
+        private float m_GraphThreshold;
+        private float m_GraphKnee;
+        private float m_GraphIntensity;
 
         // Number of vertices in curve
-        const int k_CurveResolution = 48;
+        private const int k_CurveResolution = 48;
 
         // Vertex buffers
-        Vector3[] m_RectVertices = new Vector3[4];
-        Vector3[] m_LineVertices = new Vector3[2];
-        Vector3[] m_CurveVertices = new Vector3[k_CurveResolution];
+        private Vector3[] m_RectVertices = new Vector3[4];
 
-        Rect m_RectGraph;
-        float m_RangeX;
-        float m_RangeY;
+        private Vector3[] m_LineVertices = new Vector3[2];
+        private Vector3[] m_CurveVertices = new Vector3[k_CurveResolution];
 
-        float ResponseFunction(float x)
+        private Rect m_RectGraph;
+        private float m_RangeX;
+        private float m_RangeY;
+
+        private float ResponseFunction(float x)
         {
             var rq = Mathf.Clamp(x - m_GraphThreshold + m_GraphKnee, 0, m_GraphKnee * 2);
             rq = rq * rq * 0.25f / m_GraphKnee;
@@ -91,7 +92,7 @@ namespace UnityEditor.PostProcessing
         }
 
         // Transform a point into the graph rect
-        Vector3 PointInRect(float x, float y)
+        private Vector3 PointInRect(float x, float y)
         {
             x = Mathf.Lerp(m_RectGraph.x, m_RectGraph.xMax, x / m_RangeX);
             y = Mathf.Lerp(m_RectGraph.yMax, m_RectGraph.y, y / m_RangeY);
@@ -99,7 +100,7 @@ namespace UnityEditor.PostProcessing
         }
 
         // Draw a line in the graph rect
-        void DrawLine(float x1, float y1, float x2, float y2, float grayscale)
+        private void DrawLine(float x1, float y1, float x2, float y2, float grayscale)
         {
             m_LineVertices[0] = PointInRect(x1, y1);
             m_LineVertices[1] = PointInRect(x2, y2);
@@ -108,7 +109,7 @@ namespace UnityEditor.PostProcessing
         }
 
         // Draw a rect in the graph rect
-        void DrawRect(float x1, float y1, float x2, float y2, float fill, float line)
+        private void DrawRect(float x1, float y1, float x2, float y2, float fill, float line)
         {
             m_RectVertices[0] = PointInRect(x1, y1);
             m_RectVertices[1] = PointInRect(x2, y1);
@@ -199,6 +200,6 @@ namespace UnityEditor.PostProcessing
             }
         }
 
-        #endregion
+        #endregion Graph
     }
 }

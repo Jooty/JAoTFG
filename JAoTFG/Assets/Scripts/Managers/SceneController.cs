@@ -1,17 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System;
 using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(SceneController))]
 public class SceneController : MonoBehaviour
 {
-
     /// <summary>
-    /// This is only implemented for prototyping purposes. 
+    /// This is only implemented for prototyping purposes.
     /// Scenes load too quickly to effecively test this script.
     /// </summary>
     [Range(1, 10)] [SerializeField] private float loadingWaitTime = 3f;
@@ -108,7 +106,7 @@ public class SceneController : MonoBehaviour
         }
     }
 
-    IEnumerator beginLoading()
+    private IEnumerator beginLoading()
     {
         currentOperation = SceneManager.LoadSceneAsync(currentlyLoading);
         currentOperation.allowSceneActivation = false;
@@ -176,5 +174,4 @@ public class SceneController : MonoBehaviour
 
         return quotes.ToArray();
     }
-
 }

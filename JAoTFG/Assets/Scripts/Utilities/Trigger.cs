@@ -1,14 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-/// <summary>
+﻿/// <summary>
 /// A boolean that stays true until grabbed, then turns false until set again.
 /// </summary>
 public class Trigger : Boolean
 {
-
     public bool _trigger;
+
     public bool Value
     {
         get
@@ -24,5 +20,4 @@ public class Trigger : Boolean
     {
         Value = true;
     }
-
 }

@@ -3,21 +3,21 @@ using UnityEngine.PostProcessing;
 
 namespace UnityEditor.PostProcessing
 {
-    using VignetteMode = VignetteModel.Mode;
     using Settings = VignetteModel.Settings;
+    using VignetteMode = VignetteModel.Mode;
 
     [PostProcessingModelEditor(typeof(VignetteModel))]
     public class VignetteModelEditor : PostProcessingModelEditor
     {
-        SerializedProperty m_Mode;
-        SerializedProperty m_Color;
-        SerializedProperty m_Center;
-        SerializedProperty m_Intensity;
-        SerializedProperty m_Smoothness;
-        SerializedProperty m_Roundness;
-        SerializedProperty m_Mask;
-        SerializedProperty m_Opacity;
-        SerializedProperty m_Rounded;
+        private SerializedProperty m_Mode;
+        private SerializedProperty m_Color;
+        private SerializedProperty m_Center;
+        private SerializedProperty m_Intensity;
+        private SerializedProperty m_Smoothness;
+        private SerializedProperty m_Roundness;
+        private SerializedProperty m_Mask;
+        private SerializedProperty m_Opacity;
+        private SerializedProperty m_Rounded;
 
         public override void OnEnable()
         {
@@ -96,7 +96,7 @@ namespace UnityEditor.PostProcessing
             }
         }
 
-        void SetMaskImportSettings(TextureImporter importer)
+        private void SetMaskImportSettings(TextureImporter importer)
         {
 #if UNITY_5_5_OR_NEWER
             importer.textureType = TextureImporterType.SingleChannel;

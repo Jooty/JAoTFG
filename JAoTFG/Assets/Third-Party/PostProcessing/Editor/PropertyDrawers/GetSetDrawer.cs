@@ -4,7 +4,7 @@ using UnityEngine.PostProcessing;
 namespace UnityEditor.PostProcessing
 {
     [CustomPropertyDrawer(typeof(GetSetAttribute))]
-    sealed class GetSetDrawer : PropertyDrawer
+    internal sealed class GetSetDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

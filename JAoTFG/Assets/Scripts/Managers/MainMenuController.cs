@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
-
     [SerializeField] private Slider master, sfx, music;
 
     private void Start()
@@ -40,5 +36,4 @@ public class MainMenuController : MonoBehaviour
     {
         AudioSettings.SetMusicVolume(music.value);
     }
-
 }

@@ -6,40 +6,40 @@ namespace UnityEngine.PostProcessing
 
     public sealed class MotionBlurComponent : PostProcessingComponentCommandBuffer<MotionBlurModel>
     {
-        static class Uniforms
+        private static class Uniforms
         {
-            internal static readonly int _VelocityScale     = Shader.PropertyToID("_VelocityScale");
-            internal static readonly int _MaxBlurRadius     = Shader.PropertyToID("_MaxBlurRadius");
-            internal static readonly int _RcpMaxBlurRadius  = Shader.PropertyToID("_RcpMaxBlurRadius");
-            internal static readonly int _VelocityTex       = Shader.PropertyToID("_VelocityTex");
-            internal static readonly int _MainTex           = Shader.PropertyToID("_MainTex");
-            internal static readonly int _Tile2RT           = Shader.PropertyToID("_Tile2RT");
-            internal static readonly int _Tile4RT           = Shader.PropertyToID("_Tile4RT");
-            internal static readonly int _Tile8RT           = Shader.PropertyToID("_Tile8RT");
-            internal static readonly int _TileMaxOffs       = Shader.PropertyToID("_TileMaxOffs");
-            internal static readonly int _TileMaxLoop       = Shader.PropertyToID("_TileMaxLoop");
-            internal static readonly int _TileVRT           = Shader.PropertyToID("_TileVRT");
-            internal static readonly int _NeighborMaxTex    = Shader.PropertyToID("_NeighborMaxTex");
-            internal static readonly int _LoopCount         = Shader.PropertyToID("_LoopCount");
-            internal static readonly int _TempRT            = Shader.PropertyToID("_TempRT");
+            internal static readonly int _VelocityScale = Shader.PropertyToID("_VelocityScale");
+            internal static readonly int _MaxBlurRadius = Shader.PropertyToID("_MaxBlurRadius");
+            internal static readonly int _RcpMaxBlurRadius = Shader.PropertyToID("_RcpMaxBlurRadius");
+            internal static readonly int _VelocityTex = Shader.PropertyToID("_VelocityTex");
+            internal static readonly int _MainTex = Shader.PropertyToID("_MainTex");
+            internal static readonly int _Tile2RT = Shader.PropertyToID("_Tile2RT");
+            internal static readonly int _Tile4RT = Shader.PropertyToID("_Tile4RT");
+            internal static readonly int _Tile8RT = Shader.PropertyToID("_Tile8RT");
+            internal static readonly int _TileMaxOffs = Shader.PropertyToID("_TileMaxOffs");
+            internal static readonly int _TileMaxLoop = Shader.PropertyToID("_TileMaxLoop");
+            internal static readonly int _TileVRT = Shader.PropertyToID("_TileVRT");
+            internal static readonly int _NeighborMaxTex = Shader.PropertyToID("_NeighborMaxTex");
+            internal static readonly int _LoopCount = Shader.PropertyToID("_LoopCount");
+            internal static readonly int _TempRT = Shader.PropertyToID("_TempRT");
 
-            internal static readonly int _History1LumaTex   = Shader.PropertyToID("_History1LumaTex");
-            internal static readonly int _History2LumaTex   = Shader.PropertyToID("_History2LumaTex");
-            internal static readonly int _History3LumaTex   = Shader.PropertyToID("_History3LumaTex");
-            internal static readonly int _History4LumaTex   = Shader.PropertyToID("_History4LumaTex");
+            internal static readonly int _History1LumaTex = Shader.PropertyToID("_History1LumaTex");
+            internal static readonly int _History2LumaTex = Shader.PropertyToID("_History2LumaTex");
+            internal static readonly int _History3LumaTex = Shader.PropertyToID("_History3LumaTex");
+            internal static readonly int _History4LumaTex = Shader.PropertyToID("_History4LumaTex");
 
             internal static readonly int _History1ChromaTex = Shader.PropertyToID("_History1ChromaTex");
             internal static readonly int _History2ChromaTex = Shader.PropertyToID("_History2ChromaTex");
             internal static readonly int _History3ChromaTex = Shader.PropertyToID("_History3ChromaTex");
             internal static readonly int _History4ChromaTex = Shader.PropertyToID("_History4ChromaTex");
 
-            internal static readonly int _History1Weight    = Shader.PropertyToID("_History1Weight");
-            internal static readonly int _History2Weight    = Shader.PropertyToID("_History2Weight");
-            internal static readonly int _History3Weight    = Shader.PropertyToID("_History3Weight");
-            internal static readonly int _History4Weight    = Shader.PropertyToID("_History4Weight");
+            internal static readonly int _History1Weight = Shader.PropertyToID("_History1Weight");
+            internal static readonly int _History2Weight = Shader.PropertyToID("_History2Weight");
+            internal static readonly int _History3Weight = Shader.PropertyToID("_History3Weight");
+            internal static readonly int _History4Weight = Shader.PropertyToID("_History4Weight");
         }
 
-        enum Pass
+        private enum Pass
         {
             VelocitySetup,
             TileMax1,
@@ -55,17 +55,17 @@ namespace UnityEngine.PostProcessing
         public class ReconstructionFilter
         {
             // Texture format for storing 2D vectors.
-            RenderTextureFormat m_VectorRTFormat = RenderTextureFormat.RGHalf;
+            private RenderTextureFormat m_VectorRTFormat = RenderTextureFormat.RGHalf;
 
             // Texture format for storing packed velocity/depth.
-            RenderTextureFormat m_PackedRTFormat = RenderTextureFormat.ARGB2101010;
+            private RenderTextureFormat m_PackedRTFormat = RenderTextureFormat.ARGB2101010;
 
             public ReconstructionFilter()
             {
                 CheckTextureFormatSupport();
             }
 
-            void CheckTextureFormatSupport()
+            private void CheckTextureFormatSupport()
             {
                 // If 2:10:10:10 isn't supported, use ARGB32 instead.
                 if (!SystemInfo.SupportsRenderTextureFormat(m_PackedRTFormat))
@@ -151,13 +151,13 @@ namespace UnityEngine.PostProcessing
 
         public class FrameBlendingFilter
         {
-            struct Frame
+            private struct Frame
             {
                 public RenderTexture lumaTexture;
                 public RenderTexture chromaTexture;
 
-                float m_Time;
-                RenderTargetIdentifier[] m_MRT;
+                private float m_Time;
+                private RenderTargetIdentifier[] m_MRT;
 
                 public float CalculateWeight(float strength, float currentTime)
                 {
@@ -217,11 +217,11 @@ namespace UnityEngine.PostProcessing
                 }
             }
 
-            bool m_UseCompression;
-            RenderTextureFormat m_RawTextureFormat;
+            private bool m_UseCompression;
+            private RenderTextureFormat m_RawTextureFormat;
 
-            Frame[] m_FrameList;
-            int m_LastFrameCount;
+            private Frame[] m_FrameList;
+            private int m_LastFrameCount;
 
             public FrameBlendingFilter()
             {
@@ -282,7 +282,7 @@ namespace UnityEngine.PostProcessing
             }
 
             // Check if the platform has the capability of compression.
-            static bool CheckSupportCompression()
+            private static bool CheckSupportCompression()
             {
                 return
                     SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8) &&
@@ -290,7 +290,7 @@ namespace UnityEngine.PostProcessing
             }
 
             // Determine which 16-bit render texture format is available.
-            static RenderTextureFormat GetPreferredRenderTextureFormat()
+            private static RenderTextureFormat GetPreferredRenderTextureFormat()
             {
                 RenderTextureFormat[] formats =
                 {
@@ -307,14 +307,15 @@ namespace UnityEngine.PostProcessing
 
             // Retrieve a frame record with relative indexing.
             // Use a negative index to refer to previous frames.
-            Frame GetFrameRelative(int offset)
+            private Frame GetFrameRelative(int offset)
             {
                 var index = (Time.frameCount + m_FrameList.Length + offset) % m_FrameList.Length;
                 return m_FrameList[index];
             }
         }
 
-        ReconstructionFilter m_ReconstructionFilter;
+        private ReconstructionFilter m_ReconstructionFilter;
+
         public ReconstructionFilter reconstructionFilter
         {
             get
@@ -326,7 +327,8 @@ namespace UnityEngine.PostProcessing
             }
         }
 
-        FrameBlendingFilter m_FrameBlendingFilter;
+        private FrameBlendingFilter m_FrameBlendingFilter;
+
         public FrameBlendingFilter frameBlendingFilter
         {
             get
@@ -338,7 +340,7 @@ namespace UnityEngine.PostProcessing
             }
         }
 
-        bool m_FirstFrame = true;
+        private bool m_FirstFrame = true;
 
         public override bool active
         {

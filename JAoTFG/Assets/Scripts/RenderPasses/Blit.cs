@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using UnityEngine.Serialization;
-
 namespace UnityEngine.Rendering.LWRP
 {
     public class Blit : UnityEngine.Rendering.Universal.ScriptableRendererFeature
@@ -9,13 +6,13 @@ namespace UnityEngine.Rendering.LWRP
         public class BlitSettings
         {
             public UnityEngine.Rendering.Universal.RenderPassEvent Event = UnityEngine.Rendering.Universal.RenderPassEvent.AfterRenderingOpaques;
-            
+
             public Material blitMaterial = null;
             public int blitMaterialPassIndex = -1;
             public Target destination = Target.Color;
             public string textureId = "_BlitPassTexture";
         }
-        
+
         public enum Target
         {
             Color,
@@ -23,9 +20,9 @@ namespace UnityEngine.Rendering.LWRP
         }
 
         public BlitSettings settings = new BlitSettings();
-        UnityEngine.Rendering.Universal.RenderTargetHandle m_RenderTextureHandle;
+        private UnityEngine.Rendering.Universal.RenderTargetHandle m_RenderTextureHandle;
 
-        BlitPass blitPass;
+        private BlitPass blitPass;
 
         public override void Create()
         {
@@ -51,4 +48,3 @@ namespace UnityEngine.Rendering.LWRP
         }
     }
 }
-

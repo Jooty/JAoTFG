@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class ThirdPersonCamera : MonoBehaviour {
-
+public class ThirdPersonCamera : MonoBehaviour
+{
     public bool lockCursor;
     public float mouseSensitivity = 10;
     public Transform target;
@@ -11,13 +10,13 @@ public class ThirdPersonCamera : MonoBehaviour {
     public Vector2 pitchMinMax = new Vector2(-40, 85);
 
     public float rotationSmoothTime = .12f;
-    Vector3 rotationSmoothVelocity;
-    Vector3 currentRotation;
+    private Vector3 rotationSmoothVelocity;
+    private Vector3 currentRotation;
 
     public bool DoRotate = true;
 
-    float yaw;
-    float pitch;
+    private float yaw;
+    private float pitch;
 
     private Rigidbody player;
 
@@ -56,9 +55,9 @@ public class ThirdPersonCamera : MonoBehaviour {
         // Do camera effects
         var fovtarget = Common.GetFloatByRelativePercent(
             GameVariables.FIELD_OF_VIEW,
-            GameVariables.FIELD_OF_VIEW * 1.2f, 
-            0, 
-            GameVariables.HERO_MAX_SPEED, 
+            GameVariables.FIELD_OF_VIEW * 1.2f,
+            0,
+            GameVariables.HERO_MAX_SPEED,
             player.velocity.magnitude);
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fovtarget, .3f);
     }
@@ -82,5 +81,4 @@ public class ThirdPersonCamera : MonoBehaviour {
         transform.rotation = rot;
         transform.position = pos;
     }
-
 }

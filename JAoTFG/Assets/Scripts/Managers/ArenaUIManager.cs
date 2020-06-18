@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class ArenaUIManager : MonoBehaviour
 {
-
     [SerializeField] private TextMeshProUGUI text;
 
     // locals
@@ -26,5 +22,4 @@ public class ArenaUIManager : MonoBehaviour
     {
         // text.text = $"Wave: {arena.currentWave + 1} | Titans Alive: {arena.titansAlive.Count}";
     }
-
 }

@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharacterBody : MonoBehaviour
 {
-
     [HideInInspector] public Collider Collider;
 
     private CharacterController controller;
@@ -23,5 +20,4 @@ public class CharacterBody : MonoBehaviour
     {
         controller.ColliderEvent(coll);
     }
-
 }

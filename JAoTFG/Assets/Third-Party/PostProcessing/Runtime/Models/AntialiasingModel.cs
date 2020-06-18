@@ -15,6 +15,7 @@ namespace UnityEngine.PostProcessing
         // the tooltip attributes in case an user wants to customize each preset.
 
         #region FXAA Settings
+
         public enum FxaaPreset
         {
             ExtremePerformance,
@@ -167,9 +168,11 @@ namespace UnityEngine.PostProcessing
                 }
             }
         }
-        #endregion
+
+        #endregion FXAA Settings
 
         #region TAA Settings
+
         [Serializable]
         public struct TaaSettings
         {
@@ -203,7 +206,8 @@ namespace UnityEngine.PostProcessing
                 }
             }
         }
-        #endregion
+
+        #endregion TAA Settings
 
         [Serializable]
         public struct Settings
@@ -227,7 +231,8 @@ namespace UnityEngine.PostProcessing
         }
 
         [SerializeField]
-        Settings m_Settings = Settings.defaultSettings;
+        private Settings m_Settings = Settings.defaultSettings;
+
         public Settings settings
         {
             get { return m_Settings; }

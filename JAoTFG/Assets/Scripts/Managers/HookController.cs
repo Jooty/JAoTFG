@@ -9,9 +9,11 @@ public class HookController : MonoBehaviour
     public HookSide side;
 
     public event EventHandler OnHookAttached;
+
     public event EventHandler OnHookRecalled;
 
     public enum DrawType { ghostLine, realLine }
+
     [Header("Gizmos")]
     public DrawType drawType = DrawType.ghostLine;
 
@@ -30,6 +32,7 @@ public class HookController : MonoBehaviour
 
     // locals
     private LineRenderer lineRenderer;
+
     private CurvedLineRenderer curvedLineRenderer;
 
     private void Awake()
@@ -107,7 +110,7 @@ public class HookController : MonoBehaviour
         ghostLinePositions = new Vector3[visualizerSpawnPoints.Length];
         for (int i = 0; i < visualizerSpawnPoints.Count(); i++)
         {
-            ghostLinePositions[ghostLinePositions.Length - 1 - i] 
+            ghostLinePositions[ghostLinePositions.Length - 1 - i]
                 = linePositions[0] + (lineDir.normalized * lineDir.magnitude * (1 - Mathf.Clamp01((float)i / (float)visualizerSpawnPoints.Count())));
         }
 

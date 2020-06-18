@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.PostProcessing;
 
 namespace UnityEditor.PostProcessing
@@ -8,17 +7,17 @@ namespace UnityEditor.PostProcessing
     [PostProcessingModelEditor(typeof(EyeAdaptationModel))]
     public class EyeAdaptationModelEditor : PostProcessingModelEditor
     {
-        SerializedProperty m_LowPercent;
-        SerializedProperty m_HighPercent;
-        SerializedProperty m_MinLuminance;
-        SerializedProperty m_MaxLuminance;
-        SerializedProperty m_KeyValue;
-        SerializedProperty m_DynamicKeyValue;
-        SerializedProperty m_AdaptationType;
-        SerializedProperty m_SpeedUp;
-        SerializedProperty m_SpeedDown;
-        SerializedProperty m_LogMin;
-        SerializedProperty m_LogMax;
+        private SerializedProperty m_LowPercent;
+        private SerializedProperty m_HighPercent;
+        private SerializedProperty m_MinLuminance;
+        private SerializedProperty m_MaxLuminance;
+        private SerializedProperty m_KeyValue;
+        private SerializedProperty m_DynamicKeyValue;
+        private SerializedProperty m_AdaptationType;
+        private SerializedProperty m_SpeedUp;
+        private SerializedProperty m_SpeedDown;
+        private SerializedProperty m_LogMin;
+        private SerializedProperty m_LogMax;
 
         public override void OnEnable()
         {

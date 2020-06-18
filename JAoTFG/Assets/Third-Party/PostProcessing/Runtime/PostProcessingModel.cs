@@ -6,7 +6,8 @@ namespace UnityEngine.PostProcessing
     public abstract class PostProcessingModel
     {
         [SerializeField, GetSet("enabled")]
-        bool m_Enabled;
+        private bool m_Enabled;
+
         public bool enabled
         {
             get { return m_Enabled; }
@@ -22,6 +23,6 @@ namespace UnityEngine.PostProcessing
         public abstract void Reset();
 
         public virtual void OnValidate()
-        {}
+        { }
     }
 }

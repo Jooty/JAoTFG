@@ -6,13 +6,13 @@ namespace UnityEditor.PostProcessing
 {
     public class VectorscopeMonitor : PostProcessingMonitor
     {
-        static GUIContent s_MonitorTitle = new GUIContent("Vectorscope");
+        private static GUIContent s_MonitorTitle = new GUIContent("Vectorscope");
 
-        ComputeShader m_ComputeShader;
-        ComputeBuffer m_Buffer;
-        Material m_Material;
-        RenderTexture m_VectorscopeTexture;
-        Rect m_MonitorAreaRect;
+        private ComputeShader m_ComputeShader;
+        private ComputeBuffer m_Buffer;
+        private Material m_Material;
+        private RenderTexture m_VectorscopeTexture;
+        private Rect m_MonitorAreaRect;
 
         public VectorscopeMonitor()
         {
@@ -189,12 +189,12 @@ namespace UnityEditor.PostProcessing
             RenderTexture.ReleaseTemporary(rt);
         }
 
-        void CreateBuffer(int width, int height)
+        private void CreateBuffer(int width, int height)
         {
             m_Buffer = new ComputeBuffer(width * height, sizeof(uint));
         }
 
-        void ComputeVectorscope(RenderTexture source)
+        private void ComputeVectorscope(RenderTexture source)
         {
             if (m_Buffer == null)
             {

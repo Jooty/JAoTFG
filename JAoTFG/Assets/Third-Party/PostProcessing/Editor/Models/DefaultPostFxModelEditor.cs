@@ -4,7 +4,7 @@ namespace UnityEditor.PostProcessing
 {
     public class DefaultPostFxModelEditor : PostProcessingModelEditor
     {
-        List<SerializedProperty> m_Properties = new List<SerializedProperty>();
+        private List<SerializedProperty> m_Properties = new List<SerializedProperty>();
 
         public override void OnEnable()
         {

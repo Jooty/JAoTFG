@@ -6,17 +6,17 @@ using UnityEngine.PostProcessing;
 namespace UnityEditor.PostProcessing
 {
     [CustomPropertyDrawer(typeof(TrackballGroupAttribute))]
-    sealed class TrackballGroupDrawer : PropertyDrawer
+    internal sealed class TrackballGroupDrawer : PropertyDrawer
     {
-        static Material s_Material;
+        private static Material s_Material;
 
-        const int k_MinWheelSize = 80;
-        const int k_MaxWheelSize = 256;
+        private const int k_MinWheelSize = 80;
+        private const int k_MaxWheelSize = 256;
 
-        bool m_ResetState;
+        private bool m_ResetState;
 
         // Cached trackball computation methods (for speed reasons)
-        static Dictionary<string, MethodInfo> m_TrackballMethods = new Dictionary<string, MethodInfo>();
+        private static Dictionary<string, MethodInfo> m_TrackballMethods = new Dictionary<string, MethodInfo>();
 
         internal static int m_Size
         {
@@ -49,7 +49,7 @@ namespace UnityEditor.PostProcessing
             }
         }
 
-        void OnWheelGUI(Rect position, int size, SerializedProperty property)
+        private void OnWheelGUI(Rect position, int size, SerializedProperty property)
         {
             if (Event.current.type == EventType.Layout)
                 return;
@@ -154,7 +154,7 @@ namespace UnityEditor.PostProcessing
             property.colorValue = value;
         }
 
-        bool TryGetDisplayValue(Color color, SerializedProperty property, out Vector3 output)
+        private bool TryGetDisplayValue(Color color, SerializedProperty property, out Vector3 output)
         {
             output = Vector3.zero;
             MethodInfo method;
@@ -179,9 +179,9 @@ namespace UnityEditor.PostProcessing
             return true;
         }
 
-        static readonly int k_ThumbHash = "colorWheelThumb".GetHashCode();
+        private static readonly int k_ThumbHash = "colorWheelThumb".GetHashCode();
 
-        Vector3 GetInput(Rect bounds, Vector3 hsv, float radius)
+        private Vector3 GetInput(Rect bounds, Vector3 hsv, float radius)
         {
             var e = Event.current;
             var id = GUIUtility.GetControlID(k_ThumbHash, FocusType.Passive, bounds);
@@ -226,7 +226,7 @@ namespace UnityEditor.PostProcessing
             return hsv;
         }
 
-        void GetWheelHueSaturation(float x, float y, float radius, out float hue, out float saturation)
+        private void GetWheelHueSaturation(float x, float y, float radius, out float hue, out float saturation)
         {
             float dx = (x - radius) / radius;
             float dy = (y - radius) / radius;

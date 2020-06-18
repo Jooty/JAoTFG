@@ -10,7 +10,7 @@
         }
 
         public FullScreenQuadSettings m_Settings;
-        FullScreenQuadPass m_RenderQuadPass;
+        private FullScreenQuadPass m_RenderQuadPass;
 
         public override void Create()
         {

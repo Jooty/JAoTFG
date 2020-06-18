@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class Common
 {
-
     /// <summary>
     /// Checks if an object exists.
     /// </summary>
@@ -28,7 +24,7 @@ public static class Common
     }
 
     /// <summary>
-    /// Returns the difference between firstMin and firstMax 
+    /// Returns the difference between firstMin and firstMax
     /// relative to the difference between secMin and secMax, based of the dependant.
     /// </summary>
     /// <param name="firstMin">The minimum number for the first set of numbers.</param>
@@ -64,5 +60,4 @@ public static class Common
         }
         return null; // Could not find a parent with given tag.
     }
-
 }

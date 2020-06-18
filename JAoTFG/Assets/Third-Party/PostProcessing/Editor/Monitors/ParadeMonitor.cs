@@ -6,13 +6,13 @@ namespace UnityEditor.PostProcessing
 {
     public class ParadeMonitor : PostProcessingMonitor
     {
-        static GUIContent s_MonitorTitle = new GUIContent("Parade");
+        private static GUIContent s_MonitorTitle = new GUIContent("Parade");
 
-        ComputeShader m_ComputeShader;
-        ComputeBuffer m_Buffer;
-        Material m_Material;
-        RenderTexture m_WaveformTexture;
-        Rect m_MonitorAreaRect;
+        private ComputeShader m_ComputeShader;
+        private ComputeBuffer m_Buffer;
+        private Material m_Material;
+        private RenderTexture m_WaveformTexture;
+        private Rect m_MonitorAreaRect;
 
         public ParadeMonitor()
         {
@@ -201,12 +201,12 @@ namespace UnityEditor.PostProcessing
             RenderTexture.ReleaseTemporary(rt);
         }
 
-        void CreateBuffer(int width, int height)
+        private void CreateBuffer(int width, int height)
         {
             m_Buffer = new ComputeBuffer(width * height, sizeof(uint) << 2);
         }
 
-        void ComputeWaveform(RenderTexture source)
+        private void ComputeWaveform(RenderTexture source)
         {
             if (m_Buffer == null)
             {

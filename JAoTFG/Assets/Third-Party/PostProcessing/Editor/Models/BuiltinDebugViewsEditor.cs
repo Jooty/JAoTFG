@@ -8,12 +8,12 @@ namespace UnityEditor.PostProcessing
     [PostProcessingModelEditor(typeof(BuiltinDebugViewsModel), alwaysEnabled: true)]
     public class BuiltinDebugViewsEditor : PostProcessingModelEditor
     {
-        struct DepthSettings
+        private struct DepthSettings
         {
             public SerializedProperty scale;
         }
 
-        struct MotionVectorsSettings
+        private struct MotionVectorsSettings
         {
             public SerializedProperty sourceOpacity;
             public SerializedProperty motionImageOpacity;
@@ -23,9 +23,9 @@ namespace UnityEditor.PostProcessing
             public SerializedProperty motionVectorsAmplitude;
         }
 
-        SerializedProperty m_Mode;
-        DepthSettings m_Depth;
-        MotionVectorsSettings m_MotionVectors;
+        private SerializedProperty m_Mode;
+        private DepthSettings m_Depth;
+        private MotionVectorsSettings m_MotionVectors;
 
         public override void OnEnable()
         {
@@ -97,7 +97,7 @@ namespace UnityEditor.PostProcessing
             }
         }
 
-        void CheckActiveEffect(bool expr, string name)
+        private void CheckActiveEffect(bool expr, string name)
         {
             if (expr)
                 EditorGUILayout.HelpBox(string.Format("{0} isn't enabled, the debug view won't work.", name), MessageType.Warning);

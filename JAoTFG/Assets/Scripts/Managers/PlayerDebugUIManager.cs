@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using TMPro;
 using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 
 public class PlayerDebugUIManager : MonoBehaviour
 {
-
     public TextMeshProUGUI debugtext;
 
     private PlayerController player;
@@ -35,5 +31,4 @@ public class PlayerDebugUIManager : MonoBehaviour
             $"velocity: {player.currentSpeed}\n" +
             $"using gear: {player.usingManGear}";
     }
-
 }

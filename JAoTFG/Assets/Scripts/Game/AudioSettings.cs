@@ -2,7 +2,6 @@
 
 public static class AudioSettings
 {
-
     public static float Master { get; private set; }
     public static float SFX { get; private set; }
     public static float Music { get; private set; }
@@ -31,5 +30,4 @@ public static class AudioSettings
         Music = newV;
         PlayerPrefs.SetFloat("AUDIO-Music", newV);
     }
-
 }
