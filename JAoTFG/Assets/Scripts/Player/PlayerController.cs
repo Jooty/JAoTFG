@@ -76,7 +76,7 @@ public class PlayerController : CharacterController
         {
             AirRotate();
         }
-        else if (base.IsGrounded() && base.speed > 15)
+        else if (base.IsGrounded() && base.currentSpeed > 15)
         {
             DoSliding();
         }
@@ -147,18 +147,18 @@ public class PlayerController : CharacterController
         {
             if (usingManGear)
             {
-                if (base.speed < 15)
+                if (base.currentSpeed < 15)
                 {
                     Land();
                 }
-                else if (base.speed > 15 && hooks.Count == 0) // sliding on ground
+                else if (base.currentSpeed > 15 && hooks.Count == 0) // sliding on ground
                 {
                     base.rigid.drag = .4f;
                 }
             }
             else
             {
-                if (!base.jumpedThisFrame && base.speed < 15f)
+                if (!base.jumpedThisFrame && base.currentSpeed < 15f)
                 {
                     Land();
                 }
@@ -244,11 +244,11 @@ public class PlayerController : CharacterController
 
         if (moveInput == Vector3.zero)
         {
-            base.coll.material = mfriction;
+            base.Collider.material = mfriction;
         }
         else
         {
-            base.coll.material = zfriction;
+            base.Collider.material = zfriction;
         }
     }
 

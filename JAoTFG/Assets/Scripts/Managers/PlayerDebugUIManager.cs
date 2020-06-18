@@ -32,7 +32,7 @@ public class PlayerDebugUIManager : MonoBehaviour
             $"iswaitingtoland: {player.isWaitingToLand}\n" +
             $"canjump: {player.canJump}\n" +
             $"issliding: {player.isSliding}\n" +
-            $"velocity: {player.speed}\n" +
+            $"velocity: {player.currentSpeed}\n" +
             $"using gear: {player.usingManGear}";
     }
 

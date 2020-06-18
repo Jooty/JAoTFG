@@ -5,7 +5,14 @@ using UnityEngine;
 public class CharacterBody : MonoBehaviour
 {
 
+    [HideInInspector] public Collider Collider;
+
     private CharacterController controller;
+
+    private void Awake()
+    {
+        this.Collider = GetComponent<Collider>();
+    }
 
     private void Start()
     {

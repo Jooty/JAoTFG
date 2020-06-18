@@ -12,12 +12,12 @@ public abstract class CharacterController : MonoBehaviour
     [SerializeField] protected float jumpPower = 5;
     [SerializeField] protected bool canDoubleJump;
 
-    public float speed;
+    public float currentSpeed;
 
-    public bool canJump;
-    public bool jumpedThisFrame;
-    public bool doubleJumpedThisFrame;
-    public bool isWaitingToLand;
+    [HideInInspector] public bool canJump;
+    [HideInInspector] public bool jumpedThisFrame;
+    [HideInInspector] public bool doubleJumpedThisFrame;
+    [HideInInspector] public bool isWaitingToLand;
 
     public event EventHandler OnJump;
     public event EventHandler OnMove;
@@ -27,17 +27,21 @@ public abstract class CharacterController : MonoBehaviour
     public event EventHandler OnLand;
 
     // locals
-    [SerializeField] protected CapsuleCollider coll;
+    protected CharacterBody characterBody;
+    protected Collider Collider;
     protected Rigidbody rigid;
 
     protected void Awake()
     {
         this.rigid = GetComponent<Rigidbody>();
+
+        characterBody = GetComponentInChildren<CharacterBody>();
+        Collider = characterBody.GetComponent<Collider>();
     }
 
     protected void Update()
     {
-        speed = rigid.velocity.magnitude;
+        currentSpeed = rigid.velocity.magnitude;
 
         EnforceMaxSpeed();
     }
@@ -93,7 +97,7 @@ public abstract class CharacterController : MonoBehaviour
     {
         if (IsGrounded() && isWaitingToLand)
         {
-            if (!jumpedThisFrame && speed < 11f)
+            if (!jumpedThisFrame && currentSpeed < 11f)
             {
                 Land();
             }
