@@ -106,7 +106,7 @@ public class HookController : MonoBehaviour
         // move all points at once evenly
         for (int i = 1; i < linePositions.Length; i++)
         {
-            linePositions[i] = Vector3.MoveTowards(linePositions[i], ghostLinePositions[i - 1], Time.deltaTime * 75);
+            linePositions[i] = Vector3.MoveTowards(linePositions[i], ghostLinePositions[i - 1], Time.deltaTime * 95);
         }
 
         linePositions[0] = startPos;
@@ -118,7 +118,7 @@ public class HookController : MonoBehaviour
 
         for (int i = 0; i < linePositions.Length; i++)
         {
-            float speed = 50 * Time.deltaTime;
+            float speed = 100 * Time.deltaTime;
             linePositions[i] = Vector3.MoveTowards(linePositions[i], spawn.position, speed);
         }
     }
