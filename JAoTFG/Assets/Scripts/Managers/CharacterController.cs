@@ -14,11 +14,14 @@ public abstract class CharacterController : MonoBehaviour
 
     public float currentSpeed;
 
+    // temp bools
+    [HideInInspector] protected bool canMove;
     [HideInInspector] public bool canJump;
     [HideInInspector] public bool jumpedThisFrame;
     [HideInInspector] public bool doubleJumpedThisFrame;
     [HideInInspector] public bool isWaitingToLand;
 
+    // events
     public event EventHandler OnJump;
     public event EventHandler OnMove;
     public event EventHandler OnMove_AI;
@@ -34,9 +37,10 @@ public abstract class CharacterController : MonoBehaviour
     protected void Awake()
     {
         this.rigid = GetComponent<Rigidbody>();
+        this.characterBody = GetComponentInChildren<CharacterBody>();
+        this.Collider = characterBody.GetComponent<Collider>();
 
-        characterBody = GetComponentInChildren<CharacterBody>();
-        Collider = characterBody.GetComponent<Collider>();
+        canMove = true;
     }
 
     protected void Update()
@@ -48,11 +52,15 @@ public abstract class CharacterController : MonoBehaviour
 
     public virtual void Move()
     {
+        if (!canMove) return;
+
         OnMove?.Invoke(this, EventArgs.Empty);
     }
 
     public virtual void Move_AI()
     {
+        if (!canMove) return;
+
         OnMove_AI?.Invoke(this, EventArgs.Empty);
     }
 
