@@ -12,9 +12,10 @@ public class PlayerController : CharacterController
     public float totalMaxGas;
     public float thrustPower;
 
-    [SerializeField] public GameObject hookUI;
-    [SerializeField] public ParticleSystem thrustSmoke;
-    [SerializeField] public ParticleSystem hookSmoke;
+    public GameObject hookUI;
+    public ParticleSystem thrustSmoke;
+    public ParticleSystem hookSmoke_Left;
+    public ParticleSystem hookSmoke_Right;
 
     [HideInInspector] public bool isThrusting;
 
@@ -449,6 +450,8 @@ public class PlayerController : CharacterController
                 hook.InitateHook(HookSide.left, this, hookPoints[0].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Left);
                 hooks.Add(hook);
 
+                hookSmoke_Left.Play();
+
                 hook.OnHookRecalled += Hook_OnHookRecalled;
             }
             else
@@ -459,6 +462,8 @@ public class PlayerController : CharacterController
                 hook.transform.position = hookPoints[1].transform.position;
                 hook.InitateHook(HookSide.right, this, hookPoints[1].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Right);
                 hooks.Add(hook);
+
+                hookSmoke_Right.Play();
 
                 hook.OnHookRecalled += Hook_OnHookRecalled;
             }
