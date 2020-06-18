@@ -364,14 +364,15 @@ public class PlayerController : CharacterController
     private void AirRotate()
     {
         Quaternion target = Quaternion.identity;
+        var left = GetLeftHook();
+        var right = GetRightHook();
+        bool eitherAttached = left?.status == HookStatus.attached || right?.status == HookStatus.attached;
 
-        if (hooks.Count > 0 && rigid.velocity.magnitude > 3)
+        if (eitherAttached && base.currentSpeed > 3)
         {
-            // Solo hook
-            if (hooks.Count == 1)
+            if (hooks.Count == 1) // Solo hook
             {
                 var hook = GetSoloActiveHook();
-                if (hook.status != HookStatus.attached) return;
                 if (!IsGrounded())
                 {
                     var tetherDirection = hook.getLastPoint() - transform.position;
@@ -380,11 +381,6 @@ public class PlayerController : CharacterController
             }
             else // Both hooks active
             {
-                var left = GetLeftHook();
-                var right = GetRightHook();
-
-                if (left.status != HookStatus.attached || right.status != HookStatus.attached) return;
-
                 var lTether = left.getLastPoint() - transform.position;
                 var rTether = right.getLastPoint() - transform.position;
                 var lRot = Quaternion.LookRotation(rigid.velocity, lTether);
@@ -393,7 +389,7 @@ public class PlayerController : CharacterController
                 target = Quaternion.Lerp(lRot, rRot, .5f);
             }
         }
-        else // Rotate WASD
+        else // rotate WASD
         {
             var _horizontal = Input.GetAxisRaw("Horizontal");
             var _vertical = Input.GetAxisRaw("Vertical");
