@@ -55,12 +55,27 @@ public class HookController : MonoBehaviour
         }
         else
         {
-            MovePoints(spawn.position, target);
+            if (status == HookStatus.released)
+            {
+                MovePoints(spawn.position, target);
+            }
 
             if (isNearTarget() && !alreadyCalled)
             {
                 hookAttached();
             }
+        }
+    }
+
+    private void Update()
+    {
+        if (status == HookStatus.attached)
+        {
+            linePositions = new Vector3[2] { spawn.position, target };
+        }
+        else
+        {
+            linePositions[0] = spawn.position;
         }
 
         RenderLines();
@@ -87,13 +102,6 @@ public class HookController : MonoBehaviour
 
     private void MovePoints(Vector3 startPos, Vector3 endPos)
     {
-        if (status == HookStatus.attached)
-        {
-            linePositions = new Vector3[2] { startPos, endPos };
-
-            return;
-        }
-
         // create ghost line
         Vector3 lineDir = endPos - startPos;
         ghostLinePositions = new Vector3[visualizerSpawnPoints.Length];
@@ -108,8 +116,6 @@ public class HookController : MonoBehaviour
         {
             linePositions[i] = Vector3.MoveTowards(linePositions[i], ghostLinePositions[i - 1], Time.deltaTime * 95);
         }
-
-        linePositions[0] = startPos;
     }
 
     private void Retract()
