@@ -375,7 +375,7 @@ public class PlayerController : CharacterController
                 if (hook.status != HookStatus.attached) return;
                 if (!IsGrounded())
                 {
-                    var tetherDirection = hook.transform.position - transform.position;
+                    var tetherDirection = hook.getLastPoint() - transform.position;
                     target = Quaternion.LookRotation(rigid.velocity, tetherDirection);
                 }
             }
@@ -386,8 +386,8 @@ public class PlayerController : CharacterController
 
                 if (left.status != HookStatus.attached || right.status != HookStatus.attached) return;
 
-                var lTether = left.transform.position - transform.position;
-                var rTether = right.transform.position - transform.position;
+                var lTether = left.getLastPoint() - transform.position;
+                var rTether = right.getLastPoint() - transform.position;
                 var lRot = Quaternion.LookRotation(rigid.velocity, lTether);
                 var rRot = Quaternion.LookRotation(rigid.velocity, rTether);
 

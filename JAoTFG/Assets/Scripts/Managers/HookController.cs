@@ -204,7 +204,7 @@ public class HookController : MonoBehaviour
         return Vector3.Distance(getLastPoint(), spawn.position) < 1;
     }
 
-    private Vector3 getLastPoint()
+    public Vector3 getLastPoint()
     {
         return linePositions[linePositions.Count() - 1];
     }
