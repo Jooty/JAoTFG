@@ -20,6 +20,6 @@ public class ArenaUIManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        // text.text = $"Wave: {arena.currentWave + 1} | Titans Alive: {arena.titansAlive.Count}";
+        text.text = $"Wave: {arena.currentWave + 1} | Titans Alive: {arena.titansAlive.Count}";
     }
 }

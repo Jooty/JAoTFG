@@ -936,6 +936,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1265981598, guid: bca3643027ab3a0468759d98e44bfe04, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1330709869, guid: bca3643027ab3a0468759d98e44bfe04, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -3575,6 +3579,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1304337392}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1338629194 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4266194695429138159, guid: 79e74a58db4628948a414d7d7c526768,
+    type: 3}
+  m_PrefabInstance: {fileID: 4266194695648688401}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1369179618
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4091,15 +4101,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c442596f3417e3548b1e03b9dd9a76c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPillars: 0
-  spawnTitans: 0
   pillarCount: 250
   startTitanCount: 4
+  spawnPillars: 0
+  spawnTitans: 0
   currentWave: 0
+  titansAlive: []
   towerPrefab: {fileID: 5353468833233824304, guid: 2569d4813f7df8c48bf0e4930de8c950,
     type: 3}
-  titanPrefab: {fileID: 7394262414987525881, guid: 79e74a58db4628948a414d7d7c526768,
-    type: 3}
+  titanPrefab: {fileID: 1338629194}
 --- !u!4 &1555343240
 Transform:
   m_ObjectHideFlags: 0
