@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimator : CharaterAnimator
+public class PlayerAnimator : CharacterAnimator
 {
 
     // locals
@@ -16,13 +16,6 @@ public class PlayerAnimator : CharaterAnimator
         base.Awake();
     }
 
-    new private void Start()
-    {
-        base.animator = GetAnimator();
-
-        base.Start();
-    }
-
     new private void Update()
     {
         base.animator.SetBool("usingManGear", playerController.usingManGear);
@@ -30,11 +23,6 @@ public class PlayerAnimator : CharaterAnimator
         base.animator.SetBool("isSliding", playerController.isSliding);
 
         base.Update();
-    }
-
-    private Animator GetAnimator()
-    {
-        return transform.GetChild(0).GetChild(0).GetComponent<Animator>();
     }
 
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class CharaterAnimator : MonoBehaviour
+public class CharacterAnimator : MonoBehaviour
 {
 
     // locals
@@ -14,6 +14,7 @@ public abstract class CharaterAnimator : MonoBehaviour
     {
         this.controller = GetComponent<CharacterController>();
         this.rigid = GetComponent<Rigidbody>();
+        this.animator = GetComponentInChildren<Animator>();
     }
 
     protected void Start()
