@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterAnimator : MonoBehaviour
+public abstract class CharacterAnimator : MonoBehaviour
 {
 
     // locals
