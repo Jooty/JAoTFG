@@ -10374,6 +10374,7 @@ MonoBehaviour:
   turnSpeed: 0.15
   jumpPower: 15
   canDoubleJump: 0
+  attackRecoveryTime: 1
   currentSpeed: 0
   canJump: 0
   jumpedThisFrame: 0
@@ -10411,6 +10412,7 @@ MonoBehaviour:
   manSoundEffects: []
   usingManGear: 0
   isSliding: 0
+  drawSwordHitbox: 0
 --- !u!114 &382122746
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,8 +17,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     private float yaw;
     private float pitch;
-
-    private Rigidbody player;
+    private Rigidbody localPlayer;
 
     // locals
     private Camera cam;
@@ -31,17 +30,17 @@ public class ThirdPersonCamera : MonoBehaviour
     private void Start()
     {
         cam.fieldOfView = GameVariables.FIELD_OF_VIEW;
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
+        localPlayer = FindObjectOfType<PlayerController>().GetComponent<Rigidbody>();
+    }
 
+    private void Update()
+    {
         if (lockCursor)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-    }
 
-    private void Update()
-    {
         var relativePos = transform.position - target.position;
         if (Physics.Raycast(target.position, relativePos, out var hit, distance + .5f, 1))
         {
@@ -58,7 +57,7 @@ public class ThirdPersonCamera : MonoBehaviour
             GameVariables.FIELD_OF_VIEW * 1.2f,
             0,
             GameVariables.HERO_MAX_SPEED,
-            player.velocity.magnitude);
+            localPlayer.velocity.magnitude);
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fovtarget, .3f);
     }
 
@@ -76,7 +75,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
         var rot = Quaternion.Euler(pitch, yaw, 0);
 
-        var dist = Common.GetFloatByRelativePercent(distance, distance * 1.5f, 0, GameVariables.HERO_MAX_SPEED, player.velocity.magnitude);
+        var dist = Common.GetFloatByRelativePercent(distance, distance * 1.5f, 0, GameVariables.HERO_MAX_SPEED, localPlayer.velocity.magnitude);
         var pos = rot * new Vector3(0, 0, -dist + distanceOffset) + target.position;
         transform.rotation = rot;
         transform.position = pos;

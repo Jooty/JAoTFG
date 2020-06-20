@@ -14,6 +14,7 @@ TagManager:
   - CharacterBody
   - Hook
   - TitanHitbox
+  - LocalPlayer
   layers:
   - Default
   - TransparentFX
