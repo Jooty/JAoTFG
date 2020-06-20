@@ -1,4 +1,6 @@
-﻿public class PlayerAnimator : CharacterAnimator
+﻿using System;
+
+public class PlayerAnimator : CharacterAnimator
 {
     // locals
     private PlayerController playerController;

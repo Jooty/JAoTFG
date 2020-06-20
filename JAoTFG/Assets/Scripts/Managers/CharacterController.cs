@@ -1,19 +1,22 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public abstract class CharacterController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] protected float sprintSpeed = 1.3f;
-
     [SerializeField] protected float turnSpeed = 5;
     [SerializeField] protected float jumpPower = 5;
     [SerializeField] protected bool canDoubleJump;
 
+    [SerializeField] protected float attackRecoveryTime = 1f;
+
     public float currentSpeed;
 
     // temp bools
-    [HideInInspector] protected bool canMove;
+    protected bool canMove;
+    protected bool canAttack;
 
     [HideInInspector] public bool canJump;
     [HideInInspector] public bool jumpedThisFrame;
@@ -22,20 +25,14 @@ public abstract class CharacterController : MonoBehaviour
 
     // events
     public event EventHandler OnJump;
-
     public event EventHandler OnMove;
-
     public event EventHandler OnMove_AI;
-
     public event EventHandler OnDeath;
-
     public event EventHandler OnAttack;
-
     public event EventHandler OnLand;
 
     // locals
     protected CharacterBody characterBody;
-
     protected Collider Collider;
     protected Rigidbody rigid;
 
@@ -46,6 +43,7 @@ public abstract class CharacterController : MonoBehaviour
         this.Collider = characterBody.GetComponent<Collider>();
 
         canMove = true;
+        canAttack = true;
     }
 
     protected void Update()
@@ -106,6 +104,8 @@ public abstract class CharacterController : MonoBehaviour
         OnAttack?.Invoke(this, EventArgs.Empty);
     }
 
+    protected abstract void Attack_Hit(Collider[] colliders);
+
     public virtual void HandleGround()
     {
         if (IsGrounded() && isWaitingToLand)
@@ -148,5 +148,12 @@ public abstract class CharacterController : MonoBehaviour
         {
             rigid.velocity = rigid.velocity.normalized * GameVariables.HERO_MAX_SPEED;
         }
+    }
+
+    protected IEnumerator attackRecoveryTimer()
+    {
+        canAttack = false;
+        yield return new WaitForSeconds(attackRecoveryTime);
+        canAttack = true;
     }
 }

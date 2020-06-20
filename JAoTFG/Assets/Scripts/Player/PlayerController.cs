@@ -24,6 +24,8 @@ public class PlayerController : CharacterController
     public Transform[] ropeShotVisualizerSpawnPoints_Right;
     public GameObject[] hookPoints;
 
+    private bool isHoldingAttack;
+
     [HideInInspector] public AudioClip[] manSoundEffects;
     [HideInInspector] public bool usingManGear;
 
@@ -36,6 +38,9 @@ public class PlayerController : CharacterController
     private Vector3 moveInput;
 
     [HideInInspector] public bool isSliding;
+
+    [Header("Debug")]
+    public bool drawSwordHitbox = false;
 
     // local components
     private AudioSource aud;
@@ -283,6 +288,15 @@ public class PlayerController : CharacterController
             RecallHook(HookSide.right);
         }
 
+        if (Input.GetMouseButtonDown(0) && base.canAttack)
+        {
+            AttackHold();
+        }
+        if (Input.GetMouseButtonUp(0) && isHoldingAttack)
+        {
+            Attack();
+        }
+
         if (Input.GetKey(KeyCode.Space))
         {
             GasThrust();
@@ -388,6 +402,12 @@ public class PlayerController : CharacterController
 
                 target = Quaternion.Lerp(lRot, rRot, .5f);
             }
+        }
+        else if (isHoldingAttack)
+        {
+            Quaternion quat = Quaternion.identity;
+            quat.eulerAngles = new Vector3(transform.localEulerAngles.x, cam.transform.localEulerAngles.y, transform.localEulerAngles.z);
+            target = quat;
         }
         else // rotate WASD
         {
@@ -549,6 +569,53 @@ public class PlayerController : CharacterController
         }
     }
 
+    private void AttackHold()
+    {
+        base.Attack();
+
+        isHoldingAttack = true;
+    }
+
+    public override void Attack()
+    {
+        base.Attack();
+
+        isHoldingAttack = false;
+        StartCoroutine(base.attackRecoveryTimer());
+
+        var t = characterBody.transform;
+        Vector3 hitboxPosition = t.position + t.forward;
+        hitboxPosition = hitboxPosition.ChangeY(t.position.y + 1);
+        Vector3 hitboxSizeHalf = new Vector3(1.25f, 0.375f, 0.5f);
+
+        Collider[] hitColliders = Physics.OverlapBox(hitboxPosition, hitboxSizeHalf, t.rotation);
+        if (hitColliders.Length > 0)
+        {
+            Attack_Hit(hitColliders);
+        }
+        else
+        {
+            aud.PlayOneShot(manSoundEffects[5]);
+        }
+    }
+
+    protected override void Attack_Hit(Collider[] colliders)
+    {
+        // TODO: revise
+        if (colliders.Any(x => x.tag.Contains("Titan")))
+        {
+            // sfx
+            aud.PlayOneShot(manSoundEffects[6]);
+
+            GameObject firstTitanPartHit = colliders.FirstOrDefault(x => x.tag.Contains("Titan")).gameObject;
+
+            if (firstTitanPartHit.CompareTag("TitanHitbox"))
+            {
+                firstTitanPartHit.GetComponent<TitanBodyHitbox>().Hit();
+            }
+        }
+    }
+
     public HookController GetLeftHook()
     {
         return hooks.FirstOrDefault(x => x.side == HookSide.left);
@@ -586,5 +653,21 @@ public class PlayerController : CharacterController
     public override void ColliderEvent(Collision coll)
     {
         return;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!characterBody || !drawSwordHitbox) return;
+
+        Gizmos.color = Color.white;
+        Gizmos.matrix = characterBody.transform.localToWorldMatrix;
+
+        var t = characterBody.transform;
+        Vector3 hitboxPosition = t.position + t.forward;
+        hitboxPosition = hitboxPosition.ChangeY(t.position.y + 1);
+        Vector3 hitboxSize = new Vector3(1.25f * 2f, 0.375f * 2f, 0.5f * 2f);
+        hitboxPosition = characterBody.transform.InverseTransformPoint(hitboxPosition);
+
+        Gizmos.DrawCube(hitboxPosition, hitboxSize);
     }
 }

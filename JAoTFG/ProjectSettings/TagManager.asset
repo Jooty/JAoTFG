@@ -13,6 +13,7 @@ TagManager:
   - TitanNape
   - CharacterBody
   - Hook
+  - TitanHitbox
   layers:
   - Default
   - TransparentFX

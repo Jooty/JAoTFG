@@ -45,6 +45,11 @@ public class TitanController : CharacterController
         agent.SetDestination(target);
     }
 
+    protected override void Attack_Hit(Collider[] colliders)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void HitboxHitEvent(TitanBodyHitboxType type)
     {
         switch (type)
