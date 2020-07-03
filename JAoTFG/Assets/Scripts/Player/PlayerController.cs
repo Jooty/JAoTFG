@@ -466,7 +466,10 @@ public class PlayerController : CharacterController
                 hook.InitateHook(HookSide.left, this, hookPoints[0].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Left);
                 hooks.Add(hook);
 
-                hookSmoke_Left.Play();
+                if (hookSmoke_Left)
+                {
+                    hookSmoke_Left.Play();
+                }
 
                 hook.OnHookRecalled += Hook_OnHookRecalled;
             }
@@ -479,7 +482,10 @@ public class PlayerController : CharacterController
                 hook.InitateHook(HookSide.right, this, hookPoints[1].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Right);
                 hooks.Add(hook);
 
-                hookSmoke_Right.Play();
+                if (hookSmoke_Right)
+                {
+                    hookSmoke_Right.Play();
+                }
 
                 hook.OnHookRecalled += Hook_OnHookRecalled;
             }
