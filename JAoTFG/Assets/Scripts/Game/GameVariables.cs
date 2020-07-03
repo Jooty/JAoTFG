@@ -8,7 +8,7 @@
 
     public const float HERO_WAIT_TO_ROTATE_AFTER_BURST_JUMP = 1f;
     public const float HERO_STRIKE_RAY_LENGTH = 5f;
-    public const float HERO_MAX_SPEED = 50f;
+    public const float HERO_MAX_SPEED = 65f;
     public const float HERO_AIR_ROTATE_SPEED = 3f;
 
     // MANEUVER GEAR
@@ -26,5 +26,5 @@
     public const float TITAN_MAX_X_SIZE_GROWTH = 6.5f;
 
     // GAME
-    public const float FIELD_OF_VIEW = 80;
+    public const float FIELD_OF_VIEW = 90;
 }
