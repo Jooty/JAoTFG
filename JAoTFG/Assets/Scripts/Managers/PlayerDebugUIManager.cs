@@ -28,7 +28,7 @@ public class PlayerDebugUIManager : MonoBehaviour
             $"iswaitingtoland: {localPlayer.isWaitingToLand}\n" +
             $"canjump: {localPlayer.canJump}\n" +
             $"issliding: {localPlayer.isSliding}\n" +
-            $"velocity: {localPlayer.currentSpeed}\n" +
+            $"velocity: {(int)localPlayer.currentSpeed} mps\n" +
             $"using gear: {localPlayer.usingManGear}";
     }
 }
