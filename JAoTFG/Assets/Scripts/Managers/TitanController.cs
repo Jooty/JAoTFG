@@ -42,7 +42,10 @@ public class TitanController : CharacterController
     {
         base.Move_AI(target);
 
-        agent.SetDestination(target);
+        if (agent.enabled)
+        {
+            agent.SetDestination(target);
+        }
     }
 
     protected override void Attack_Hit(Collider[] colliders)

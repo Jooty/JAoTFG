@@ -30,6 +30,7 @@ public abstract class CharacterController : MonoBehaviour
     public event EventHandler OnMove_AI;
     public event EventHandler OnDeath;
     public event EventHandler OnAttack;
+    public event EventHandler OnAttackRelease;
     public event EventHandler OnLand;
 
     // global scripts
@@ -108,6 +109,11 @@ public abstract class CharacterController : MonoBehaviour
     public virtual void Attack()
     {
         OnAttack?.Invoke(this, EventArgs.Empty);
+    }
+
+    public virtual void AttackRelease()
+    {
+        OnAttackRelease?.Invoke(this, EventArgs.Empty);
     }
 
     protected abstract void Attack_Hit(Collider[] colliders);

@@ -294,7 +294,7 @@ public class PlayerController : CharacterController
         }
         if (Input.GetMouseButtonUp(0) && isHoldingAttack)
         {
-            Attack();
+            AttackRelease();
         }
 
         if (Input.GetKey(KeyCode.Space))
@@ -580,9 +580,9 @@ public class PlayerController : CharacterController
         isHoldingAttack = true;
     }
 
-    public override void Attack()
+    public override void AttackRelease()
     {
-        base.Attack();
+        base.AttackRelease();
 
         isHoldingAttack = false;
         StartCoroutine(base.attackRecoveryTimer());

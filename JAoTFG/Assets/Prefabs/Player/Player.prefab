@@ -1198,6 +1198,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3048449051653311179}
     m_Modifications:
+    - target: {fileID: 7823372374891963592, guid: ab544c6004af8c043a07b525fe948da8,
+        type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7823372374891963592, guid: ab544c6004af8c043a07b525fe948da8,
+        type: 3}
+      propertyPath: VelocityModule.y.scalar
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7823372374891963594, guid: ab544c6004af8c043a07b525fe948da8,
         type: 3}
       propertyPath: m_LocalPosition.x

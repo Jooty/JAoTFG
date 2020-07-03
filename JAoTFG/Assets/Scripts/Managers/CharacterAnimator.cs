@@ -1,24 +1,27 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class CharacterAnimator : MonoBehaviour
 {
     // locals
     protected CharacterController controller;
-
     protected Animator animator;
     protected Rigidbody rigid;
+    protected NavMeshAgent navAgent;
 
     protected void Awake()
     {
         this.controller = GetComponent<CharacterController>();
         this.rigid = GetComponent<Rigidbody>();
         this.animator = GetComponentInChildren<Animator>();
+        this.navAgent = GetComponent<NavMeshAgent>();
     }
 
     protected void Start()
     {
         controller.OnMove += Controller_OnMove;
         controller.OnAttack += Controller_OnAttack;
+        controller.OnAttackRelease += Controller_OnAttackRelease;
         controller.OnDeath += Controller_OnDeath;
         controller.OnJump += Controller_OnJump;
         controller.OnMove_AI += Controller_OnMove_AI;
@@ -52,6 +55,11 @@ public abstract class CharacterAnimator : MonoBehaviour
         animator.SetTrigger("attack");
     }
 
+    protected virtual void Controller_OnAttackRelease(object sender, System.EventArgs e)
+    {
+        animator.SetTrigger("attackRelease");
+    }
+
     protected virtual void Controller_OnMove(object sender, System.EventArgs e)
     {
         var input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -67,7 +75,7 @@ public abstract class CharacterAnimator : MonoBehaviour
 
     protected virtual void Controller_OnMove_AI(object sender, System.EventArgs e)
     {
-        if (controller.currentSpeed > 0)
+        if (navAgent.velocity.magnitude > .1f)
         {
             animator.SetBool("isRunning", true);
         }
