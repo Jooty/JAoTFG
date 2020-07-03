@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        LoadAudio();
+        // LoadAudio();
     }
 
     private void LoadAudio()

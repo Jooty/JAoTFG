@@ -13,10 +13,6 @@ public class PlayerController : CharacterController
     public float thrustPower;
 
     public GameObject hookUI;
-    public ParticleSystem thrustSmoke;
-    public ParticleSystem hookSmoke_Left;
-    public ParticleSystem hookSmoke_Right;
-    public ParticleSystem slide_Leaves;
 
     [HideInInspector] public bool isThrusting;
 
@@ -196,15 +192,12 @@ public class PlayerController : CharacterController
             || IsGrounded() && hooks.Count > 0 && rigid.velocity.magnitude > 3f)
         {
             isSliding = true;
-            if (!slide_Leaves.isPlaying)
-            {
-                slide_Leaves.Play();
-            }
+            base.characterBody.PlaySFXParticles(CharacterSFXType.sliding_leaves);
         }
         else
         {
             isSliding = false;
-            slide_Leaves.Stop();
+            base.characterBody.StopSFXParticles(CharacterSFXType.sliding_leaves);
         }
     }
 
@@ -272,6 +265,7 @@ public class PlayerController : CharacterController
         UpdateTetherDistanceWhenFooted();
         CheckHookRunawayDistance();
         HandleManeuverGearControls();
+        DoSwordTrail();
     }
 
     private void HandleManeuverGearControls()
@@ -307,25 +301,14 @@ public class PlayerController : CharacterController
         {
             GasThrust();
 
-            if (!aud.isPlaying)
-            {
-                aud.clip = manSoundEffects[3];
-                aud.loop = true;
-                aud.Play();
-            }
-            if (thrustSmoke)
-            {
-                thrustSmoke.Play();
-            }
+            base.characterBody.PlaySFXAudio(CharacterSFXType.gas_thrust, manSoundEffects[3]);
+            base.characterBody.PlaySFXParticles(CharacterSFXType.gas_thrust);
         }
         else if (Input.GetKeyUp(KeyCode.Space) || isSliding && !GetLeftHook() || isSliding && !GetRightHook())
         {
             isThrusting = false;
-            aud.Stop();
-            if (thrustSmoke)
-            {
-                thrustSmoke.Stop();
-            }
+
+            base.characterBody.StopAllSFX(CharacterSFXType.gas_thrust);
         }
     }
 
@@ -449,12 +432,9 @@ public class PlayerController : CharacterController
         return Physics.Raycast(cam.transform.position, cam.transform.forward, GameVariables.MG_HOOK_RANGE, 1);
     }
 
+    // todo: i can rewrite this, just not in this update
     private void FireHook(HookSide side)
     {
-        // SFX
-        // .hookSmoke.Play();
-        aud.PlayOneShot(manSoundEffects[10]);
-
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, GameVariables.MG_HOOK_RANGE, 1))
         {
             if (rigid.velocity.y < -5)
@@ -472,11 +452,6 @@ public class PlayerController : CharacterController
                 hook.InitateHook(HookSide.left, this, hookPoints[0].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Left);
                 hooks.Add(hook);
 
-                if (hookSmoke_Left)
-                {
-                    hookSmoke_Left.Play();
-                }
-
                 hook.OnHookRecalled += Hook_OnHookRecalled;
             }
             else
@@ -488,13 +463,14 @@ public class PlayerController : CharacterController
                 hook.InitateHook(HookSide.right, this, hookPoints[1].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Right);
                 hooks.Add(hook);
 
-                if (hookSmoke_Right)
-                {
-                    hookSmoke_Right.Play();
-                }
-
                 hook.OnHookRecalled += Hook_OnHookRecalled;
             }
+
+            // play SFX
+            CharacterSFXType type = (side == HookSide.left) ? CharacterSFXType.gas_hook_left : CharacterSFXType.gas_hook_right;
+
+            base.characterBody.PlaySFXAudioOneShot(type, manSoundEffects[10]);
+            base.characterBody.PlaySFXParticles(type);
         }
     }
 
@@ -510,8 +486,9 @@ public class PlayerController : CharacterController
             usingManGear = false;
         }
 
-        // sound effect
-        aud.PlayOneShot(manSoundEffects[9]);
+        // sfx
+        CharacterSFXType type = (side == HookSide.left) ? CharacterSFXType.gas_hook_left : CharacterSFXType.gas_hook_right;
+        base.characterBody.PlaySFXAudioOneShot(type, manSoundEffects[9]);
     }
 
     private void Hook_OnHookRecalled(object sender, EventArgs e)
@@ -578,6 +555,21 @@ public class PlayerController : CharacterController
             Vector3 tensionForceRight = (rigid.mass * (deltaVelocityRight / Time.fixedDeltaTime));
 
             rigid.AddForce(tensionForceRight, ForceMode.Impulse);
+        }
+    }
+
+    private void DoSwordTrail()
+    {
+        // if moving 10% near max speed, do trail
+        float percentVal = 0.1f * GameVariables.HERO_MAX_SPEED;
+        float needAboveThis = GameVariables.HERO_MAX_SPEED - percentVal;
+        if (base.currentSpeed >= needAboveThis)
+        {
+            base.characterBody.PlaySFXTrails(CharacterSFXType.sword_trail);
+        }
+        else
+        {
+            base.characterBody.StopSFXTrails(CharacterSFXType.sword_trail);
         }
     }
 

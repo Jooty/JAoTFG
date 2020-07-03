@@ -15,6 +15,7 @@ TagManager:
   - Hook
   - TitanHitbox
   - LocalPlayer
+  - CharacterSFX
   layers:
   - Default
   - TransparentFX

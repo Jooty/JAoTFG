@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public abstract class CharacterController : MonoBehaviour
 {
@@ -31,6 +32,9 @@ public abstract class CharacterController : MonoBehaviour
     public event EventHandler OnAttack;
     public event EventHandler OnLand;
 
+    // global scripts
+    protected AudioManager audioManager;
+
     // locals
     protected CharacterBody characterBody;
     protected Collider Collider;
@@ -41,6 +45,8 @@ public abstract class CharacterController : MonoBehaviour
         this.rigid = GetComponent<Rigidbody>();
         this.characterBody = GetComponentInChildren<CharacterBody>();
         this.Collider = characterBody.GetComponent<Collider>();
+
+        this.audioManager = FindObjectOfType<AudioManager>();
 
         canMove = true;
         canAttack = true;
