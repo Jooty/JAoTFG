@@ -12,7 +12,7 @@ public class SceneController : MonoBehaviour
     /// This is only implemented for prototyping purposes.
     /// Scenes load too quickly to effecively test this script.
     /// </summary>
-    [Range(1, 10)] [SerializeField] private float loadingWaitTime = 3f;
+    [Range(1, 10)] [SerializeField] private float loadingWaitTime = 10f;
 
     public Image fadeImage;
     public string FirstSceneToLoad = "MainMenu";
