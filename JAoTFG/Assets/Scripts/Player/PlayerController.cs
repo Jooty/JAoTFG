@@ -16,6 +16,7 @@ public class PlayerController : CharacterController
     public ParticleSystem thrustSmoke;
     public ParticleSystem hookSmoke_Left;
     public ParticleSystem hookSmoke_Right;
+    public ParticleSystem slide_Leaves;
 
     [HideInInspector] public bool isThrusting;
 
@@ -82,7 +83,7 @@ public class PlayerController : CharacterController
         }
         else if (base.IsGrounded() && base.currentSpeed > 15)
         {
-            DoSliding();
+            DoSlidingControl();
         }
 
         base.Update();
@@ -192,17 +193,22 @@ public class PlayerController : CharacterController
     private void SetSliding()
     {
         if (IsGrounded() && rigid.velocity.magnitude > 15f && !base.jumpedThisFrame
-            || IsGrounded() && hooks.Count > 0 && rigid.velocity.magnitude > 3f && usingManGear)
+            || IsGrounded() && hooks.Count > 0 && rigid.velocity.magnitude > 3f)
         {
             isSliding = true;
+            if (!slide_Leaves.isPlaying)
+            {
+                slide_Leaves.Play();
+            }
         }
         else
         {
             isSliding = false;
+            slide_Leaves.Stop();
         }
     }
 
-    private void DoSliding()
+    private void DoSlidingControl()
     {
         if (!isSliding) return;
 
