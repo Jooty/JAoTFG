@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class ExtensionMethods
@@ -22,6 +23,31 @@ public static class ExtensionMethods
             t = t.parent.transform;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Returns all child gameobjects with tag.
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    public static List<GameObject> FindObjectsWithTag(this Transform parent, string tag)
+    {
+        List<GameObject> taggedGameObjects = new List<GameObject>();
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.tag == tag)
+            {
+                taggedGameObjects.Add(child.gameObject);
+            }
+            if (child.childCount > 0)
+            {
+                taggedGameObjects.AddRange(FindObjectsWithTag(child, tag));
+            }
+        }
+        return taggedGameObjects;
     }
 
     /// <summary>
