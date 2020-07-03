@@ -127,7 +127,7 @@ public class HookController : MonoBehaviour
 
         for (int i = 0; i < linePositions.Length; i++)
         {
-            float speed = 100 * Time.deltaTime;
+            float speed = 400 * Time.deltaTime;
             linePositions[i] = Vector3.MoveTowards(linePositions[i], spawn.position, speed);
         }
     }
@@ -210,7 +210,7 @@ public class HookController : MonoBehaviour
 
     private bool isNearSpawn()
     {
-        return Vector3.Distance(getLastPoint(), spawn.position) < 1;
+        return Vector3.Distance(getLastPoint(), spawn.position) < 3;
     }
 
     public Vector3 getLastPoint()
