@@ -281,4 +281,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lineSegmentSize: 0.15
-  lineWidth: 0.03
+  lineWidth: 0.06
