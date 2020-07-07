@@ -7,16 +7,10 @@ public class PlayerController : CharacterController
 {
     [Header("Maneuver Gear")]
     public bool hasManGear;
-
-    public float gas;
-    public float totalMaxGas;
     public float thrustPower;
 
-    public GameObject hookUI;
-
     [HideInInspector] public bool isThrusting;
-
-    public List<HookController> hooks;
+    private List<HookController> hooks;
     public Transform[] ropeShotVisualizerSpawnPoints_Left;
     public Transform[] ropeShotVisualizerSpawnPoints_Right;
     public GameObject[] hookPoints;
@@ -26,13 +20,7 @@ public class PlayerController : CharacterController
     [HideInInspector] public AudioClip[] manSoundEffects;
     [HideInInspector] public bool usingManGear;
 
-    private PhysicMaterial zfriction;
-    private PhysicMaterial mfriction;
-
-    private Camera cam;
-
     private Vector3 directionPos;
-    private Vector3 moveInput;
 
     [HideInInspector] public bool isSliding;
 
@@ -51,87 +39,25 @@ public class PlayerController : CharacterController
 
     private void Start()
     {
-        cam = Camera.main;
         hooks = new List<HookController>();
         // TODO
         //aud.volume = AudioSettings.SFX;
 
         Cursor.lockState = CursorLockMode.Locked;
-
-        base.canJump = true;
-        gas = totalMaxGas;
-
-        zfriction = Resources.Load<PhysicMaterial>("Physics/zeroFriction");
-        mfriction = Resources.Load<PhysicMaterial>("Physics/maxFriction");
         manSoundEffects = Resources.LoadAll<AudioClip>("SFX/HERO");
     }
 
     new private void Update()
     {
+        base.Update();
+
         HandleGround();
-        HandleGroundedControls();
         ManueverGearUpdate();
         SetSliding();
 
-        if (!IsGrounded())
+        if (!base.IsGrounded())
         {
             AirRotate();
-        }
-        else if (base.IsGrounded() && base.currentSpeed > 15)
-        {
-            DoSlidingControl();
-        }
-
-        base.Update();
-    }
-
-    private void FixedUpdate()
-    {
-        Move();
-    }
-
-    private void HandleGroundedControls()
-    {
-        // REMOVE LATER
-        if (Input.GetKeyDown(KeyCode.P))
-            Debug.Break();
-
-        if (Input.GetKeyDown(KeyCode.Space) && canJump || Input.GetKeyDown(KeyCode.Space) && canDoubleJump)
-        {
-            if (!jumpedThisFrame && canJump)
-            {
-                base.Jump();
-            }
-            else if (canDoubleJump)
-            {
-                base.Jump();
-            }
-        }
-    }
-
-    public override void Move()
-    {
-        base.Move();
-
-        if (IsGrounded() && hooks.Count == 0 && !isWaitingToLand)
-        {
-            var _horizontal = Input.GetAxisRaw("Horizontal");
-            var _vertical = Input.GetAxisRaw("Vertical");
-            moveInput = new Vector3(_horizontal, 0, _vertical).normalized;
-
-            RotateToMovement();
-            HandleFriction();
-
-            // add camera relativity
-            moveInput = cam.transform.TransformDirection(moveInput);
-            moveInput.y = 0;
-            moveInput.Normalize();
-
-            base.rigid.AddForce(moveInput * sprintSpeed / Time.deltaTime);
-        }
-        else if (usingManGear && hasManGear)
-        {
-            DoManeuverGearPhysics();
         }
     }
 
@@ -192,6 +118,8 @@ public class PlayerController : CharacterController
             || IsGrounded() && hooks.Count > 0 && rigid.velocity.magnitude > 3f)
         {
             isSliding = true;
+            DoSlidingControl();
+
             base.characterBody.PlaySFXParticles(CharacterSFXType.sliding_leaves);
         }
         else
@@ -207,7 +135,7 @@ public class PlayerController : CharacterController
 
         if (hooks.Count == 0)
         {
-            RotateToMovement();
+            base.RotateToMovement();
         }
         else
         {
@@ -223,88 +151,65 @@ public class PlayerController : CharacterController
         }
     }
 
-    private void RotateToMovement()
+    #region Ability Overrides
+
+    protected override void Ability_01_Press()
     {
-        var directionPos = transform.position + (cam.transform.right * moveInput.x) + (cam.transform.forward * moveInput.z);
-        var dir = directionPos - transform.position;
-        dir.y = 0;
+        base.Ability_01_Press();
 
-        // rotate
-        if (moveInput.x != 0 || moveInput.z != 0)
-        {
-            var angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
-
-            if (angle != 0)
-            {
-                base.rigid.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turnSpeed);
-            }
-        }
-    }
-
-    private void HandleFriction()
-    {
-        if (usingManGear) return;
-
-        if (moveInput == Vector3.zero)
-        {
-            base.Collider.material = mfriction;
-        }
-        else
-        {
-            base.Collider.material = zfriction;
-        }
-    }
-
-    #region Maneuver Gear Methods
-
-    private void ManueverGearUpdate()
-    {
-        if (!hasManGear) return;
-
-        UpdateManeuverGearUI();
-        UpdateTetherDistanceWhenFooted();
-        CheckHookRunawayDistance();
-        HandleManeuverGearControls();
-        DoSwordTrail();
-    }
-
-    private void HandleManeuverGearControls()
-    {
-        if (Input.GetKey(KeyCode.Q) && CanHook() && !GetLeftHook())
+        if (IsPlayerInHookRange() && !GetLeftHook())
         {
             FireHook(HookSide.left);
         }
-        else if (Input.GetKeyUp(KeyCode.Q) && GetLeftHook())
+    }
+
+    protected override void Ability_01_Release()
+    {
+        base.Ability_01_Release();
+
+        if (GetLeftHook())
         {
             RecallHook(HookSide.left);
         }
+    }
 
-        if (Input.GetKey(KeyCode.E) && CanHook() && !GetRightHook())
+    protected override void Ability_02_Press()
+    {
+        base.Ability_02_Press();
+
+        if (IsPlayerInHookRange() && !GetRightHook())
         {
             FireHook(HookSide.right);
         }
-        else if (Input.GetKeyUp(KeyCode.E) && GetRightHook())
+    }
+
+    protected override void Ability_02_Release()
+    {
+        base.Ability_02_Release();
+
+        if (GetRightHook())
         {
             RecallHook(HookSide.right);
         }
+    }
 
-        if (Input.GetMouseButtonDown(0) && base.canAttack)
-        {
-            AttackHold();
-        }
-        if (Input.GetMouseButtonUp(0) && isHoldingAttack)
-        {
-            AttackRelease();
-        }
+    public override void JumpHold()
+    {
+        base.JumpHold();
 
-        if (Input.GetKey(KeyCode.Space))
-        {
-            GasThrust();
+        if (!hasManGear) return;
 
-            base.characterBody.PlaySFXAudio(CharacterSFXType.gas_thrust, manSoundEffects[3]);
-            base.characterBody.PlaySFXParticles(CharacterSFXType.gas_thrust);
-        }
-        else if (Input.GetKeyUp(KeyCode.Space) || isSliding && !GetLeftHook() || isSliding && !GetRightHook())
+        GasThrust();
+
+        base.characterBody.PlaySFXAudio(CharacterSFXType.gas_thrust, manSoundEffects[3]);
+        base.characterBody.PlaySFXParticles(CharacterSFXType.gas_thrust);
+    }
+
+    public override void JumpRelease()
+    {
+        base.JumpRelease();
+
+        if (isThrusting)
         {
             isThrusting = false;
 
@@ -312,17 +217,21 @@ public class PlayerController : CharacterController
         }
     }
 
-    private void UpdateManeuverGearUI()
-    {
-        if (!hookUI) return;
+    #endregion
 
-        if (CanHook())
+    #region Maneuver Gear Methods
+
+    private void ManueverGearUpdate()
+    {
+        if (!hasManGear) return;
+
+        UpdateTetherDistanceWhenFooted();
+        CheckHookRunawayDistance();
+        DoSwordTrail();
+
+        if (usingManGear)
         {
-            hookUI.SetActive(true);
-        }
-        else
-        {
-            hookUI.SetActive(false);
+            DoManeuverGearPhysics();
         }
     }
 
@@ -352,16 +261,8 @@ public class PlayerController : CharacterController
     private void GasThrust()
     {
         isThrusting = true;
-        gas -= 1 * Time.deltaTime;
 
         rigid.AddForce(transform.forward * thrustPower * Time.deltaTime);
-    }
-
-    private void GasBurst()
-    {
-        gas -= 1.5f * Time.deltaTime;
-
-        rigid.AddForce(transform.forward * thrustPower * .75f, ForceMode.Impulse);
     }
 
     private void AirRotate()
@@ -427,12 +328,11 @@ public class PlayerController : CharacterController
         transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED);
     }
 
-    private bool CanHook()
+    private bool IsPlayerInHookRange()
     {
         return Physics.Raycast(cam.transform.position, cam.transform.forward, GameVariables.MG_HOOK_RANGE, 1);
     }
 
-    // todo: i can rewrite this, just not in this update
     private void FireHook(HookSide side)
     {
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, GameVariables.MG_HOOK_RANGE, 1))
@@ -442,29 +342,14 @@ public class PlayerController : CharacterController
                 usingManGear = true;
             }
 
-            // New code
-            if (side == HookSide.left)
-            {
-                var hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation)
+            var hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation)
                     .GetComponent<HookController>();
-                hook.transform.parent = transform;
-                hook.transform.position = hookPoints[0].transform.position;
-                hook.InitateHook(HookSide.left, this, hookPoints[0].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Left);
-                hooks.Add(hook);
+            hook.transform.position = hookPoints[(int)side].transform.position;
+            hook.transform.position = hookPoints[(int)side].transform.position;
+            hook.InitateHook(side, this, hookPoints[(int)side].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Right);
+            hooks.Add(hook);
 
-                hook.OnHookRecalled += Hook_OnHookRecalled;
-            }
-            else
-            {
-                var hook = Instantiate(Resources.Load<GameObject>("Hook"), transform.position, transform.rotation)
-                    .GetComponent<HookController>();
-                hook.transform.position = hookPoints[1].transform.position;
-                hook.transform.position = hookPoints[1].transform.position;
-                hook.InitateHook(HookSide.right, this, hookPoints[1].transform, hit.point, hit.transform.gameObject, ropeShotVisualizerSpawnPoints_Right);
-                hooks.Add(hook);
-
-                hook.OnHookRecalled += Hook_OnHookRecalled;
-            }
+            hook.OnHookRecalled += Hook_OnHookRecalled;
 
             // play SFX
             CharacterSFXType type = (side == HookSide.left) ? CharacterSFXType.gas_hook_left : CharacterSFXType.gas_hook_right;
@@ -573,19 +458,11 @@ public class PlayerController : CharacterController
         }
     }
 
-    private void AttackHold()
-    {
-        base.Attack();
-
-        isHoldingAttack = true;
-    }
-
     public override void AttackRelease()
     {
         base.AttackRelease();
 
         isHoldingAttack = false;
-        StartCoroutine(base.attackRecoveryTimer());
 
         var t = characterBody.transform;
         Vector3 hitboxPosition = t.position + t.forward;
@@ -647,17 +524,12 @@ public class PlayerController : CharacterController
         return hooks.FirstOrDefault(x => x.side == side);
     }
 
+    public bool isHooked()
+    {
+        return hooks.Count > 0;
+    }
+
     #endregion Maneuver Gear Methods
-
-    private Vector3 GetNextFramePosition()
-    {
-        return transform.position + (rigid.velocity * Time.fixedDeltaTime);
-    }
-
-    public override void ColliderEvent(Collision coll)
-    {
-        return;
-    }
 
     private void OnDrawGizmos()
     {
