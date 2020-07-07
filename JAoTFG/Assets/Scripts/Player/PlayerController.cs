@@ -264,7 +264,13 @@ public class PlayerController : CharacterController
 
     private void GasThrust()
     {
-        if (currentGas <= 0) return;
+        if (currentGas <= 0)
+        {
+            isThrusting = false;
+            base.characterBody.StopAllSFX(CharacterSFXType.gas_thrust);
+
+            return;
+        }
 
         isThrusting = true;
 
