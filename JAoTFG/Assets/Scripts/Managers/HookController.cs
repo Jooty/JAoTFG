@@ -30,6 +30,9 @@ public class HookController : MonoBehaviour
     private Vector3[] ghostLinePositions;
     private Transform[] visualizerSpawnPoints;
 
+    // trail renderer
+    private TrailRenderer trail;
+
     // locals
     private LineRenderer lineRenderer;
 
@@ -39,39 +42,37 @@ public class HookController : MonoBehaviour
     {
         this.lineRenderer = GetComponent<LineRenderer>();
         this.curvedLineRenderer = GetComponent<CurvedLineRenderer>();
+
+        trail = Instantiate(Resources.Load<GameObject>("HookEnd"), transform.position, transform.rotation)
+            .GetComponent<TrailRenderer>();
+        trail.transform.parent = transform;
     }
 
     private void FixedUpdate()
     {
         if (status == HookStatus.sheathed) return;
 
-        if (recall)
+        if (recall && !isNearSpawn())
         {
-            if (isNearSpawn())
-            {
-                hookRecalled();
-            }
-            else
-            {
-                Retract();
-            }
+            Retract();
         }
-        else
+        else if (!recall && status == HookStatus.released)
         {
-            if (status == HookStatus.released)
-            {
-                MovePoints(spawn.position, target);
-            }
-
-            if (isNearTarget() && !alreadyCalled)
-            {
-                hookAttached();
-            }
+            MovePoints(spawn.position, target);
         }
     }
 
     private void Update()
     {
+        if (isNearTarget() && !alreadyCalled)
+        {
+            hookAttached();
+        }
+        else if (recall && isNearSpawn())
+        {
+            hookRecalled();
+        }
+
         if (status == HookStatus.attached)
         {
             linePositions = new Vector3[2] { spawn.position, target };
@@ -80,6 +81,8 @@ public class HookController : MonoBehaviour
         {
             linePositions[0] = spawn.position;
         }
+
+        trail.transform.position = getLastPoint();
 
         RenderLines();
     }
@@ -140,7 +143,7 @@ public class HookController : MonoBehaviour
     private void hookAttached()
     {
         alreadyCalled = true;
-        tetherDistance = Vector3.Distance(getLastPoint(), source.transform.position);
+        tetherDistance = Vector3.Distance(target, source.transform.position);
         status = HookStatus.attached;
 
         // ghostLinePositions = null;
