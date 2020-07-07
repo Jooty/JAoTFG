@@ -14,9 +14,9 @@
     // MANEUVER GEAR
     public const bool MG_RETRACT_ON_GAS = true;
 
-    public const float MG_HOOK_RANGE = 75f;
+    public const float MG_HOOK_RANGE = 95f;
     public const float MG_HOOK_MAX_RUNAWAY_RANGE = MG_HOOK_RANGE * 1.5f;
-    public const float MG_GAS_REEL_SPEED_MULTIPLIER = 2f;
+    public const float MG_GAS_REEL_SPEED_MULTIPLIER = 2.6f;
 
     // TITAN
     public const int TITAN_DISSIPATE_TIMER = 30;

@@ -8,6 +8,8 @@ public class PlayerController : CharacterController
     [Header("Maneuver Gear")]
     public bool hasManGear;
     public float thrustPower;
+    public float maxGas;
+    [HideInInspector] public float currentGas;
 
     [HideInInspector] public bool isThrusting;
     private List<HookController> hooks;
@@ -33,6 +35,8 @@ public class PlayerController : CharacterController
     new private void Awake()
     {
         this.aud = GetComponent<AudioSource>();
+
+        currentGas = maxGas;
 
         base.Awake();
     }
@@ -101,7 +105,7 @@ public class PlayerController : CharacterController
         }
         else if (!base.IsGrounded())
         {
-            base.rigid.drag = 0.02f;
+            base.rigid.drag = 0.07f;
             base.isWaitingToLand = true;
             base.jumpedThisFrame = false;
 
@@ -260,7 +264,11 @@ public class PlayerController : CharacterController
 
     private void GasThrust()
     {
+        if (currentGas <= 0) return;
+
         isThrusting = true;
+
+        currentGas -= Time.deltaTime * 30f;
 
         rigid.AddForce(transform.forward * thrustPower * Time.deltaTime);
     }

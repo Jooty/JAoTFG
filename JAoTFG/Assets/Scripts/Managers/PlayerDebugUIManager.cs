@@ -17,7 +17,10 @@ public class PlayerDebugUIManager : MonoBehaviour
     {
         this.background = GetComponent<Image>();
 
-        isOn = true;
+        background.enabled = false;
+        debugtext.enabled = false;
+
+        isOn = false;
     }
 
     private void Start()
