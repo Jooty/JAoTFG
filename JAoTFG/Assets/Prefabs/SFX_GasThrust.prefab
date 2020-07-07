@@ -110,7 +110,7 @@ PrefabInstance:
     - target: {fileID: 8500667190187906227, guid: 45c4d5c373b579c4bac9f96f123aa753,
         type: 3}
       propertyPath: EmissionModule.rateOverDistance.scalar
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8500667190187906227, guid: 45c4d5c373b579c4bac9f96f123aa753,
         type: 3}
@@ -185,7 +185,7 @@ PrefabInstance:
     - target: {fileID: 8500667190187906227, guid: 45c4d5c373b579c4bac9f96f123aa753,
         type: 3}
       propertyPath: TrailModule.enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8500667190187906227, guid: 45c4d5c373b579c4bac9f96f123aa753,
         type: 3}
@@ -326,6 +326,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ForceModule.x.scalar
       value: -27.86
+      objectReference: {fileID: 0}
+    - target: {fileID: 8500667190187906227, guid: 45c4d5c373b579c4bac9f96f123aa753,
+        type: 3}
+      propertyPath: InitialModule.startColor.minMaxState
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45c4d5c373b579c4bac9f96f123aa753, type: 3}

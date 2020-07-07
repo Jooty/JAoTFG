@@ -157,7 +157,7 @@ PrefabInstance:
     - target: {fileID: 8288761811907870321, guid: fe7e0a2323c543443867544777f46c5c,
         type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8288761811907870321, guid: fe7e0a2323c543443867544777f46c5c,
         type: 3}
@@ -344,10 +344,30 @@ PrefabInstance:
       propertyPath: NoiseModule.enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8288761811907870321, guid: fe7e0a2323c543443867544777f46c5c,
+        type: 3}
+      propertyPath: InitialModule.startColor.minMaxState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8288761811907870321, guid: fe7e0a2323c543443867544777f46c5c,
+        type: 3}
+      propertyPath: InitialModule.startColor.minColor.r
+      value: 0.6981132
+      objectReference: {fileID: 0}
+    - target: {fileID: 8288761811907870321, guid: fe7e0a2323c543443867544777f46c5c,
+        type: 3}
+      propertyPath: InitialModule.startColor.minColor.g
+      value: 0.6981132
+      objectReference: {fileID: 0}
+    - target: {fileID: 8288761811907870321, guid: fe7e0a2323c543443867544777f46c5c,
+        type: 3}
+      propertyPath: InitialModule.startColor.minColor.b
+      value: 0.6981132
+      objectReference: {fileID: 0}
     - target: {fileID: 8288761811907870322, guid: fe7e0a2323c543443867544777f46c5c,
         type: 3}
       propertyPath: m_Name
-      value: SFX_GasHook 2
+      value: SFX_GasHookRight
       objectReference: {fileID: 0}
     - target: {fileID: 8288761811907870323, guid: fe7e0a2323c543443867544777f46c5c,
         type: 3}
