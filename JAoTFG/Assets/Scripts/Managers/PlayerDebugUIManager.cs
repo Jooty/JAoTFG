@@ -1,11 +1,24 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerDebugUIManager : MonoBehaviour
 {
     public TextMeshProUGUI debugtext;
 
+    private bool isOn;
+
     private PlayerController localPlayer;
+
+    // locals
+    private Image background;
+
+    private void Awake()
+    {
+        this.background = GetComponent<Image>();
+
+        isOn = true;
+    }
 
     private void Start()
     {
@@ -14,6 +27,8 @@ public class PlayerDebugUIManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.O)) TogglePanel();
+
         debugtext.text =
             $"max speed: {GameVariables.HERO_MAX_SPEED}\n" +
             $"gear: {localPlayer.usingManGear}\n" +
@@ -29,5 +44,12 @@ public class PlayerDebugUIManager : MonoBehaviour
             $"issliding: {localPlayer.isSliding}\n" +
             $"velocity: {(int)localPlayer.currentSpeed} mps\n" +
             $"using gear: {localPlayer.usingManGear}";
+    }
+
+    private void TogglePanel()
+    {
+        isOn = !isOn;
+        background.enabled = isOn;
+        debugtext.enabled = isOn;
     }
 }
