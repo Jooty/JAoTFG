@@ -15,7 +15,7 @@ public class PlayerAnimator : CharacterAnimator
     new private void Update()
     {
         base.animator.SetBool("usingManGear", playerController.usingManGear);
-        base.animator.SetBool("isHooked", playerController.hooks.Count > 0);
+        base.animator.SetBool("isHooked", playerController.isHooked());
         base.animator.SetBool("isSliding", playerController.isSliding);
         base.animator.SetBool("isThrusting", playerController.isThrusting);
 

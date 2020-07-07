@@ -71,7 +71,7 @@ public class TitanController : CharacterController
         }
     }
 
-    public override void ColliderEvent(Collision coll)
+    public override void CharacterBodyColliderEvent(Collision coll)
     {
         throw new System.NotImplementedException();
     }

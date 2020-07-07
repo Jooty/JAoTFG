@@ -171,6 +171,6 @@ public class CharacterBody : MonoBehaviour
 
     public void ColliderEvent(Collision coll)
     {
-        controller.ColliderEvent(coll);
+        controller.CharacterBodyColliderEvent(coll);
     }
 }

@@ -22,7 +22,6 @@ public class PlayerDebugUIManager : MonoBehaviour
             $"left-status: {localPlayer.GetLeftHook()?.status}\n" +
             $"right-status: {localPlayer.GetRightHook()?.status}\n" +
             $"grounded: {localPlayer.IsGrounded()}\n" +
-            $"gas: {localPlayer.gas / localPlayer.totalMaxGas}\n" +
             $"thrust-power: {localPlayer.thrustPower}\n" +
             $"thrust: {localPlayer.isThrusting}\n" +
             $"iswaitingtoland: {localPlayer.isWaitingToLand}\n" +

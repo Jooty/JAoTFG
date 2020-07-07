@@ -33,6 +33,12 @@ public class GameManager : MonoBehaviour
         // LoadAudio();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+            Debug.Break();
+    }
+
     private void LoadAudio()
     {
         if (!Application.isEditor)
