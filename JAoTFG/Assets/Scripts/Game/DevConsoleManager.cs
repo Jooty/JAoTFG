@@ -171,6 +171,7 @@ public class DevConsoleManager : MonoBehaviour
         if (float.TryParse(param, out var val))
         {
             Gamerules.SetVariable("FIELD_OF_VIEW", val);
+            Camera.main.fieldOfView = val;
 
             return "Successfully set to " + param + ".";
         }
