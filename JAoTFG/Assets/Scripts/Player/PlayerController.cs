@@ -262,7 +262,7 @@ public class PlayerController : CharacterController
 
         foreach (HookController hook in hooks)
         {
-            if (Vector3.Distance(transform.position, hook.transform.position) > Gamerules.MG_HOOK_MAX_RUNAWAY_RANGE)
+            if (Vector3.Distance(transform.position, hook.transform.position) > Gamerules.MG_HOOK_RANGE * 1.5f)
             {
                 RecallHook(hook.side);
             }

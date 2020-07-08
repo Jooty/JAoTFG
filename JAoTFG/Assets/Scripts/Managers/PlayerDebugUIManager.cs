@@ -30,7 +30,7 @@ public class PlayerDebugUIManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O)) TogglePanel();
+        if (Input.GetKeyDown(KeyCode.O) && !DevConsoleManager.instance.isToggledOn) TogglePanel();
 
         debugtext.text =
             $"max speed: {Gamerules.HERO_MAX_SPEED}\n" +

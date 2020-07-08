@@ -520,6 +520,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1070438996}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &227316181 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11481160, guid: b3600f1d06eafca4c9abad294a25bc53,
+    type: 3}
+  m_PrefabInstance: {fileID: 1070438996}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 227316180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10a0ac9c6a9ee094583c9804c9ef268d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &227316184 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 22491278, guid: b3600f1d06eafca4c9abad294a25bc53,
@@ -2803,6 +2815,34 @@ PrefabInstance:
     - target: {fileID: 133828, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 162804, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11402586, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11402586, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11402586, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11402586, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 227316181}
+    - target: {fileID: 11402586, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnInput
+      objectReference: {fileID: 0}
+    - target: {fileID: 11402586, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 22475808, guid: b3600f1d06eafca4c9abad294a25bc53, type: 3}
       propertyPath: m_AnchorMax.x

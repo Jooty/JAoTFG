@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Reflection;
 
 public static class Gamerules
 {
@@ -10,11 +12,49 @@ public static class Gamerules
 
     public static bool MG_RETRACT_ON_GAS = true;
     public static float MG_HOOK_RANGE = 95f;
-    public static float MG_HOOK_MAX_RUNAWAY_RANGE = MG_HOOK_RANGE * 1.5f;
     public static float MG_GAS_REEL_SPEED_MULTIPLIER = 2.6f;
 
-    public static int TITAN_DISSIPATE_TIMER = 30;
+    public static float TITAN_DISSIPATE_TIMER = 30;
 
     public static float FIELD_OF_VIEW = 90;
+
+    public static bool SetVariable<T>(string varName, T newVal) where T 
+        : struct, IComparable, IConvertible, IComparable<T>, IEquatable<T>
+    {
+        var result = typeof(Gamerules).GetField(varName);
+        if (result != null)
+        {
+            result.SetValue(null, newVal);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static bool TryGetVariableValue(string varName, out object value)
+    {
+        var result = typeof(Gamerules).GetField(varName);
+        if (result != null)
+        {
+            value = result.GetValue(null);
+
+            return true;
+        }
+        else
+        {
+            value = "";
+            return false;
+        }
+    }
+
+    public static Dictionary<string, string> GetAllRules()
+    {
+        return typeof(Gamerules)
+            .GetFields()
+            .ToDictionary(x => x.Name, x => x.GetValue(null).ToString());
+    }
 
 }
