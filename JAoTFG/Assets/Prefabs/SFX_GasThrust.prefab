@@ -110,7 +110,7 @@ PrefabInstance:
     - target: {fileID: 8500667190187906227, guid: 45c4d5c373b579c4bac9f96f123aa753,
         type: 3}
       propertyPath: EmissionModule.rateOverDistance.scalar
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8500667190187906227, guid: 45c4d5c373b579c4bac9f96f123aa753,
         type: 3}
