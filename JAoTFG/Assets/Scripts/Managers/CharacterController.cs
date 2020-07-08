@@ -297,9 +297,9 @@ public abstract class CharacterController : MonoBehaviour
 
     protected void EnforceMaxSpeed()
     {
-        if (rigid.velocity.magnitude > GameVariables.HERO_MAX_SPEED)
+        if (rigid.velocity.magnitude > Gamerules.HERO_MAX_SPEED)
         {
-            rigid.velocity = rigid.velocity.normalized * GameVariables.HERO_MAX_SPEED;
+            rigid.velocity = rigid.velocity.normalized * Gamerules.HERO_MAX_SPEED;
         }
     }
 
@@ -307,10 +307,7 @@ public abstract class CharacterController : MonoBehaviour
     {
         var origin = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
-        if (GameVariables.DEBUG_DRAW_GROUND_CHECK_RAY)
-        {
-            Debug.DrawLine(origin, (Vector3.down * (.4f)) + origin, Color.red);
-        }
+        Debug.DrawLine(origin, (Vector3.down * (.4f)) + origin, Color.red);
 
         return Physics.Raycast(origin, Vector3.down, .4f, 1);
     }

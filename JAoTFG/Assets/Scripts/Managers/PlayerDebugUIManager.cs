@@ -33,7 +33,7 @@ public class PlayerDebugUIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O)) TogglePanel();
 
         debugtext.text =
-            $"max speed: {GameVariables.HERO_MAX_SPEED}\n" +
+            $"max speed: {Gamerules.HERO_MAX_SPEED}\n" +
             $"gear: {localPlayer.usingManGear}\n" +
             $"left-distance: {localPlayer.GetLeftHook()?.tetherDistance}\n" +
             $"right-distance: {localPlayer.GetRightHook()?.tetherDistance}\n" +

@@ -151,7 +151,7 @@ public class PlayerController : CharacterController
             var newDir = new Quaternion(0, lookDir.y, 0, 0);
             var target = newDir;
 
-            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED * .15f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * Gamerules.HERO_AIR_ROTATE_SPEED * .15f);
         }
     }
 
@@ -195,6 +195,13 @@ public class PlayerController : CharacterController
         {
             RecallHook(HookSide.right);
         }
+    }
+
+    protected override void Ability_03_Press()
+    {
+        base.Ability_03_Press();
+
+        RefillGas();
     }
 
     public override void JumpHold()
@@ -255,7 +262,7 @@ public class PlayerController : CharacterController
 
         foreach (HookController hook in hooks)
         {
-            if (Vector3.Distance(transform.position, hook.transform.position) > GameVariables.MG_HOOK_MAX_RUNAWAY_RANGE)
+            if (Vector3.Distance(transform.position, hook.transform.position) > Gamerules.MG_HOOK_MAX_RUNAWAY_RANGE)
             {
                 RecallHook(hook.side);
             }
@@ -339,17 +346,17 @@ public class PlayerController : CharacterController
             }
         }
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * GameVariables.HERO_AIR_ROTATE_SPEED);
+        transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * Gamerules.HERO_AIR_ROTATE_SPEED);
     }
 
     private bool IsPlayerInHookRange()
     {
-        return Physics.Raycast(cam.transform.position, cam.transform.forward, GameVariables.MG_HOOK_RANGE, 1);
+        return Physics.Raycast(cam.transform.position, cam.transform.forward, Gamerules.MG_HOOK_RANGE, 1);
     }
 
     private void FireHook(HookSide side)
     {
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, GameVariables.MG_HOOK_RANGE, 1))
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, Gamerules.MG_HOOK_RANGE, 1))
         {
             if (rigid.velocity.y < -5)
             {
@@ -413,9 +420,9 @@ public class PlayerController : CharacterController
                     hook.tetherDistance = Vector3.Distance(nextPos, hook.target);
                 }
 
-                if (isThrusting && GameVariables.MG_RETRACT_ON_GAS && hook.tetherDistance > 1 && hooks.Count == 1)
+                if (isThrusting && Gamerules.MG_RETRACT_ON_GAS && hook.tetherDistance > 1 && hooks.Count == 1)
                 {
-                    hook.tetherDistance -= GameVariables.MG_GAS_REEL_SPEED_MULTIPLIER * Time.deltaTime;
+                    hook.tetherDistance -= Gamerules.MG_GAS_REEL_SPEED_MULTIPLIER * Time.deltaTime;
                 }
             }
 
@@ -460,8 +467,8 @@ public class PlayerController : CharacterController
     private void DoSwordTrail()
     {
         // if moving 10% near max speed, do trail
-        float percentVal = 0.1f * GameVariables.HERO_MAX_SPEED;
-        float needAboveThis = GameVariables.HERO_MAX_SPEED - percentVal;
+        float percentVal = 0.1f * Gamerules.HERO_MAX_SPEED;
+        float needAboveThis = Gamerules.HERO_MAX_SPEED - percentVal;
         if (base.currentSpeed >= needAboveThis)
         {
             base.characterBody.PlaySFXTrails(CharacterSFXType.sword_trail);
@@ -509,6 +516,11 @@ public class PlayerController : CharacterController
                 firstTitanPartHit.GetComponent<TitanBodyHitbox>().Hit();
             }
         }
+    }
+
+    public void RefillGas()
+    {
+        currentGas = maxGas;
     }
 
     public HookController GetLeftHook()

@@ -30,7 +30,7 @@ public abstract class CharacterAnimator : MonoBehaviour
 
     protected void Update()
     {
-        animator.SetFloat("velocity", Common.GetFloatByRelativePercent(0, 1, 0, GameVariables.HERO_MAX_SPEED, rigid.velocity.magnitude));
+        animator.SetFloat("velocity", Common.GetFloatByRelativePercent(0, 1, 0, Gamerules.HERO_MAX_SPEED, rigid.velocity.magnitude));
         animator.SetFloat("velocityY", Common.GetFloatByRelativePercent(0, 1, 0, 9.8f, rigid.velocity.y));
         animator.SetBool("isGrounded", controller.IsGrounded());
 
