@@ -349,7 +349,7 @@ public class PlayerController : CharacterController
         transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * Gamerules.HERO_AIR_ROTATE_SPEED);
     }
 
-    private bool IsPlayerInHookRange()
+    public bool IsPlayerInHookRange()
     {
         return Physics.Raycast(cam.transform.position, cam.transform.forward, Gamerules.MG_HOOK_RANGE, 1);
     }
