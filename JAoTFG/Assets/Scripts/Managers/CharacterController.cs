@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Audio;
 
 public abstract class CharacterController : MonoBehaviour
 {
@@ -56,16 +55,16 @@ public abstract class CharacterController : MonoBehaviour
 
     protected void Awake()
     {
-        this.rigid         = GetComponent<Rigidbody>();
+        this.rigid = GetComponent<Rigidbody>();
         this.characterBody = GetComponentInChildren<CharacterBody>();
-        this.Collider      = characterBody.GetComponent<Collider>();
+        this.Collider = characterBody.GetComponent<Collider>();
 
-        this.audioManager  = FindObjectOfType<AudioManager>();
-        this.cam           = Camera.main;
+        this.audioManager = FindObjectOfType<AudioManager>();
+        this.cam = Camera.main;
 
-        canMove         = true;
-        canAttack       = true;
-        canJump         = true;
+        canMove = true;
+        canAttack = true;
+        canJump = true;
         canUseAbility01 = true;
         canUseAbility02 = true;
         canUseAbility03 = true;
@@ -104,16 +103,16 @@ public abstract class CharacterController : MonoBehaviour
         if (Input.GetButtonUp("Jump")) JumpRelease();
 
         // Attack
-        if (Input.GetMouseButtonDown(0))    { Attack(); }
+        if (Input.GetMouseButtonDown(0)) { Attack(); }
         else if (Input.GetMouseButtonUp(0)) { AttackRelease(); }
 
         // Abilities
-        if (Input.GetButtonDown("Ability_01") && canUseAbility01)    Ability_01_Press();
-        else if (Input.GetButtonUp("Ability_01"))                    Ability_01_Release();
-        if (Input.GetButtonDown("Ability_02") && canUseAbility02)    Ability_02_Press();
-        else if (Input.GetButtonUp("Ability_02"))                    Ability_02_Release();
-        if (Input.GetButtonDown("Ability_03") && canUseAbility03)    Ability_03_Press();
-        else if (Input.GetButtonUp("Ability_03"))                    Ability_03_Release();
+        if (Input.GetButtonDown("Ability_01") && canUseAbility01) Ability_01_Press();
+        else if (Input.GetButtonUp("Ability_01")) Ability_01_Release();
+        if (Input.GetButtonDown("Ability_02") && canUseAbility02) Ability_02_Press();
+        else if (Input.GetButtonUp("Ability_02")) Ability_02_Release();
+        if (Input.GetButtonDown("Ability_03") && canUseAbility03) Ability_03_Press();
+        else if (Input.GetButtonUp("Ability_03")) Ability_03_Release();
     }
 
     #region Overrides
@@ -215,7 +214,7 @@ public abstract class CharacterController : MonoBehaviour
 
     #region Abilities
 
-    protected virtual void Ability_01_Press() 
+    protected virtual void Ability_01_Press()
     {
         if (!canUseAbility01) return;
 
@@ -227,7 +226,7 @@ public abstract class CharacterController : MonoBehaviour
 
     }
 
-    protected virtual void Ability_02_Press() 
+    protected virtual void Ability_02_Press()
     {
         if (!canUseAbility02) return;
 
@@ -246,8 +245,8 @@ public abstract class CharacterController : MonoBehaviour
         StartCoroutine(ability03_Cooldown());
     }
 
-    protected virtual void Ability_03_Release() 
-    { 
+    protected virtual void Ability_03_Release()
+    {
 
     }
 

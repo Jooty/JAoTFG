@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 
 public static class Gamerules
 {
@@ -18,7 +16,7 @@ public static class Gamerules
 
     public static float FIELD_OF_VIEW = 90;
 
-    public static bool SetVariable<T>(string varName, T newVal) where T 
+    public static bool SetVariable<T>(string varName, T newVal) where T
         : struct, IComparable, IConvertible, IComparable<T>, IEquatable<T>
     {
         var result = typeof(Gamerules).GetField(varName);

@@ -1,7 +1,7 @@
-using UnityEngine;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 [AddComponentMenu("Scripts/GConsole")]
 public class GConsole : MonoBehaviour
@@ -26,15 +26,17 @@ public class GConsole : MonoBehaviour
     /// <para>Color code, used to color any text. Set color code that your GUI use.</para>
     /// <para>arg1 = text, arg2 = color.</para>
     /// </summary>
-    public static Func<string, string, string> Color {
-       get { return _color; }
-       set {
-           _color = value;
-           updateDefaultMessages();
-       }
+    public static Func<string, string, string> Color
+    {
+        get { return _color; }
+        set
+        {
+            _color = value;
+            updateDefaultMessages();
+        }
     }
 
-   #region Default Output
+    #region Default Output
 
     //Set in Awake
     private static string INVALID_COMMAND_STRING;
@@ -45,13 +47,13 @@ public class GConsole : MonoBehaviour
     private static string LOG_STRING;
     private static string EXCEPTION_STRING;
     private static string ASSERT_STRING;
-   private static Func<string, string, string> _color;
+    private static Func<string, string, string> _color;
 
-   #endregion
+    #endregion
 
-    static GConsole() 
+    static GConsole()
     {
-       Color = (text, color) => text;
+        Color = (text, color) => text;
     }
 
     #region Unity Callbacks
@@ -66,24 +68,24 @@ public class GConsole : MonoBehaviour
     {
         //Register the Log Callback
         if (outputUnityLog)
-        { 
-			//Application.RegisterLogCallback(new Application.LogCallback(this.HandleUnityLog)); // If using earlier Unity then v5. use this line instead
-			Application.logMessageReceived += new Application.LogCallback(this.HandleUnityLog);
+        {
+            //Application.RegisterLogCallback(new Application.LogCallback(this.HandleUnityLog)); // If using earlier Unity then v5. use this line instead
+            Application.logMessageReceived += new Application.LogCallback(this.HandleUnityLog);
         }
         LoadBuiltInCommands();
 
     }
 
-    private static void updateDefaultMessages() 
+    private static void updateDefaultMessages()
     {
-       INVALID_COMMAND_STRING = Color("Invalid Command!", "FF0000");
-       COMMAND_NOT_FOUND_STRING = Color("Unrecognized command: ", "FF0000");
+        INVALID_COMMAND_STRING = Color("Invalid Command!", "FF0000");
+        COMMAND_NOT_FOUND_STRING = Color("Unrecognized command: ", "FF0000");
 
-       ERROR_STRING = Color("Error: ", "EEAA00");
-       WARNING_STRING = Color("Warning: ", "CCAA00");
-       LOG_STRING = Color("Log: ", "AAAAAA");
-       EXCEPTION_STRING = Color("Exception: ", "FF0000");
-       ASSERT_STRING = Color("Assert: ", "0000FF");
+        ERROR_STRING = Color("Error: ", "EEAA00");
+        WARNING_STRING = Color("Warning: ", "CCAA00");
+        LOG_STRING = Color("Log: ", "AAAAAA");
+        EXCEPTION_STRING = Color("Exception: ", "FF0000");
+        ASSERT_STRING = Color("Assert: ", "0000FF");
     }
 
     private void HandleUnityLog(string logString, string trace, LogType logType)
@@ -110,7 +112,7 @@ public class GConsole : MonoBehaviour
             default:
                 return;
         }
-        output += logString + (instance.outputStackTrace ? "\n" + Color(trace, "AAAAAA"): String.Empty);
+        output += logString + (instance.outputStackTrace ? "\n" + Color(trace, "AAAAAA") : String.Empty);
         Print(output);
     }
 
@@ -166,7 +168,8 @@ public class GConsole : MonoBehaviour
         Print("> " + Color(command, "AADDFF"));
 
 
-        if (string.IsNullOrEmpty(command)) {
+        if (string.IsNullOrEmpty(command))
+        {
             output = INVALID_COMMAND_STRING;
             return Print(output);
         }
@@ -215,13 +218,13 @@ public class GConsole : MonoBehaviour
     /// Get suggestions for a given (incomplete) input.
     /// </summary>
     /// <returns>A list of suggestions</returns>
-    public static List<GConsoleItem> GetSuggestionItems(string inputSoFar) 
+    public static List<GConsoleItem> GetSuggestionItems(string inputSoFar)
     {
-       return commands.Keys
-          .Where(command => command.StartsWith(inputSoFar))
-          .OrderBy(command => command.Length)
-          .Select(command => new GConsoleItem(command, Color(command, "00CCCC"), Color(commands[command].description, "CCCCCC")))
-          .ToList();
+        return commands.Keys
+           .Where(command => command.StartsWith(inputSoFar))
+           .OrderBy(command => command.Length)
+           .Select(command => new GConsoleItem(command, Color(command, "00CCCC"), Color(commands[command].description, "CCCCCC")))
+           .ToList();
     }
 
     /// <summary>
@@ -235,14 +238,14 @@ public class GConsole : MonoBehaviour
             .Where(c => c.StartsWith(inputSoFar)) //Only take those which start with the input so far
             .OrderBy(c => c.Length) //Order them by length
             .Select(c => c + (includeDescription ? " \t" + Color(commands[c].description, "CCCCCC") : String.Empty)) //Append description if requested
-            .Select(c => Color(c.Substring(0,inputSoFar.Length), "00CCCC") + c.Substring(inputSoFar.Length)) //Color part typed so far
+            .Select(c => Color(c.Substring(0, inputSoFar.Length), "00CCCC") + c.Substring(inputSoFar.Length)) //Color part typed so far
             .ToList(); //Convert to list
     }
 
     #endregion
 
     #region Printing and Output Sending to Listeners
-    
+
     private static string SendOutputToListeners(string output)
     {
         if (OnOutput != null)
@@ -282,7 +285,7 @@ public class GConsole : MonoBehaviour
     {
         if (string.IsNullOrEmpty(param))
         {
-            return "Type " + Color("help list [description]","33EE33") + " for a list of possible commands, or " + Color("help <command>","33EE33") + " for a description of a certain command.";
+            return "Type " + Color("help list [description]", "33EE33") + " for a list of possible commands, or " + Color("help <command>", "33EE33") + " for a description of a certain command.";
         }
         if (param == "list description" || param == "list [description]")
         {
@@ -296,8 +299,8 @@ public class GConsole : MonoBehaviour
         {
             GConsoleCommand command = commands[param];
             return Color(param, "33EE33") + " "
-                + command.description + "\n" 
-                + (command.helpText == null ? String.Empty : (Color(command.helpText,"DDDDDD")));
+                + command.description + "\n"
+                + (command.helpText == null ? String.Empty : (Color(command.helpText, "DDDDDD")));
         }
         else
         {
@@ -328,34 +331,38 @@ public class GConsole : MonoBehaviour
 /// <summary>
 /// Contain main data for suggestion item.
 /// </summary>
-public struct GConsoleItem {
-   /// <summary>
-   /// Raw text command
-   /// </summary>
-   public string Raw { get; private set; }
+public struct GConsoleItem
+{
+    /// <summary>
+    /// Raw text command
+    /// </summary>
+    public string Raw { get; private set; }
 
-   /// <summary>
-   /// Colored text command if colors is enabled, if not then be same as <see cref="Raw"/>
-   /// </summary>
-   public string Colored { get; private set; }
+    /// <summary>
+    /// Colored text command if colors is enabled, if not then be same as <see cref="Raw"/>
+    /// </summary>
+    public string Colored { get; private set; }
 
-   /// <summary>
-   /// Description of text command if exists.
-   /// </summary>
-   public string Description { get; private set; }
+    /// <summary>
+    /// Description of text command if exists.
+    /// </summary>
+    public string Description { get; private set; }
 
-   public GConsoleItem(string raw, string colored, string description)
-      : this() {
-      Raw = raw;
-      Colored = colored;
-      Description = description;
-   }
+    public GConsoleItem(string raw, string colored, string description)
+       : this()
+    {
+        Raw = raw;
+        Colored = colored;
+        Description = description;
+    }
 
-   public override string ToString() {
-      return string.Format("{0} \t{1}", Colored, Description);
-   }
+    public override string ToString()
+    {
+        return string.Format("{0} \t{1}", Colored, Description);
+    }
 
-   public static implicit operator string(GConsoleItem item) {
-      return item.ToString();
-   }
+    public static implicit operator string(GConsoleItem item)
+    {
+        return item.ToString();
+    }
 }
