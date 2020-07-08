@@ -204,16 +204,32 @@ public class PlayerController : CharacterController
         RefillGas();
     }
 
+    public override void Jump()
+    {
+        if (hasManGear && currentGas > 0)
+        {
+            base.characterBody.PlaySFXAudio(CharacterSFXType.gas_thrust, manSoundEffects[3]);
+            base.characterBody.PlaySFXParticles(CharacterSFXType.gas_thrust);
+        }
+
+        if (base.IsGrounded())
+        {
+            base.Jump();
+        }
+    }
+
     public override void JumpHold()
     {
         base.JumpHold();
 
-        if (!hasManGear) return;
-
-        GasThrust();
-
-        base.characterBody.PlaySFXAudio(CharacterSFXType.gas_thrust, manSoundEffects[3]);
-        base.characterBody.PlaySFXParticles(CharacterSFXType.gas_thrust);
+        if (hasManGear && currentGas > 0)
+        {
+            GasThrust();
+        }
+        else if (isThrusting && currentGas <= 0)
+        {
+            base.characterBody.StopAllSFX(CharacterSFXType.gas_thrust);
+        }
     }
 
     public override void JumpRelease()
@@ -271,14 +287,6 @@ public class PlayerController : CharacterController
 
     private void GasThrust()
     {
-        if (currentGas <= 0)
-        {
-            isThrusting = false;
-            base.characterBody.StopAllSFX(CharacterSFXType.gas_thrust);
-
-            return;
-        }
-
         isThrusting = true;
 
         currentGas -= Time.deltaTime * 30f;

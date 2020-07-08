@@ -33,7 +33,6 @@ public class CharacterBody : MonoBehaviour
             Debug.LogWarning($"SFX type {type} could not be found on {gameObject.name}!");
             return;
         }
-        // else if (sfx.particles.isPlaying) return;
 
         sfx.particles.Play();
     }

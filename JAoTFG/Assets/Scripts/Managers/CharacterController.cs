@@ -99,10 +99,9 @@ public abstract class CharacterController : MonoBehaviour
         SetMoveInput();
 
         // Jump
-        if (Input.GetButtonDown("Jump") && !jumpedThisFrame && canJump
-            || Input.GetButtonDown("Jump") && canDoubleJump) Jump();
-        else if (Input.GetButtonUp("Jump")) JumpRelease();
-        else if (Input.GetButton("Jump")) JumpHold();
+        if (Input.GetButtonDown("Jump")) Jump();
+        if (Input.GetButton("Jump")) JumpHold();
+        if (Input.GetButtonUp("Jump")) JumpRelease();
 
         // Attack
         if (Input.GetMouseButtonDown(0))    { Attack(); }
@@ -139,26 +138,26 @@ public abstract class CharacterController : MonoBehaviour
 
     public virtual void Jump()
     {
-        OnJump?.Invoke(this, EventArgs.Empty);
-
-        jumpedThisFrame = true;
-        canJump = false;
-
-        if (!IsGrounded() && canDoubleJump)
+        if (!jumpedThisFrame && canJump || canDoubleJump)
         {
-            canDoubleJump = false;
-        }
+            OnJump?.Invoke(this, EventArgs.Empty);
 
-        var newVelocity = rigid.velocity.ChangeY(jumpPower);
-        rigid.velocity = newVelocity;
+            jumpedThisFrame = true;
+            canJump = false;
+
+            if (!IsGrounded() && canDoubleJump)
+            {
+                canDoubleJump = false;
+            }
+
+            var newVelocity = rigid.velocity.ChangeY(jumpPower);
+            rigid.velocity = newVelocity;
+        }
     }
 
     public virtual void JumpHold() { }
 
-    public virtual void JumpRelease()
-    {
-
-    }
+    public virtual void JumpRelease() { }
 
     public virtual void Land()
     {
@@ -189,6 +188,30 @@ public abstract class CharacterController : MonoBehaviour
     }
 
     protected abstract void Attack_Hit(Collider[] colliders);
+
+    public virtual void HandleGround()
+    {
+        if (IsGrounded() && isWaitingToLand)
+        {
+            if (!jumpedThisFrame && currentSpeed < 11f)
+            {
+                Land();
+            }
+            else
+            {
+                rigid.drag = 5;
+            }
+        }
+        else
+        {
+            rigid.drag = 0.02f;
+
+            isWaitingToLand = true;
+            jumpedThisFrame = false;
+        }
+    }
+
+    public virtual void CharacterBodyColliderEvent(Collision coll) { }
 
     #region Abilities
 
@@ -270,30 +293,6 @@ public abstract class CharacterController : MonoBehaviour
         moveInput.y = 0;
         moveInput.Normalize();
     }
-
-    public virtual void HandleGround()
-    {
-        if (IsGrounded() && isWaitingToLand)
-        {
-            if (!jumpedThisFrame && currentSpeed < 11f)
-            {
-                Land();
-            }
-            else
-            {
-                rigid.drag = 5;
-            }
-        }
-        else
-        {
-            rigid.drag = 0.02f;
-
-            isWaitingToLand = true;
-            jumpedThisFrame = false;
-        }
-    }
-
-    public virtual void CharacterBodyColliderEvent(Collision coll) { }
 
     protected void EnforceMaxSpeed()
     {
