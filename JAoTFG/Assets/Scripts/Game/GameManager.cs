@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,8 +26,6 @@ public class GameManager : MonoBehaviour
         CheckForDuplicateGameManagers();
         DontDestroyOnLoad(gameObject);
 
-        GetAndSetAllPlayerControls();
-
         this.sceneController = GetComponent<SceneController>();
         this.musicPlayer = GetComponent<AudioSource>();
         this.anim = GetComponent<Animator>();
@@ -36,6 +35,10 @@ public class GameManager : MonoBehaviour
     {
         // TODO: unlock
         // LoadAudio();
+
+        GetAndSetAllPlayerControls();
+
+        SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
     }
 
     private void CheckForDuplicateGameManagers()
@@ -89,7 +92,12 @@ public class GameManager : MonoBehaviour
 
     public void ReloadLevel()
     {
-        GameManager.instance.ReloadLevel();
+        sceneController.ReloadCurrentScene();
+    }
+
+    private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
+    {
+        GetAndSetAllPlayerControls();
     }
 
     public void PauseGame()

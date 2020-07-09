@@ -53,6 +53,13 @@ public class TitanController : CharacterController
         throw new System.NotImplementedException();
     }
 
+    public override void Death()
+    {
+        base.Death();
+
+        agent.isStopped = true;
+    }
+
     public void HitboxHitEvent(TitanBodyHitboxType type)
     {
         switch (type)
@@ -66,7 +73,7 @@ public class TitanController : CharacterController
                 break;
 
             case TitanBodyHitboxType.nape:
-                base.Death();
+                Death();
                 break;
         }
     }
@@ -89,6 +96,7 @@ public class TitanController : CharacterController
     private IEnumerator RecoveryTimer(float timeToWait)
     {
         base.canMove = false;
+        agent.isStopped = true;
         yield return new WaitForSeconds(timeToWait);
         base.canMove = true;
     }

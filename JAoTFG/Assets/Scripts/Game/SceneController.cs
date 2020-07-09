@@ -81,7 +81,7 @@ public class SceneController : MonoBehaviour
 
     public void ReloadCurrentScene()
     {
-        ChangeScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void FadeOutCompletedEvent()
