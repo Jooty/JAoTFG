@@ -519,6 +519,16 @@ public class PlayerController : CharacterController
 
             GameObject firstTitanPartHit = colliders.FirstOrDefault(x => x.tag.Contains("Titan")).gameObject;
 
+            // LOS check
+            var direction = transform.position - firstTitanPartHit.transform.position;
+            if (Physics.Raycast(transform.position, direction, out var hit, 0))
+            {
+                if (hit.transform != firstTitanPartHit.transform)
+                {
+                    return;
+                }
+            }
+
             if (firstTitanPartHit.CompareTag("TitanHitbox"))
             {
                 firstTitanPartHit.GetComponent<TitanBodyHitbox>().Hit();
