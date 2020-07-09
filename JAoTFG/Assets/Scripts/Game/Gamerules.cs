@@ -10,7 +10,7 @@ public static class Gamerules
 
     public static bool MG_RETRACT_ON_GAS = true;
     public static float MG_HOOK_RANGE = 95f;
-    public static float MG_GAS_REEL_SPEED_MULTIPLIER = 2.6f;
+    public static float MG_GAS_REEL_SPEED_MULTIPLIER = 2.8f;
 
     public static float TITAN_DISSIPATE_TIMER = 30;
 
