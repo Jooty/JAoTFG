@@ -11,19 +11,10 @@ public class DevConsoleManager : MonoBehaviour
 
     public GameObject consoleGO;
 
-    // all player related controls
-    private ThirdPersonCamera tpc;
-    private PlayerController playerController;
-    private PlayerAnimator playerAnimator;
-
     private void Awake()
     {
         instance = this;
         isToggledOn = false;
-
-        tpc = FindObjectOfType<ThirdPersonCamera>();
-        playerController = FindObjectOfType<PlayerController>();
-        playerAnimator = FindObjectOfType<PlayerAnimator>();
     }
 
     private void Start()
@@ -42,17 +33,11 @@ public class DevConsoleManager : MonoBehaviour
     private void ToggleConsole()
     {
         isToggledOn = !isToggledOn;
-
-        // cursor
-        Cursor.lockState = isToggledOn ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = isToggledOn;
-
         consoleGO.SetActive(isToggledOn);
 
-        // disable all player related objects
-        tpc.enabled = !isToggledOn;
-        playerController.enabled = !isToggledOn;
-        playerAnimator.enabled = !isToggledOn;
+        // pause/unpause
+        if (isToggledOn) GameManager.instance.PauseGame();
+        else GameManager.instance.ResumeGame();
     }
 
     private void InitiateCommands()

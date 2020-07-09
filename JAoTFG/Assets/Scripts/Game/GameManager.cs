@@ -7,30 +7,55 @@ public class GameManager : MonoBehaviour
 
     public Gamemode gamemode;
 
+    // all player related controls
+    private ThirdPersonCamera tpc;
+    private PlayerController playerController;
+    private PlayerAnimator playerAnimator;
+    private Rigidbody playerRigidbody;
+
+    private Vector3 playerVelOnPause;
+
     // Locals
     private SceneController sceneController;
-
     private AudioSource musicPlayer;
     private Animator anim;
 
     private void Awake()
     {
-        if (GameManager.instance)
-        {
-            Destroy(gameObject);
-        }
-
-        instance = this;
+        CheckForDuplicateGameManagers();
         DontDestroyOnLoad(gameObject);
 
-        sceneController = GetComponent<SceneController>();
-        musicPlayer = GetComponent<AudioSource>();
-        anim = GetComponent<Animator>();
+        GetAndSetAllPlayerControls();
+
+        this.sceneController = GetComponent<SceneController>();
+        this.musicPlayer = GetComponent<AudioSource>();
+        this.anim = GetComponent<Animator>();
     }
 
     private void Start()
     {
+        // TODO: unlock
         // LoadAudio();
+    }
+
+    private void CheckForDuplicateGameManagers()
+    {
+        if (instance)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+
+    private void GetAndSetAllPlayerControls()
+    {
+        tpc = FindObjectOfType<ThirdPersonCamera>();
+        playerController = FindObjectOfType<PlayerController>();
+        playerAnimator = FindObjectOfType<PlayerAnimator>();
+        playerRigidbody = playerController.gameObject.GetComponent<Rigidbody>();
     }
 
     private void LoadAudio()
@@ -56,6 +81,43 @@ public class GameManager : MonoBehaviour
             case Gamemode.arena:
                 sceneController.ChangeScene("UpdatedArena");
                 break;
+            case Gamemode.mainMenu:
+                sceneController.ChangeScene("MainMenu");
+                break;
         }
+    }
+
+    public void ReloadLevel()
+    {
+        GameManager.instance.ReloadLevel();
+    }
+
+    public void PauseGame()
+    {
+        // cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // disable all player related objects
+        tpc.enabled = false;
+        playerController.enabled = false;
+        playerAnimator.enabled = false;
+        playerVelOnPause = playerRigidbody.velocity;
+        playerRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+    }
+
+    public void ResumeGame()
+    {
+        // cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        // enable all player related objects
+        tpc.enabled = true;
+        playerController.enabled = true;
+        playerAnimator.enabled = true;
+        playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+
+        playerRigidbody.velocity = playerVelOnPause;
     }
 }
