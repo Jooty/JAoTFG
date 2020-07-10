@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
 
     private Vector3 playerVelOnPause;
 
+    private ScoreShow scoreShow;
+
     // Locals
     private SceneController sceneController;
     private AudioSource musicPlayer;
@@ -25,6 +27,8 @@ public class GameManager : MonoBehaviour
     {
         CheckForDuplicateGameManagers();
         DontDestroyOnLoad(gameObject);
+
+        scoreShow = FindObjectOfType<ScoreShow>();
 
         this.sceneController = GetComponent<SceneController>();
         this.musicPlayer = GetComponent<AudioSource>();
@@ -39,6 +43,58 @@ public class GameManager : MonoBehaviour
         GetAndSetAllPlayerControls();
 
         SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
+    }
+
+    public void ChangeGameMode(Gamemode mode)
+    {
+        switch (mode)
+        {
+            case Gamemode.arena:
+                sceneController.ChangeScene("UpdatedArena");
+                break;
+            case Gamemode.mainMenu:
+                sceneController.ChangeScene("MainMenu");
+                break;
+        }
+    }
+
+    public void ReloadLevel()
+    {
+        sceneController.ReloadCurrentScene();
+    }
+
+    public void PauseGame()
+    {
+        // cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // disable all player related objects
+        tpc.enabled = false;
+        playerController.enabled = false;
+        playerAnimator.enabled = false;
+        playerVelOnPause = playerRigidbody.velocity;
+        playerRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+    }
+
+    public void ResumeGame()
+    {
+        // cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        // enable all player related objects
+        tpc.enabled = true;
+        playerController.enabled = true;
+        playerAnimator.enabled = true;
+        playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+
+        playerRigidbody.velocity = playerVelOnPause;
+    }
+
+    public void TitanDeathEvent(DeathInfo info)
+    {
+        scoreShow.ShowScore(info);
     }
 
     private void CheckForDuplicateGameManagers()
@@ -77,55 +133,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ChangeGameMode(Gamemode mode)
-    {
-        switch (mode)
-        {
-            case Gamemode.arena:
-                sceneController.ChangeScene("UpdatedArena");
-                break;
-            case Gamemode.mainMenu:
-                sceneController.ChangeScene("MainMenu");
-                break;
-        }
-    }
-
-    public void ReloadLevel()
-    {
-        sceneController.ReloadCurrentScene();
-    }
-
     private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
     {
         GetAndSetAllPlayerControls();
-    }
-
-    public void PauseGame()
-    {
-        // cursor
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        // disable all player related objects
-        tpc.enabled = false;
-        playerController.enabled = false;
-        playerAnimator.enabled = false;
-        playerVelOnPause = playerRigidbody.velocity;
-        playerRigidbody.constraints = RigidbodyConstraints.FreezeAll;
-    }
-
-    public void ResumeGame()
-    {
-        // cursor
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        // enable all player related objects
-        tpc.enabled = true;
-        playerController.enabled = true;
-        playerAnimator.enabled = true;
-        playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-
-        playerRigidbody.velocity = playerVelOnPause;
     }
 }

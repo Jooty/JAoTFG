@@ -169,7 +169,7 @@ public abstract class CharacterController : MonoBehaviour
         rigid.drag = 5;
     }
 
-    public virtual void Death()
+    public virtual void Death(DeathInfo info)
     {
         OnDeath?.Invoke(this, EventArgs.Empty);
     }

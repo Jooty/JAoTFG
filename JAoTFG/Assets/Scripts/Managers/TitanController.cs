@@ -53,14 +53,15 @@ public class TitanController : CharacterController
         throw new System.NotImplementedException();
     }
 
-    public override void Death()
+    public override void Death(DeathInfo info)
     {
-        base.Death();
+        base.Death(info);
 
         agent.isStopped = true;
+        GameManager.instance.TitanDeathEvent(info);
     }
 
-    public void HitboxHitEvent(TitanBodyHitboxType type)
+    public void HitboxHitEvent(TitanBodyHitboxType type, DeathInfo info = null)
     {
         switch (type)
         {
@@ -73,7 +74,7 @@ public class TitanController : CharacterController
                 break;
 
             case TitanBodyHitboxType.nape:
-                Death();
+                Death(info);
                 break;
         }
     }

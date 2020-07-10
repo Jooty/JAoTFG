@@ -14,12 +14,12 @@ public class TitanBodyHitbox : MonoBehaviour
         titanController = transform.FindParentWithTag("Titan").GetComponent<TitanController>();
     }
 
-    public void Hit()
+    public void Hit(DeathInfo info = null)
     {
         if (!canBeHit) return;
 
         StartCoroutine(RecoverTimer());
-        titanController.HitboxHitEvent(hitboxType);
+        titanController.HitboxHitEvent(hitboxType, info);
     }
 
     private IEnumerator RecoverTimer()

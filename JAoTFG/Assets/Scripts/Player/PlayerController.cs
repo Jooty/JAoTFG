@@ -18,6 +18,7 @@ public class PlayerController : CharacterController
     public GameObject[] hookPoints;
 
     private bool isHoldingAttack;
+    private float attackHoldTime;
 
     [HideInInspector] public AudioClip[] manSoundEffects;
     [HideInInspector] public bool usingManGear;
@@ -260,6 +261,11 @@ public class PlayerController : CharacterController
         {
             DoManeuverGearPhysics();
         }
+
+        if (isHoldingAttack)
+        {
+            attackHoldTime += Time.deltaTime;
+        }
     }
 
     private void UpdateTetherDistanceWhenFooted()
@@ -492,13 +498,12 @@ public class PlayerController : CharacterController
         base.AttackRelease();
 
         isHoldingAttack = false;
+        attackHoldTime = 0;
 
-        var t = characterBody.transform;
-        Vector3 hitboxPosition = t.position + t.forward;
-        hitboxPosition = hitboxPosition.ChangeY(t.position.y + 1);
+        var pos = getSwordHitboxLocation();
         Vector3 hitboxSizeHalf = new Vector3(1.25f, 0.375f, 0.5f);
 
-        Collider[] hitColliders = Physics.OverlapBox(hitboxPosition, hitboxSizeHalf, t.rotation);
+        Collider[] hitColliders = Physics.OverlapBox(pos, hitboxSizeHalf, base.characterBody.transform.rotation);
         if (hitColliders.Length > 0)
         {
             Attack_Hit(hitColliders);
@@ -531,7 +536,8 @@ public class PlayerController : CharacterController
 
             if (firstTitanPartHit.CompareTag("TitanHitbox"))
             {
-                firstTitanPartHit.GetComponent<TitanBodyHitbox>().Hit();
+                var info = new DeathInfo(this, (int)base.currentSpeed, DetermineScore());
+                firstTitanPartHit.GetComponent<TitanBodyHitbox>().Hit(info);
             }
         }
     }
@@ -539,6 +545,15 @@ public class PlayerController : CharacterController
     public void RefillGas()
     {
         currentGas = maxGas;
+    }
+
+    public int DetermineScore()
+    {
+        var holdTime = Mathf.Clamp(attackHoldTime, 0, 5);
+        var scaledHoldTime = Common.GetFloatByRelativePercent(10, 5000, 0, 5, holdTime);
+        var speedScore = Common.GetFloatByRelativePercent(10, 5000, 0, Gamerules.HERO_MAX_SPEED, base.currentSpeed);
+
+        return (int)(scaledHoldTime + speedScore);
     }
 
     public HookController GetLeftHook()
@@ -568,6 +583,13 @@ public class PlayerController : CharacterController
         return hooks.FirstOrDefault(x => x.side == side);
     }
 
+    private Vector3 getSwordHitboxLocation()
+    {
+        var t = characterBody.transform;
+        Vector3 hitboxPosition = t.position + t.forward;
+        return hitboxPosition.ChangeY(t.position.y + 1);
+    }
+
     public bool isHooked()
     {
         return hooks.Count > 0;
@@ -582,9 +604,7 @@ public class PlayerController : CharacterController
         Gizmos.color = Color.white;
         Gizmos.matrix = characterBody.transform.localToWorldMatrix;
 
-        var t = characterBody.transform;
-        Vector3 hitboxPosition = t.position + t.forward;
-        hitboxPosition = hitboxPosition.ChangeY(t.position.y + 1);
+        var hitboxPosition = getSwordHitboxLocation();
         Vector3 hitboxSize = new Vector3(1.25f * 2f, 0.375f * 2f, 0.5f * 2f);
         hitboxPosition = characterBody.transform.InverseTransformPoint(hitboxPosition);
 
