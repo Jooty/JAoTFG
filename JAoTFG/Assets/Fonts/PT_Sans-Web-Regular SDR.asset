@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: PT_Sans-Web-Regular SDR
   m_EditorClassIdentifier: 
-  hashCode: 1630813615
+  hashCode: 1630813627
   material: {fileID: 21492637580707374}
   materialHashCode: -109660604
   m_Version: 1.1.0
@@ -2884,6 +2884,7 @@ Texture2D:
   m_TextureFormat: 1
   m_MipCount: 1
   m_IsReadable: 0
+  m_IgnoreMasterTextureLimit: 0
   m_StreamingMipmaps: 0
   m_StreamingMipmapsPriority: 0
   m_AlphaIsTransparency: 0
