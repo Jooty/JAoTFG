@@ -68,7 +68,7 @@ public class MainMenuController : MonoBehaviour
         disclaimerPanel.SetActive(true);
         if (!Application.isEditor)
         {
-            StartCoroutine(disclaimerButtonTimer());
+            StartCoroutine(DisclaimerButtonTimer());
         }
         else
         {
@@ -100,17 +100,17 @@ public class MainMenuController : MonoBehaviour
 
     public void BTN_Profiles()
     {
-        listProfiles();
+        ListProfiles();
     }
 
     public void BTN_CreateProfile()
     {
-        createProfile();
+        CreateProfile();
     }
 
     public void BTN_ProfileRenameSave()
     {
-        if (doesProfileAlreadyExist(name))
+        if (DoesProfileAlreadyExist(name))
         {
             profileNameError.text = "A profile already exists with that name!";
             return;
@@ -181,7 +181,7 @@ public class MainMenuController : MonoBehaviour
     {
         if (Application.isEditor)
         {
-            SetVerifyMessage("SUCCESSFULLY VERIFIED", "You are using Unity editor.");
+            SetVerifyMessage("SUCCESSFULLY VERIFIED", "You are using the Unity editor.");
 
             return;
         }
@@ -241,27 +241,30 @@ public class MainMenuController : MonoBehaviour
 
     #region Profiles
 
-    private void listProfiles()
+    private void ListProfiles()
     {
-        profileListings = new List<GameObject>();
+        if (profileListings == null) profileListings = new List<GameObject>();
         if (!ProfileManager.DoesAnyProfileExist()) return;
 
-        var profiles = ProfileManager.loadAllProfiles();
-        foreach (var profile in profiles)
+        // remove current profile listings
+        profileListings.ForEach(x => Destroy(x));
+
+        // add all profiles;
+        foreach (var profile in ProfileManager.loadAllProfiles())
         {
             GameObject listing = Instantiate(profileButtonPrefab, profilesListGrid.transform);
             listing.name = profile.name;
-            listing.GetComponent<Button>().onClick.AddListener(() => showProfile(profile.name));
+            listing.GetComponent<Button>().onClick.AddListener(() => ShowProfile(profile.name));
             listing.GetComponentInChildren<TextMeshProUGUI>().text = profile.name;
 
             profileListings.Add(listing);
         }
     }
 
-    private void createProfile()
+    private void CreateProfile()
     {
         string name = profileNewInput.text;
-        if (doesProfileAlreadyExist(name))
+        if (DoesProfileAlreadyExist(name))
         {
             profileNameError.text = "A profile already exists with that name!";
             return;
@@ -279,7 +282,7 @@ public class MainMenuController : MonoBehaviour
 
             GameObject listing = Instantiate(profileButtonPrefab, profilesListGrid.transform);
             listing.name = newProfile.name;
-            listing.GetComponent<Button>().onClick.AddListener(() => showProfile(newProfile.name));
+            listing.GetComponent<Button>().onClick.AddListener(() => ShowProfile(newProfile.name));
             listing.GetComponentInChildren<TextMeshProUGUI>().text = newProfile.name;
 
             profileListings.Add(listing);
@@ -287,11 +290,11 @@ public class MainMenuController : MonoBehaviour
             profileButtonText.text = newProfile.name;
             profileNewProfilePanel.SetActive(false);
 
-            showProfile(newProfile.name);
+            ShowProfile(newProfile.name);
         }
     }
 
-    private void showProfile(string _profile)
+    private void ShowProfile(string _profile)
     {
         if (ProfileManager.TryLoadProfile(_profile, out PlayerProfile profile))
         {
@@ -306,7 +309,7 @@ public class MainMenuController : MonoBehaviour
 
             // set character display
             if (spawnedCharacterBody) Destroy(spawnedCharacterBody); // remove old one if exists
-            GameObject cBody = getCharacterBody(profile.preferredHumanCharacterBody);
+            GameObject cBody = GetCharacterBody(profile.preferredHumanCharacterBody);
             spawnedCharacterBody = Instantiate(cBody);
             spawnedCharacterBody.transform.position = Vector3.zero;
             spawnedCharacterBody.GetComponent<Animator>().runtimeAnimatorController = menuAnimController;
@@ -341,12 +344,12 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    private GameObject getCharacterBody(string name)
+    private GameObject GetCharacterBody(string name)
     {
         return characterBodies.FirstOrDefault(x => x.name == name);
     }
 
-    private bool doesProfileAlreadyExist(string name)
+    private bool DoesProfileAlreadyExist(string name)
     {
         if (ProfileManager.TryLoadProfile(name, out var profile))
         {
@@ -360,7 +363,7 @@ public class MainMenuController : MonoBehaviour
 
     #endregion
 
-    private IEnumerator disclaimerButtonTimer()
+    private IEnumerator DisclaimerButtonTimer()
     {
         disclaimerButton.interactable = false;
 
