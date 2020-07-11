@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DiscordRPC;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -16,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     private Vector3 playerVelOnPause;
 
+    private DiscordManager discord;
+
     private ScoreShow scoreShow;
 
     // Locals
@@ -29,6 +32,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         scoreShow = FindObjectOfType<ScoreShow>();
+        discord = FindObjectOfType<DiscordManager>();
 
         this.sceneController = GetComponent<SceneController>();
         this.musicPlayer = GetComponent<AudioSource>();
@@ -45,12 +49,21 @@ public class GameManager : MonoBehaviour
         SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
     }
 
+    private void Update()
+    {
+        if (discord?.rawDiscordClient != null)
+        {
+            discord.rawDiscordClient.RunCallbacks();
+        }
+    }
+
     public void ChangeGameMode(Gamemode mode)
     {
         switch (mode)
         {
-            case Gamemode.arena:
+            case Gamemode.singleplayer:
                 sceneController.ChangeScene("UpdatedArena");
+                DiscordManager.current.SetPresence(getDiscordRPPerMode(Gamemode.singleplayer));
                 break;
             case Gamemode.mainMenu:
                 sceneController.ChangeScene("MainMenu");
@@ -111,6 +124,8 @@ public class GameManager : MonoBehaviour
 
     private void GetAndSetAllPlayerControls()
     {
+        if (SceneManager.GetActiveScene().name != "UpdatedArena") return;
+
         tpc = FindObjectOfType<ThirdPersonCamera>();
         playerController = FindObjectOfType<PlayerController>();
         playerAnimator = FindObjectOfType<PlayerAnimator>();
@@ -130,6 +145,50 @@ public class GameManager : MonoBehaviour
             AudioSettings.SetMasterVolume(1);
             AudioSettings.SetMusicVolume(.15f);
             AudioSettings.SetSFXVolume(.15f);
+        }
+    }
+
+    private DiscordPresence getDiscordRPPerMode(Gamemode mode)
+    {
+        DiscordAsset bigAsset = new DiscordAsset()
+        {
+            image = "logo_discord",
+            tooltip = "JAoTFG"
+        };
+        DiscordAsset smallAsset = new DiscordAsset()
+        {
+            image = "",
+            tooltip = ""
+        };
+
+        switch (mode)
+        {
+            case Gamemode.mainMenu:
+                return new DiscordPresence()
+                {
+                    details = "Main Menu",
+                    state = "Idling",
+                    largeAsset = bigAsset,
+                    smallAsset = smallAsset
+                };
+            case Gamemode.singleplayer:
+                return new DiscordPresence()
+                {
+                    details = "Singleplayer",
+                    state = "As Human",
+                    largeAsset = bigAsset,
+                    smallAsset = smallAsset
+                };
+            case Gamemode.multiplayer:
+                return new DiscordPresence()
+                {
+                    details = "Multiplayer",
+                    state = "As Human",
+                    largeAsset = bigAsset,
+                    smallAsset = smallAsset
+                };
+            default:
+                return null;
         }
     }
 
