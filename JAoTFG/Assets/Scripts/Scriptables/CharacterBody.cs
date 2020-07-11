@@ -118,6 +118,7 @@ public class CharacterBody : MonoBehaviour
 
         sfx.audioSource.loop = true;
         sfx.audioSource.clip = clip;
+        if (!audioManager) audioManager = FindObjectOfType<AudioManager>();
         audioManager.StartFadeIn(sfx.audioSource, .5f, 0.05f);
     }
 
@@ -142,6 +143,7 @@ public class CharacterBody : MonoBehaviour
             return;
         }
 
+        if (!audioManager) audioManager = FindObjectOfType<AudioManager>();
         audioManager.StartFadeOut(sfx.audioSource, .15f);
     }
 
