@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 147716575}
   - component: {fileID: 147716574}
   m_Layer: 5
-  m_Name: QuoteText
+  m_Name: TooltipText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -204,8 +204,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -328,12 +328,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.09433961, g: 0.09433961, b: 0.09433961, a: 0.85490197}
+  m_Color: {r: 0.09433961, g: 0.09433961, b: 0.09433961, a: 0.9372549}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -852,6 +852,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7106863661503969876, guid: e6cf1a014dd3d234ca8d7a1afef49d01,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 1ac04e5e6ef90364a963a94834595b6b, type: 3}
     - target: {fileID: 7106863661503969878, guid: e6cf1a014dd3d234ca8d7a1afef49d01,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -910,7 +915,7 @@ PrefabInstance:
     - target: {fileID: 7106863661503969962, guid: e6cf1a014dd3d234ca8d7a1afef49d01,
         type: 3}
       propertyPath: loadingWaitTime
-      value: 10
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7106863662328840881, guid: e6cf1a014dd3d234ca8d7a1afef49d01,
         type: 3}

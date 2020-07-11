@@ -536,7 +536,21 @@ public class PlayerController : CharacterController
 
             if (firstTitanPartHit.CompareTag("TitanHitbox"))
             {
-                var info = new DeathInfo(this, (int)base.currentSpeed, DetermineScore());
+                int score = DetermineScore();
+
+                // set stats in player's profile
+                PlayerProfile profile = ProfileManager.currentProfile;
+                if (profile != null)
+                {
+                    profile.totalScore += score;
+                    if (profile.highestScore < score)
+                    {
+                        profile.highestScore = score;
+                    }
+                }
+
+                // send info to the titan
+                var info = new DeathInfo(this, (int)base.currentSpeed, score);
                 firstTitanPartHit.GetComponent<TitanBodyHitbox>().Hit(info);
             }
         }
