@@ -39,10 +39,10 @@ public class SceneController : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "LoadingScreen")
         {
             background = GameObject.Find("Canvas/Background").GetComponent<Image>();
-            quoteText = GameObject.Find("Canvas/BottomPanel/QuoteText").GetComponent<TextMeshProUGUI>();
+            quoteText = GameObject.Find("Canvas/BottomPanel/TooltipText").GetComponent<TextMeshProUGUI>();
 
             SetBackground();
-            SetQuote();
+            SetTooltip();
 
             ChangeScene(FirstSceneToLoad);
         }
@@ -55,10 +55,10 @@ public class SceneController : MonoBehaviour
         if (newScene.name == "LoadingScreen")
         {
             background = GameObject.Find("Canvas/Background").GetComponent<Image>();
-            quoteText = GameObject.Find("Canvas/BottomPanel/QuoteText").GetComponent<TextMeshProUGUI>();
+            quoteText = GameObject.Find("Canvas/BottomPanel/TooltipText").GetComponent<TextMeshProUGUI>();
 
             SetBackground();
-            SetQuote();
+            SetTooltip();
         }
     }
 
@@ -138,15 +138,15 @@ public class SceneController : MonoBehaviour
         background.sprite = backgrounds[UnityEngine.Random.Range(0, backgrounds.Length)];
     }
 
-    private void SetQuote()
+    private void SetTooltip()
     {
-        var quotes = GetQuotes();
-        quoteText.text = quotes[UnityEngine.Random.Range(0, quotes.Length)];
+        var quotes = GetTooltips();
+        quoteText.text = quotes[Random.Range(0, quotes.Length)];
     }
 
-    private string[] GetQuotes()
+    private string[] GetTooltips()
     {
-        var data = Resources.Load<TextAsset>("LoadingScreen/Quotes").text;
+        var data = Resources.Load<TextAsset>("LoadingScreen/Tooltips").text;
 
         var newData = data;
         bool doQuoteData = false;
