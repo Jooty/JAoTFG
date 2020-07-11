@@ -2,5 +2,6 @@
 {
     unknown,
     mainMenu,
-    arena
+    singleplayer,
+    multiplayer
 }
