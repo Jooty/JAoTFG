@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DevConsoleManager : MonoBehaviour
 {
@@ -32,6 +33,8 @@ public class DevConsoleManager : MonoBehaviour
 
     private void ToggleConsole()
     {
+        if (SceneManager.GetActiveScene().name != "UpdatedArena") return;
+
         isToggledOn = !isToggledOn;
         consoleGO.SetActive(isToggledOn);
 

@@ -83,11 +83,14 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
 
         // disable all player related objects
-        tpc.enabled = false;
-        playerController.enabled = false;
-        playerAnimator.enabled = false;
-        playerVelOnPause = playerRigidbody.velocity;
-        playerRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+        if (playerController)
+        {
+            tpc.enabled = false;
+            playerController.enabled = false;
+            playerAnimator.enabled = false;
+            playerVelOnPause = playerRigidbody.velocity;
+            playerRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+        }
     }
 
     public void ResumeGame()
@@ -97,10 +100,13 @@ public class GameManager : MonoBehaviour
         Cursor.visible = false;
 
         // enable all player related objects
-        tpc.enabled = true;
-        playerController.enabled = true;
-        playerAnimator.enabled = true;
-        playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        if (playerController)
+        {
+            tpc.enabled = true;
+            playerController.enabled = true;
+            playerAnimator.enabled = true;
+            playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        }
 
         playerRigidbody.velocity = playerVelOnPause;
     }
