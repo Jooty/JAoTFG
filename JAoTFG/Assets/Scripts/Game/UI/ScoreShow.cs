@@ -19,7 +19,7 @@ public class ScoreShow : MonoBehaviour
     public void ShowScore(DeathInfo info)
     {
         speedText.text = $"Speed: {info.sourceSpeed}";
-        scoreText.text = info.score.ToString();
+        scoreText.text = $"Score: {info.score.ToString()}";
 
         anim.SetTrigger("appear");
     }

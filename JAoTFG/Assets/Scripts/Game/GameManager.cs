@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour
         CheckForDuplicateGameManagers();
         DontDestroyOnLoad(gameObject);
 
-        scoreShow = FindObjectOfType<ScoreShow>();
         discord = FindObjectOfType<DiscordManager>();
 
         this.sceneController = GetComponent<SceneController>();
@@ -45,6 +44,11 @@ public class GameManager : MonoBehaviour
         // LoadAudio();
 
         GetAndSetAllPlayerControls();
+
+        if (SceneManager.GetActiveScene().name == "UpdatedArena")
+        {
+            scoreShow = FindObjectOfType<ScoreShow>();
+        }
 
         SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
     }
@@ -201,5 +205,10 @@ public class GameManager : MonoBehaviour
     private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
     {
         GetAndSetAllPlayerControls();
+
+        if (SceneManager.GetActiveScene().name == "UpdatedArena")
+        {
+            scoreShow = FindObjectOfType<ScoreShow>();
+        }
     }
 }
