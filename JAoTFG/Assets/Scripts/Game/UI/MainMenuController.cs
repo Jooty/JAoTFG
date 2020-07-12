@@ -143,9 +143,14 @@ public class MainMenuController : MonoBehaviour
         ProfileManager.SetActiveProfile(selectedProfile);
     }
 
-    public void BTN_Start()
+    public void BTN_Singleplayer()
     {
         GameManager.instance.ChangeGameMode(Gamemode.singleplayer);
+    }
+
+    public void BTN_MultiplayerArena()
+    {
+        GameManager.instance.ChangeGameMode(Gamemode.multiplayer);
     }
 
     public void BTN_Exit()
