@@ -10,7 +10,29 @@ public static class ProfileManager
 
     private const string DEFAULT_PROFILE_NAME = "DEFAULT_PLACEHOLDER";
 
-    public static PlayerProfile currentProfile;
+    public static PlayerProfile currentProfile
+    {
+        get
+        {
+            if (_currentProfile == null)
+            {
+                if (DoesAnyProfileExist())
+                {
+                    return GetOnlyExistingProfile();
+                }
+                else 
+                { 
+                    return _currentProfile;
+                }
+            }
+            else
+            {
+                return _currentProfile;
+            }
+        }
+        set { _currentProfile = value; }
+    }
+    private static PlayerProfile _currentProfile;
 
     public static void SaveExistingProfile(PlayerProfile newProfile)
     {
@@ -100,6 +122,8 @@ public static class ProfileManager
 
     public static void SetActiveProfile(PlayerProfile profile)
     {
+        Debug.Log($"Active profile changed to \"{profile.name}\"!");
+
         currentProfile = profile;
         PlayerPrefs.SetString("LastUsedProfile", currentProfile.name);
     }
@@ -122,6 +146,11 @@ public static class ProfileManager
         {
             return false;
         }
+    }
+
+    public static PlayerProfile GetOnlyExistingProfile()
+    {
+        return loadAllProfiles().FirstOrDefault();
     }
 
     public static PlayerProfile[] loadAllProfiles()

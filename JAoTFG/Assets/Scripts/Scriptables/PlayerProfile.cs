@@ -21,6 +21,16 @@ public class PlayerProfile
         this.totalScore = 0;
     }
 
+    public PlayerProfile()
+    {
+        this.name = "empty";
+        this.preferredHumanCharacterBody = "Eren";
+        this.level = 1;
+        this.kills = 0;
+        this.highestScore = 0;
+        this.totalScore = 0;
+    }
+
     public void Save()
     {
         ProfileManager.SaveExistingProfile(this);
