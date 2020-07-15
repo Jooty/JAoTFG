@@ -10,6 +10,10 @@ public static class ProfileManager
 
     private const string DEFAULT_PROFILE_NAME = "DEFAULT_PLACEHOLDER";
 
+    // naming rules
+    private const int NAME_LEAST_CHARACTERS = 3;
+    private const int NAME_MAX_CHARACTERS = 15;
+
     public static PlayerProfile currentProfile
     {
         get
@@ -128,6 +132,35 @@ public static class ProfileManager
         PlayerPrefs.SetString("LastUsedProfile", currentProfile.name);
     }
 
+    /// <summary>
+    /// Tests a name against naming rules and returns the results.
+    /// </summary>
+    /// <param name="errorMessage">The error message associated with this result.</param>
+    /// <returns></returns>
+    public static bool TestNameAgainstRules(string name, out string errorMessage)
+    {
+        if (name.Count() < NAME_LEAST_CHARACTERS)
+        {
+            errorMessage = "Must be at least 3 characters!";
+            return false;
+        }
+        else if (name.Count() > NAME_MAX_CHARACTERS)
+        {
+            errorMessage = "Max of 15 characters!";
+            return false;
+        }
+        else if (DoesProfileAlreadyExist(name))
+        {
+            errorMessage = "A profile with that name already exists!";
+            return false;
+        }
+        else
+        {
+            errorMessage = "";
+            return true;
+        }
+    }
+
     public static bool DoesAnyProfileExist()
     {
         var profiles = loadAllProfiles();
@@ -141,6 +174,18 @@ public static class ProfileManager
             {
                 return true;
             }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private static bool DoesProfileAlreadyExist(string name)
+    {
+        if (TryLoadProfile(name, out var profile))
+        {
+            return true;
         }
         else
         {

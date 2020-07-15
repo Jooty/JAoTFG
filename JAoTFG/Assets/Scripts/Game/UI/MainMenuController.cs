@@ -57,7 +57,6 @@ public class MainMenuController : MonoBehaviour
     // misc
     [Header("Misc")]
     [SerializeField] private TextMeshProUGUI versionText;
-    private GameObject[] characterBodies;
 
     private void Start()
     {
@@ -65,21 +64,11 @@ public class MainMenuController : MonoBehaviour
         sfx.value = AudioSettings.SFX;
         music.value = AudioSettings.Music;
 
-        disclaimerPanel.SetActive(true);
-        if (!Application.isEditor)
-        {
-            StartCoroutine(DisclaimerButtonTimer());
-        }
-        else
-        {
-            disclaimerButton.interactable = true;
-        }
-
+        ShowDisclaimers();
         SetVersionText();
         SetDefaultProfile();
 
         menuAnimController = Resources.Load<RuntimeAnimatorController>("Animation/menuCharacterAnimController");
-        characterBodies = Resources.LoadAll<GameObject>("CharacterBodies/Humans");
     }
 
     private void Update()
@@ -269,22 +258,14 @@ public class MainMenuController : MonoBehaviour
     private void CreateProfile()
     {
         string name = profileNewInput.text;
-        if (DoesProfileAlreadyExist(name))
-        {
-            profileNameError.text = "A profile already exists with that name!";
-            return;
-        }
-        else if (name.Length < 3)
-        {
-            profileNameError.text = "Name must be at least 3 characters long!";
-            return;
-        }
-        else
+        bool nameAccept = ProfileManager.TestNameAgainstRules(name, out string errorMessage);
+        if (nameAccept)
         {
             PlayerProfile newProfile = new PlayerProfile(name);
             ProfileManager.AddProfile(newProfile);
             selectedProfile = newProfile;
 
+            // create button
             GameObject listing = Instantiate(profileButtonPrefab, profilesListGrid.transform);
             listing.name = newProfile.name;
             listing.GetComponent<Button>().onClick.AddListener(() => ShowProfile(newProfile.name));
@@ -292,10 +273,17 @@ public class MainMenuController : MonoBehaviour
 
             profileListings.Add(listing);
 
+            profileNameError.gameObject.SetActive(false);
             profileButtonText.text = newProfile.name;
             profileNewProfilePanel.SetActive(false);
 
             ShowProfile(newProfile.name);
+        }
+        else
+        {
+            profileNameError.gameObject.SetActive(true);
+            profileNameError.text = errorMessage;
+            return;
         }
     }
 
@@ -314,7 +302,7 @@ public class MainMenuController : MonoBehaviour
 
             // set character display
             if (spawnedCharacterBody) Destroy(spawnedCharacterBody); // remove old one if exists
-            GameObject cBody = GetCharacterBody(profile.preferredHumanCharacterBody);
+            GameObject cBody = CharacterBodyGrabber.GetCharacterBody(selectedProfile.preferredHumanCharacterBody);
             spawnedCharacterBody = Instantiate(cBody);
             spawnedCharacterBody.transform.position = Vector3.zero;
             spawnedCharacterBody.GetComponent<Animator>().runtimeAnimatorController = menuAnimController;
@@ -341,17 +329,14 @@ public class MainMenuController : MonoBehaviour
                 profileButtonText.text = loaded.name;
                 singleplayerButton.interactable = true;
                 multiplayerButton.interactable = true;
+
+                ProfileManager.SetActiveProfile(loaded);
             }
         }
         else
         {
             Debug.Log("No last profile found!");
         }
-    }
-
-    private GameObject GetCharacterBody(string name)
-    {
-        return characterBodies.FirstOrDefault(x => x.name == name);
     }
 
     private bool DoesProfileAlreadyExist(string name)
@@ -368,6 +353,25 @@ public class MainMenuController : MonoBehaviour
 
     #endregion
 
+    #region Disclaimers
+
+    private void ShowDisclaimers()
+    {
+        if (GameManager.instance == null || GameManager.instance.hasSeenDisclaimers) return;
+        GameManager.instance.hasSeenDisclaimers = true;
+
+        disclaimerPanel.SetActive(true);
+        if (!Application.isEditor)
+        {
+            StartCoroutine(DisclaimerButtonTimer());
+        }
+        else
+        {
+            // skip in editor because it's annoying when testing
+            disclaimerButton.interactable = true;
+        }
+    }
+
     private IEnumerator DisclaimerButtonTimer()
     {
         disclaimerButton.interactable = false;
@@ -376,4 +380,6 @@ public class MainMenuController : MonoBehaviour
 
         disclaimerButton.interactable = true;
     }
+
+    #endregion
 }
