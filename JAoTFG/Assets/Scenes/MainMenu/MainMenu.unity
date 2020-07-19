@@ -27,7 +27,7 @@ RenderSettings:
   m_AmbientIntensity: 2
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 4067de1a02072244798361060c5e7325, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 7d1430089afb5854892670b854d1d684, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -39,7 +39,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.2532956, g: 0.21699746, b: 0.23319985, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -100,7 +100,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000000, guid: f6ea4fc26a16ea349be2363469cd0d6f,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1122,6 +1122,17 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1361925145}
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1416282423}
         m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
@@ -11774,7 +11785,7 @@ GameObject:
   - component: {fileID: 1551721987}
   m_Layer: 0
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13032,7 +13043,7 @@ PrefabInstance:
     - target: {fileID: 3215743128181845729, guid: c57e665b365f80745a8fdb64a4c1e00e,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: BTN_ProfileSave
+      value: BTN_SetProfile
       objectReference: {fileID: 0}
     - target: {fileID: 3215743128181845729, guid: c57e665b365f80745a8fdb64a4c1e00e,
         type: 3}
@@ -13931,7 +13942,7 @@ GameObject:
   - component: {fileID: 1747655920}
   - component: {fileID: 1747655919}
   m_Layer: 5
-  m_Name: Text_NewProfile
+  m_Name: Text_CreateProfile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13974,7 +13985,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Profile
+  m_text: 'Create Profile
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0b4d7236bcd5d6c49aef93bb1e8633f1, type: 2}
   m_sharedMaterial: {fileID: 21492637580707374, guid: 0b4d7236bcd5d6c49aef93bb1e8633f1,

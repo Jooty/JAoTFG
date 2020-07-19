@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3527388557009469561}
   - component: {fileID: 4732701436077111586}
   m_Layer: 5
-  m_Name: BTN_Profile
+  m_Name: BTN_Template
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -279,7 +279,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 32
   m_textAlignment: 514
   m_characterSpacing: 0
   m_wordSpacing: 0
